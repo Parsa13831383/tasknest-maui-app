@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using TaskNest.Interfaces;
+using TaskNest.Services;
 
 namespace TaskNest;
 
@@ -15,8 +17,11 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		builder.Services.AddSingleton<INavigationService, NavigationService>();
+
 #if DEBUG
 		builder.Logging.AddDebug();
+
 #endif
 
 		return builder.Build();
