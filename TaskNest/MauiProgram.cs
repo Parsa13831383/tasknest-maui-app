@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using TaskNest.Interfaces;
 using TaskNest.Services;
+using TaskNest.ViewModels;
 
 namespace TaskNest;
 
@@ -18,6 +19,8 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
+		builder.Services.AddTransient<BaseViewModel>();
+		builder.Services.AddTransient<DashboardViewModel>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

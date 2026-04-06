@@ -3,24 +3,105 @@
     x:Class="TaskNest.Views.TasksPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TaskNest.Controls">
+    xmlns:controls="clr-namespace:TaskNest.Controls"
+    Title="Tasks"
+    BackgroundColor="#F7F8FC">
 
-    <ContentPage.Content>
-        <CollectionView
-            ItemsSource="{Binding Tasks}"
-            Margin="16"
-            SelectionMode="None">
+    <ScrollView>
+        <VerticalStackLayout Padding="24"
+                Spacing="20">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <controls:TaskCard
-                        Title="{Binding Title}"
-                        Subtitle="{Binding Description}"
-                        PriorityText="{Binding Priority}"
-                        PriorityColor="{Binding PriorityColor}"/>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+            <VerticalStackLayout Spacing="6">
+                <Label
+                    Text="Tasks"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    TextColor="#111827"/>
 
-        </CollectionView>
-    </ContentPage.Content>
+                <Label
+                    Text="Manage your workload, track priorities, and stay organised."
+                    FontSize="15"
+                    TextColor="#6B7280"/>
+            </VerticalStackLayout>
+
+            <Grid ColumnDefinitions="*,*"
+                    ColumnSpacing="12">
+                <Button
+                    Grid.Column="0"
+                    Text="+ Create Task"
+                    BackgroundColor="#2563EB"
+                    TextColor="White"
+                    CornerRadius="12"
+                    HeightRequest="48"/>
+
+                <Button
+                    Grid.Column="1"
+                    Text="Filter Tasks"
+                    BackgroundColor="#E5E7EB"
+                    TextColor="#111827"
+                    CornerRadius="12"
+                    HeightRequest="48"/>
+            </Grid>
+
+            <Frame
+                Padding="18"
+                CornerRadius="18"
+                BackgroundColor="White"
+                HasShadow="True">
+                <VerticalStackLayout Spacing="14">
+                    <Label
+                        Text="Search &amp; Filters"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="#111827"/>
+
+                    <Entry
+                        Placeholder="Search tasks..."
+                        BackgroundColor="#F3F4F6"
+                        TextColor="#111827"/>
+
+                    <Grid ColumnDefinitions="*,*"
+                            ColumnSpacing="12">
+                        <Picker Grid.Column="0"
+                                Title="Priority"/>
+                        <Picker Grid.Column="1"
+                                Title="Category"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <VerticalStackLayout Spacing="12">
+                <Label
+                    Text="Your Tasks"
+                    FontSize="22"
+                    FontAttributes="Bold"
+                    TextColor="#111827"/>
+
+                <controls:TaskCard
+                    Title="Finish UI navigation"
+                    Subtitle="Complete the remaining page flow and visual consistency."
+                    PriorityText="High"
+                    PriorityColor="Red"
+                    DueDate="10 Apr 2026"
+                    Category="Coursework"/>
+
+                <controls:TaskCard
+                    Title="Refactor services"
+                    Subtitle="Clean up app service layer and prepare for MVVM wiring."
+                    PriorityText="Medium"
+                    PriorityColor="Orange"
+                    DueDate="11 Apr 2026"
+                    Category="Development"/>
+
+                <controls:TaskCard
+                    Title="Write README"
+                    Subtitle="Document setup, features, and app structure clearly."
+                    PriorityText="Low"
+                    PriorityColor="Green"
+                    DueDate="12 Apr 2026"
+                    Category="Documentation"/>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

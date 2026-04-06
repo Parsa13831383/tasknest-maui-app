@@ -1,5 +1,3 @@
-using Microsoft.Maui.Graphics;
-
 namespace TaskNest.Controls;
 
 public partial class TaskCard : ContentView
@@ -9,9 +7,23 @@ public partial class TaskCard : ContentView
         InitializeComponent();
     }
 
-    // Title
     public static readonly BindableProperty TitleProperty =
-        BindableProperty.Create(nameof(Title), typeof(string), typeof(TaskCard), "");
+        BindableProperty.Create(nameof(Title), typeof(string), typeof(TaskCard), string.Empty);
+
+    public static readonly BindableProperty SubtitleProperty =
+        BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(TaskCard), string.Empty);
+
+    public static readonly BindableProperty PriorityTextProperty =
+        BindableProperty.Create(nameof(PriorityText), typeof(string), typeof(TaskCard), string.Empty);
+
+    public static readonly BindableProperty PriorityColorProperty =
+        BindableProperty.Create(nameof(PriorityColor), typeof(Color), typeof(TaskCard), Colors.Red);
+
+    public static readonly BindableProperty DueDateProperty =
+        BindableProperty.Create(nameof(DueDate), typeof(string), typeof(TaskCard), string.Empty);
+
+    public static readonly BindableProperty CategoryProperty =
+        BindableProperty.Create(nameof(Category), typeof(string), typeof(TaskCard), string.Empty);
 
     public string Title
     {
@@ -19,19 +31,11 @@ public partial class TaskCard : ContentView
         set => SetValue(TitleProperty, value);
     }
 
-    // Subtitle
-    public static readonly BindableProperty SubtitleProperty =
-        BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(TaskCard), "");
-
     public string Subtitle
     {
         get => (string)GetValue(SubtitleProperty);
         set => SetValue(SubtitleProperty, value);
     }
-
-    // Priority text + color
-    public static readonly BindableProperty PriorityTextProperty =
-        BindableProperty.Create(nameof(PriorityText), typeof(string), typeof(TaskCard), "Low");
 
     public string PriorityText
     {
@@ -39,31 +43,31 @@ public partial class TaskCard : ContentView
         set => SetValue(PriorityTextProperty, value);
     }
 
-    public static readonly BindableProperty PriorityColorProperty =
-        BindableProperty.Create(nameof(PriorityColor), typeof(Color), typeof(TaskCard), Colors.Gray);
-
     public Color PriorityColor
     {
         get => (Color)GetValue(PriorityColorProperty);
         set => SetValue(PriorityColorProperty, value);
     }
 
-    // Optional icon
-    public static readonly BindableProperty IconProperty =
-        BindableProperty.Create(nameof(Icon), typeof(ImageSource), typeof(TaskCard), default(ImageSource));
-
-    public ImageSource? Icon
+    public string DueDate
     {
-        get => (ImageSource?)GetValue(IconProperty);
-        set => SetValue(IconProperty, value);
+        get => (string)GetValue(DueDateProperty);
+        set => SetValue(DueDateProperty, value);
     }
 
-    public static readonly BindableProperty HasIconProperty =
-        BindableProperty.Create(nameof(HasIcon), typeof(bool), typeof(TaskCard), false);
-
-    public bool HasIcon
+    public string Category
     {
-        get => (bool)GetValue(HasIconProperty);
-        set => SetValue(HasIconProperty, value);
+        get => (string)GetValue(CategoryProperty);
+        set => SetValue(CategoryProperty, value);
+    }
+
+    private async void OnViewDetailsClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("taskdetail");
+    }
+
+    private async void OnEditTaskClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("taskedit");
     }
 }

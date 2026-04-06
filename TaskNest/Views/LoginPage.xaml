@@ -3,14 +3,128 @@
     x:Class="TaskNest.Views.LoginPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Login">
+    Title="Login"
+    BackgroundColor="#F7F8FC">
 
-    <ContentPage.Content>
-        <StackLayout Padding="16" Spacing="12" VerticalOptions="Center">
-            <Label Text="Login" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
-            <Entry Placeholder="Email" />
-            <Entry Placeholder="Password" IsPassword="True" />
-            <Button Text="Login" />
-        </StackLayout>
-    </ContentPage.Content>
+    <ScrollView>
+        <Grid Padding="24">
+            <VerticalStackLayout
+                MaximumWidthRequest="520"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Spacing="22">
+
+                <!-- Header -->
+                <VerticalStackLayout Spacing="6">
+                    <Label
+                        Text="Welcome back"
+                        FontSize="16"
+                        TextColor="#6B7280"/>
+
+                    <Label
+                        Text="Login to TaskNest"
+                        FontSize="32"
+                        FontAttributes="Bold"
+                        TextColor="#111827"/>
+
+                    <Label
+                        Text="Access your tasks, categories, and productivity dashboard."
+                        FontSize="15"
+                        TextColor="#6B7280"/>
+                </VerticalStackLayout>
+
+                <!-- Login Card -->
+                <Frame
+                    Padding="22"
+                    CornerRadius="18"
+                    BackgroundColor="White"
+                    HasShadow="True">
+
+                    <VerticalStackLayout Spacing="18">
+
+                        <Label
+                            Text="Account Login"
+                            FontSize="20"
+                            FontAttributes="Bold"
+                            TextColor="#111827"/>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label
+                                Text="Email Address"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                TextColor="#111827"/>
+                            <Entry
+                                Placeholder="Enter your email"
+                                Keyboard="Email"
+                                TextColor="#111827"
+                                BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label
+                                Text="Password"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                TextColor="#111827"/>
+                            <Entry
+                                Placeholder="Enter your password"
+                                IsPassword="True"
+                                TextColor="#111827"
+                                BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,Auto"
+                                VerticalOptions="Center">
+                            <HorizontalStackLayout Spacing="10"
+                                    VerticalOptions="Center">
+                                <Switch
+                                    IsToggled="True"
+                                    OnColor="#2563EB"/>
+                                <Label
+                                    Text="Remember me"
+                                    VerticalOptions="Center"
+                                    TextColor="#374151"/>
+                            </HorizontalStackLayout>
+
+                            <Label
+                                Grid.Column="1"
+                                Text="Forgot password?"
+                                TextColor="#2563EB"
+                                VerticalOptions="Center"/>
+                        </Grid>
+
+                        <Button
+                            Text="Login"
+                            BackgroundColor="#2563EB"
+                            TextColor="White"
+                            CornerRadius="12"
+                            HeightRequest="50"/>
+
+                        <Button
+                            Text="Create an account"
+                            BackgroundColor="#E5E7EB"
+                            TextColor="#111827"
+                            CornerRadius="12"
+                            HeightRequest="50"
+                            Clicked="OnRegisterClicked"/>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Footer Note -->
+                <Frame
+                    Padding="16"
+                    CornerRadius="16"
+                    BackgroundColor="#EFF6FF"
+                    HasShadow="False">
+                    <Label
+                        Text="Demo login page for TaskNest mobile coursework project."
+                        FontSize="14"
+                        TextColor="#1D4ED8"/>
+                </Frame>
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
 </ContentPage>

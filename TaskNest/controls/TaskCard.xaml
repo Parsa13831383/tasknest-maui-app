@@ -2,51 +2,83 @@
 <ContentView
     x:Class="TaskNest.Controls.TaskCard"
     x:Name="This"
+    x:DataType="controls:TaskCard"
+    BindingContext="{x:Reference This}"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:TaskNest.Controls">
 
-    <Border
-        Padding="12"
-        StrokeThickness="1"
-        Stroke="#2B2B2B"
-        BackgroundColor="#1E1E1E"
-        StrokeShape="RoundRectangle 14">
+    <Frame
+        Padding="18"
+        Margin="0,0,0,14"
+        CornerRadius="18"
+        BackgroundColor="White"
+        HasShadow="True">
 
-        <Grid RowDefinitions="Auto,Auto"
-                ColumnDefinitions="*,Auto"
-                RowSpacing="6">
-            <!-- Title + optional icon -->
-            <HorizontalStackLayout Spacing="8">
-                <!-- optional icon -->
-                <Image
-                    Source="{Binding Icon, Source={x:Reference This}}"
-                    HeightRequest="18"
-                    WidthRequest="18"
-                    IsVisible="{Binding HasIcon, Source={x:Reference This}}"/>
+        <VerticalStackLayout Spacing="12">
+
+            <Grid ColumnDefinitions="*,Auto"
+                    ColumnSpacing="12">
+                <VerticalStackLayout Spacing="4">
+                    <Label
+                        Text="{Binding Title}"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        TextColor="#111827"/>
+
+                    <Label
+                        Text="{Binding Subtitle}"
+                        FontSize="14"
+                        TextColor="#6B7280"/>
+                </VerticalStackLayout>
+
+                <controls:PriorityBadge
+                    Grid.Column="1"
+                    PriorityText="{Binding PriorityText}"
+                    PriorityColor="{Binding PriorityColor}"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                    ColumnSpacing="10">
+                <Label
+                    Text="Due:"
+                    FontSize="13"
+                    TextColor="#6B7280"/>
 
                 <Label
-                    FontAttributes="Bold"
-                    FontSize="16"
+                    Grid.Column="1"
+                    Text="{Binding DueDate}"
+                    FontSize="13"
+                    TextColor="#111827"/>
+
+                <Label
+                    Grid.Column="2"
+                    Text="{Binding Category}"
+                    FontSize="13"
+                    TextColor="#2563EB"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*"
+                    ColumnSpacing="12">
+                <Button
+                    Grid.Column="0"
+                    Text="View Details"
+                    BackgroundColor="#E5E7EB"
+                    TextColor="#111827"
+                    CornerRadius="12"
+                    HeightRequest="42"
+                    Clicked="OnViewDetailsClicked"/>
+
+                <Button
+                    Grid.Column="1"
+                    Text="Edit Task"
+                    BackgroundColor="#2563EB"
                     TextColor="White"
-                    LineBreakMode="TailTruncation"
-                    Text="{Binding Title, Source={x:Reference This}}"/>
-            </HorizontalStackLayout>
+                    CornerRadius="12"
+                    HeightRequest="42"
+                    Clicked="OnEditTaskClicked"/>
+            </Grid>
 
-            <!-- Priority badge -->
-            <controls:PriorityBadge
-                Grid.Column="1"
-                Text="{Binding PriorityText, Source={x:Reference This}}"
-                BadgeColor="{Binding PriorityColor, Source={x:Reference This}}"/>
-
-            <!-- Subtitle -->
-            <Label
-                Grid.Row="1"
-                Grid.ColumnSpan="2"
-                FontSize="13"
-                TextColor="#BDBDBD"
-                LineBreakMode="TailTruncation"
-                Text="{Binding Subtitle, Source={x:Reference This}}"/>
-        </Grid>
-    </Border>
+        </VerticalStackLayout>
+    </Frame>
 </ContentView>

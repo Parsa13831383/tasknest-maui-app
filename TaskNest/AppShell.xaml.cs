@@ -10,7 +10,6 @@ public partial class AppShell : Shell
 
 		Routing.RegisterRoute("taskdetail", typeof(TaskDetailPage));
 		Routing.RegisterRoute("taskedit", typeof(TaskEditPage));
-
 		Routing.RegisterRoute("login", typeof(LoginPage));
 		Routing.RegisterRoute("register", typeof(RegisterPage));
 	}

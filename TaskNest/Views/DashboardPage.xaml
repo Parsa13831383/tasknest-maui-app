@@ -3,12 +3,379 @@
     x:Class="TaskNest.Views.DashboardPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Dashboard">
+    Title="Dashboard"
+    BackgroundColor="{StaticResource SurfaceAlt}">
 
-    <ContentPage.Content>
-        <StackLayout Padding="16" Spacing="12">
-            <Label Text="Dashboard" FontSize="24" FontAttributes="Bold" />
-            <Label Text="Welcome to TaskNest" FontSize="16" />
-        </StackLayout>
-    </ContentPage.Content>
+    <ScrollView>
+        <VerticalStackLayout Padding="24"
+                             Spacing="24">
+
+            <VerticalStackLayout Spacing="8">
+                <Label
+                    Style="{StaticResource DashboardEyebrow}"
+                    Text="Welcome back"/>
+
+                <Label
+                    Style="{StaticResource DashboardTitle}"
+                    Text="TaskNest Dashboard"
+                    LineBreakMode="TailTruncation"/>
+
+                <Label
+                    Style="{StaticResource DashboardSubtitle}"
+                    Text="Stay on top of your tasks, priorities, and progress."
+                    LineBreakMode="WordWrap"/>
+            </VerticalStackLayout>
+
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="12">
+                <Border
+                    Grid.Column="0"
+                    Padding="18"
+                    BackgroundColor="{StaticResource AccentSoft}"
+                    Stroke="{StaticResource Accent}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16">
+                    <Border.Shadow>
+                        <Shadow Brush="#1A2563EB"
+                                Offset="0,8"
+                                Radius="16"
+                                Opacity="0.16"/>
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Style="{StaticResource DashboardCardLabel}"
+                               FontSize="13"
+                               TextColor="{StaticResource Accent}"
+                               Text="Today"/>
+                        <Label Style="{StaticResource DashboardCardValue}"
+                               Text="5 Tasks"/>
+                        <Label Style="{StaticResource DashboardCardSubtext}"
+                               Text="2 high priority"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="18"
+                    BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource BorderSubtle}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16">
+                    <Border.Shadow>
+                        <Shadow Brush="#12000000"
+                                Offset="0,8"
+                                Radius="16"
+                                Opacity="0.08"/>
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Style="{StaticResource DashboardCardLabel}"
+                               FontSize="13"
+                               Text="Completed"/>
+                        <Label Style="{StaticResource DashboardCardValue}"
+                               Text="12"/>
+                        <Label Style="{StaticResource DashboardCardSubtext}"
+                               Text="This week"
+                               TextColor="{StaticResource Success}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border
+                    Grid.Column="2"
+                    Padding="18"
+                    BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource BorderSubtle}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16">
+                    <Border.Shadow>
+                        <Shadow Brush="#12000000"
+                                Offset="0,8"
+                                Radius="16"
+                                Opacity="0.08"/>
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Style="{StaticResource DashboardCardLabel}"
+                               FontSize="13"
+                               Text="Categories"/>
+                        <Label Style="{StaticResource DashboardCardValue}"
+                               Text="4"/>
+                        <Label Style="{StaticResource DashboardCardSubtext}"
+                               Text="Work, Study, Health..."
+                               TextColor="{StaticResource Accent}"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Border
+                Padding="20"
+                BackgroundColor="{StaticResource Surface}"
+                Stroke="{StaticResource BorderSubtle}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 16">
+                <Border.Shadow>
+                    <Shadow Brush="#12000000"
+                            Offset="0,8"
+                            Radius="16"
+                            Opacity="0.08"/>
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <Label
+                        Style="{StaticResource DashboardSectionTitle}"
+                        Text="Quick Actions"
+                        />
+
+                    <ScrollView Orientation="Horizontal">
+                        <HorizontalStackLayout Spacing="12">
+                            <Border
+                                Padding="16,14"
+                                BackgroundColor="{StaticResource Accent}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16"
+                                WidthRequest="142">
+                                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                    <Border WidthRequest="32"
+                                            HeightRequest="32"
+                                            BackgroundColor="#33FFFFFF"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 16">
+                                        <Label Text="＋"
+                                               FontSize="18"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               TextColor="White"/>
+                                    </Border>
+                                    <Label Text="New Task"
+                                           VerticalOptions="Center"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="14"
+                                           TextColor="White"/>
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <Border
+                                Padding="16,14"
+                                BackgroundColor="{StaticResource SurfaceMuted}"
+                                Stroke="{StaticResource BorderSubtle}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16"
+                                WidthRequest="142">
+                                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                    <Border WidthRequest="32"
+                                            HeightRequest="32"
+                                            BackgroundColor="{StaticResource Surface}"
+                                            Stroke="{StaticResource BorderSubtle}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 16">
+                                        <Label Text="▦"
+                                               FontSize="16"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               TextColor="{StaticResource TextPrimary}"/>
+                                    </Border>
+                                    <Label Text="View Tasks"
+                                           VerticalOptions="Center"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="14"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <Border
+                                Padding="16,14"
+                                BackgroundColor="{StaticResource SurfaceMuted}"
+                                Stroke="{StaticResource BorderSubtle}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16"
+                                WidthRequest="142">
+                                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                    <Border WidthRequest="32"
+                                            HeightRequest="32"
+                                            BackgroundColor="{StaticResource Surface}"
+                                            Stroke="{StaticResource BorderSubtle}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 16">
+                                        <Label Text="◌"
+                                               FontSize="16"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               TextColor="{StaticResource TextPrimary}"/>
+                                    </Border>
+                                    <Label Text="Categories"
+                                           VerticalOptions="Center"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="14"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                </HorizontalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                Padding="20"
+                BackgroundColor="{StaticResource Surface}"
+                Stroke="{StaticResource BorderSubtle}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 16">
+                <Border.Shadow>
+                    <Shadow Brush="#12000000"
+                            Offset="0,8"
+                            Radius="16"
+                            Opacity="0.08"/>
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="14">
+                    <Label
+                        Style="{StaticResource DashboardSectionTitle}"
+                        Text="Today's Focus"
+                        />
+
+                    <VerticalStackLayout Spacing="12">
+                        <Border
+                            Padding="16"
+                            BackgroundColor="{StaticResource Surface}"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16">
+                            <Border.Shadow>
+                                <Shadow Brush="#0F000000"
+                                        Offset="0,6"
+                                        Radius="12"
+                                        Opacity="0.06"/>
+                            </Border.Shadow>
+                            <Grid ColumnDefinitions="4,*,Auto"
+                                  ColumnSpacing="14">
+                                <BoxView BackgroundColor="{StaticResource Accent}"
+                                         CornerRadius="2"
+                                         WidthRequest="4"/>
+
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="5">
+                                    <Label Text="Finish mobile app UI implementation"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="15"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="High priority task for the dashboard release"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           Opacity="0.78"/>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2"
+                                                     Spacing="6"
+                                                     HorizontalOptions="End">
+                                    <Label Text="Today"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource Accent}"
+                                           HorizontalOptions="End"/>
+                                    <Label Text="UI / High"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="End"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                        <Border
+                            Padding="16"
+                            BackgroundColor="{StaticResource Surface}"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16">
+                            <Border.Shadow>
+                                <Shadow Brush="#0F000000"
+                                        Offset="0,6"
+                                        Radius="12"
+                                        Opacity="0.06"/>
+                            </Border.Shadow>
+                            <Grid ColumnDefinitions="4,*,Auto"
+                                  ColumnSpacing="14">
+                                <BoxView BackgroundColor="{StaticResource Success}"
+                                         CornerRadius="2"
+                                         WidthRequest="4"/>
+
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="5">
+                                    <Label Text="Review task navigation and custom controls"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="15"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="Check interaction polish across the main flows"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           Opacity="0.78"/>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2"
+                                                     Spacing="6"
+                                                     HorizontalOptions="End">
+                                    <Label Text="Afternoon"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource Success}"
+                                           HorizontalOptions="End"/>
+                                    <Label Text="Review / Med"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="End"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                        <Border
+                            Padding="16"
+                            BackgroundColor="{StaticResource Surface}"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16">
+                            <Border.Shadow>
+                                <Shadow Brush="#0F000000"
+                                        Offset="0,6"
+                                        Radius="12"
+                                        Opacity="0.06"/>
+                            </Border.Shadow>
+                            <Grid ColumnDefinitions="4,*,Auto"
+                                  ColumnSpacing="14">
+                                <BoxView BackgroundColor="{StaticResource Warning}"
+                                         CornerRadius="2"
+                                         WidthRequest="4"/>
+
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="5">
+                                    <Label Text="Prepare polished screens for demo"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="15"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="Tighten spacing, contrast, and layout consistency"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           Opacity="0.78"/>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2"
+                                                     Spacing="6"
+                                                     HorizontalOptions="End">
+                                    <Label Text="Later"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource Warning}"
+                                           HorizontalOptions="End"/>
+                                    <Label Text="Demo / Low"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="End"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

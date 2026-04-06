@@ -1,5 +1,3 @@
-using TaskNest.ViewModels;
-
 namespace TaskNest.Views;
 
 public partial class TasksPage : ContentPage
@@ -7,6 +5,10 @@ public partial class TasksPage : ContentPage
     public TasksPage()
     {
         InitializeComponent();
-        BindingContext = new TasksViewModel();
+    }
+
+    private async void OnEditTaskClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("taskedit");
     }
 }

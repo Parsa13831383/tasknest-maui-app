@@ -3,15 +3,133 @@
     x:Class="TaskNest.Views.RegisterPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Register">
+    Title="Register"
+    BackgroundColor="#F7F8FC">
 
-    <ContentPage.Content>
-        <StackLayout Padding="16" Spacing="12" VerticalOptions="Center">
-            <Label Text="Register" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
-            <Entry Placeholder="Email" />
-            <Entry Placeholder="Password" IsPassword="True" />
-            <Entry Placeholder="Confirm Password" IsPassword="True" />
-            <Button Text="Register" />
-        </StackLayout>
-    </ContentPage.Content>
+    <ScrollView>
+        <Grid Padding="24">
+            <VerticalStackLayout
+                MaximumWidthRequest="520"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Spacing="22">
+
+                <!-- Header -->
+                <VerticalStackLayout Spacing="6">
+                    <Label
+                        Text="Create your account"
+                        FontSize="16"
+                        TextColor="#6B7280"/>
+
+                    <Label
+                        Text="Join TaskNest"
+                        FontSize="32"
+                        FontAttributes="Bold"
+                        TextColor="#111827"/>
+
+                    <Label
+                        Text="Set up your account to manage tasks, categories, and productivity goals."
+                        FontSize="15"
+                        TextColor="#6B7280"/>
+                </VerticalStackLayout>
+
+                <!-- Register Card -->
+                <Frame
+                    Padding="22"
+                    CornerRadius="18"
+                    BackgroundColor="White"
+                    HasShadow="True">
+
+                    <VerticalStackLayout Spacing="18">
+
+                        <Label
+                            Text="Account Registration"
+                            FontSize="20"
+                            FontAttributes="Bold"
+                            TextColor="#111827"/>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label
+                                Text="Full Name"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                TextColor="#111827"/>
+                            <Entry
+                                Placeholder="Enter your full name"
+                                TextColor="#111827"
+                                BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label
+                                Text="Email Address"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                TextColor="#111827"/>
+                            <Entry
+                                Placeholder="Enter your email"
+                                Keyboard="Email"
+                                TextColor="#111827"
+                                BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label
+                                Text="Password"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                TextColor="#111827"/>
+                            <Entry
+                                Placeholder="Create a password"
+                                IsPassword="True"
+                                TextColor="#111827"
+                                BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label
+                                Text="Confirm Password"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                TextColor="#111827"/>
+                            <Entry
+                                Placeholder="Re-enter your password"
+                                IsPassword="True"
+                                TextColor="#111827"
+                                BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <Button
+                            Text="Create Account"
+                            BackgroundColor="#2563EB"
+                            TextColor="White"
+                            CornerRadius="12"
+                            HeightRequest="50"/>
+
+                        <Button
+                            Text="Back to Login"
+                            BackgroundColor="#E5E7EB"
+                            TextColor="#111827"
+                            CornerRadius="12"
+                            HeightRequest="50"
+                            Clicked="OnLoginClicked"/>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Footer Note -->
+                <Frame
+                    Padding="16"
+                    CornerRadius="16"
+                    BackgroundColor="#F0FDF4"
+                    HasShadow="False">
+                    <Label
+                        Text="Register screen prepared for TaskNest user onboarding flow."
+                        FontSize="14"
+                        TextColor="#166534"/>
+                </Frame>
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
 </ContentPage>

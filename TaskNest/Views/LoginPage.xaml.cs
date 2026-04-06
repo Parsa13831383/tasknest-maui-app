@@ -6,4 +6,9 @@ public partial class LoginPage : ContentPage
     {
         InitializeComponent();
     }
+
+    private async void OnRegisterClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("register");
+    }
 }
