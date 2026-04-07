@@ -7,22 +7,28 @@ namespace TaskNest.ViewModels;
 public partial class DashboardViewModel : BaseViewModel
 {
     [ObservableProperty]
-    private int todayCount = 5;
+    private int todayTaskCount = 5;
 
     [ObservableProperty]
-    private int completedCount = 12;
+    private int completedThisWeek = 12;
 
     [ObservableProperty]
     private int categoryCount = 4;
 
     [ObservableProperty]
-    private ObservableCollection<DashboardFocusItem> focusItems = new();
+    private string highPrioritySummary = "2 high priority";
+
+    [ObservableProperty]
+    private string categorySummary = "Work, Study, Health...";
+
+    [ObservableProperty]
+    private ObservableCollection<FocusItem> focusItems = new();
 
     public DashboardViewModel()
     {
         Title = "Dashboard";
 
-        FocusItems = new ObservableCollection<DashboardFocusItem>
+        FocusItems = new ObservableCollection<FocusItem>
         {
             new("Finish mobile app UI implementation", "High priority task for the dashboard release", "Today", "UI / High", Colors.Blue),
             new("Review task navigation and custom controls", "Check interaction polish across the main flows", "Afternoon", "Review / Med", Colors.Green),
@@ -40,9 +46,9 @@ public partial class DashboardViewModel : BaseViewModel
     private Task ViewCategoriesAsync() => NavigateAsync("categories");
 }
 
-public sealed record DashboardFocusItem(
+public sealed record FocusItem(
     string Title,
     string Subtitle,
-    string DueLabel,
-    string Tag,
+    string TimeLabel,
+    string MetaLabel,
     Color AccentColor);
