@@ -71,6 +71,7 @@
                     HeightRequest="42"/>
 
                 <Button
+                    Grid.Column="1"
                     Text="Edit Task"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditTaskCommand}"
                     CommandParameter="{Binding .}"

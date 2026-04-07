@@ -58,7 +58,14 @@ public class TaskListViewModel : BaseViewModel
 
     private async Task GoToDetails(TaskItem task)
     {
-        await Shell.Current.GoToAsync("taskdetail");
+        var route = $"taskdetail?" +
+                    $"title={Uri.EscapeDataString(task.Title)}&" +
+                    $"description={Uri.EscapeDataString(task.Description)}&" +
+                    $"dueDate={Uri.EscapeDataString(task.DueDate)}&" +
+                    $"category={Uri.EscapeDataString(task.Category)}&" +
+                    $"priorityText={Uri.EscapeDataString(task.PriorityText)}";
+
+        await Shell.Current.GoToAsync(route);
     }
 
     private async Task GoToEdit(TaskItem task)

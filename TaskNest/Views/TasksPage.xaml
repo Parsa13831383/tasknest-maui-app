@@ -56,7 +56,7 @@
                 HasShadow="True">
                 <VerticalStackLayout Spacing="14">
                     <Label
-                        Text="Search & Filters"
+                        Text="Search &amp; Filters"
                         FontSize="18"
                         FontAttributes="Bold"
                         TextColor="#111827"/>
