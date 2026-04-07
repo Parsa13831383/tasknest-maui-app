@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
     x:Class="TaskNest.Controls.TaskCard"
-    x:Name="This"
-    x:DataType="controls:TaskCard"
-    BindingContext="{x:Reference This}"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:TaskNest.Controls">
@@ -17,6 +14,7 @@
 
         <VerticalStackLayout Spacing="12">
 
+            <!-- Title + Priority -->
             <Grid ColumnDefinitions="*,Auto"
                     ColumnSpacing="12">
                 <VerticalStackLayout Spacing="4">
@@ -27,7 +25,7 @@
                         TextColor="#111827"/>
 
                     <Label
-                        Text="{Binding Subtitle}"
+                        Text="{Binding Description}"
                         FontSize="14"
                         TextColor="#6B7280"/>
                 </VerticalStackLayout>
@@ -38,6 +36,7 @@
                     PriorityColor="{Binding PriorityColor}"/>
             </Grid>
 
+            <!-- Metadata -->
             <Grid ColumnDefinitions="Auto,*,Auto"
                     ColumnSpacing="10">
                 <Label
@@ -58,25 +57,28 @@
                     TextColor="#2563EB"/>
             </Grid>
 
+            <!-- Actions -->
             <Grid ColumnDefinitions="*,*"
                     ColumnSpacing="12">
+
                 <Button
-                    Grid.Column="0"
                     Text="View Details"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewTaskCommand}"
+                    CommandParameter="{Binding .}"
                     BackgroundColor="#E5E7EB"
                     TextColor="#111827"
                     CornerRadius="12"
-                    HeightRequest="42"
-                    Clicked="OnViewDetailsClicked"/>
+                    HeightRequest="42"/>
 
                 <Button
-                    Grid.Column="1"
                     Text="Edit Task"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditTaskCommand}"
+                    CommandParameter="{Binding .}"
                     BackgroundColor="#2563EB"
                     TextColor="White"
                     CornerRadius="12"
-                    HeightRequest="42"
-                    Clicked="OnEditTaskClicked"/>
+                    HeightRequest="42"/>
+
             </Grid>
 
         </VerticalStackLayout>

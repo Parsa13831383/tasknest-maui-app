@@ -1,40 +1,68 @@
 using System.Collections.ObjectModel;
-using Microsoft.Maui.Graphics;
-using TaskNest.Models;
+using System.Windows.Input;
 
 namespace TaskNest.ViewModels;
 
-public class TasksViewModel
+public class TaskListViewModel : BaseViewModel
 {
-    public ObservableCollection<TaskItemVM> Tasks { get; } = new();
+    public ObservableCollection<TaskItem> Tasks { get; } = new();
 
-    public TasksViewModel()
+    public ICommand CreateTaskCommand { get; }
+    public ICommand ViewTaskCommand { get; }
+    public ICommand EditTaskCommand { get; }
+
+    public TaskListViewModel()
     {
-        // sample data
-        Tasks.Add(new TaskItemVM("Finish UI navigation", "Wire Shell flyout + routes", "High"));
-        Tasks.Add(new TaskItemVM("Refactor services", "Clean up NavigationService", "Medium"));
-        Tasks.Add(new TaskItemVM("Write README", "Add screenshots + setup steps", "Low"));
+        Title = "Tasks";
+
+        // Sample data (for UI demo)
+        Tasks.Add(new TaskItem
+        {
+            Title = "Finish UI navigation",
+            Description = "Complete the remaining page flow and visual consistency.",
+            DueDate = "10 Apr 2026",
+            Category = "Coursework",
+            PriorityText = "High",
+            PriorityColor = Colors.Red
+        });
+
+        Tasks.Add(new TaskItem
+        {
+            Title = "Refactor services",
+            Description = "Clean up app service layer and prepare for MVVM wiring.",
+            DueDate = "11 Apr 2026",
+            Category = "Development",
+            PriorityText = "Medium",
+            PriorityColor = Colors.Orange
+        });
+
+        Tasks.Add(new TaskItem
+        {
+            Title = "Write README",
+            Description = "Document setup, features, and app structure clearly.",
+            DueDate = "12 Apr 2026",
+            Category = "Documentation",
+            PriorityText = "Low",
+            PriorityColor = Colors.Green
+        });
+
+        CreateTaskCommand = new Command(async () => await GoToCreate());
+        ViewTaskCommand = new Command<TaskItem>(async (task) => await GoToDetails(task));
+        EditTaskCommand = new Command<TaskItem>(async (task) => await GoToEdit(task));
     }
-}
 
-public class TaskItemVM
-{
-    public string Title { get; }
-    public string Subtitle { get; }
-    public string Priority { get; }
-
-    public Color PriorityColor => Priority switch
+    private async Task GoToCreate()
     {
-        "High" => Colors.Red,
-        "Medium" => Colors.Orange,
-        "Low" => Colors.Green,
-        _ => Colors.Gray
-    };
+        await Shell.Current.GoToAsync("taskedit");
+    }
 
-    public TaskItemVM(string title, string subtitle, string priority)
+    private async Task GoToDetails(TaskItem task)
     {
-        Title = title;
-        Subtitle = subtitle;
-        Priority = priority;
+        await Shell.Current.GoToAsync("taskdetail");
+    }
+
+    private async Task GoToEdit(TaskItem task)
+    {
+        await Shell.Current.GoToAsync("taskedit");
     }
 }
