@@ -3,6 +3,7 @@
     x:Class="TaskNest.Views.CategoriesPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:TaskNest.Models"
     xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
     x:DataType="viewModels:CategoriesViewModel"
     Title="Categories"
@@ -109,7 +110,7 @@
                     SelectionMode="None">
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="viewModels:CategoryItem">
+                        <DataTemplate x:DataType="models:CategoryItem">
                             <Frame
                                 Padding="18"
                                 Margin="0,0,0,14"
