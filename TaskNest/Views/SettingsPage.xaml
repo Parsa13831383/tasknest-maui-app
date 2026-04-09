@@ -3,6 +3,8 @@
     x:Class="TaskNest.Views.SettingsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
+    x:DataType="viewModels:SettingsViewModel"
     Title="Settings"
     BackgroundColor="#F7F8FC">
 
@@ -10,7 +12,6 @@
         <VerticalStackLayout Padding="24"
                 Spacing="22">
 
-            <!-- Header -->
             <VerticalStackLayout Spacing="6">
                 <Label
                     Text="Settings"
@@ -24,7 +25,6 @@
                     TextColor="#6B7280"/>
             </VerticalStackLayout>
 
-            <!-- Preferences Card -->
             <Frame
                 Padding="20"
                 CornerRadius="18"
@@ -58,7 +58,7 @@
                         <Switch
                             Grid.Row="0"
                             Grid.Column="1"
-                            IsToggled="True"
+                            IsToggled="{Binding NotificationsEnabled}"
                             OnColor="#2563EB"/>
 
                         <VerticalStackLayout Grid.Row="1"
@@ -77,14 +77,13 @@
                         <Switch
                             Grid.Row="1"
                             Grid.Column="1"
-                            IsToggled="False"
+                            IsToggled="{Binding DarkModeEnabled}"
                             OnColor="#2563EB"/>
                     </Grid>
 
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Appearance Card -->
             <Frame
                 Padding="20"
                 CornerRadius="18"
@@ -104,13 +103,10 @@
                             FontSize="15"
                             FontAttributes="Bold"
                             TextColor="#111827"/>
-                        <Picker Title="Select theme">
-                            <Picker.Items>
-                                <x:String>Light</x:String>
-                                <x:String>Dark</x:String>
-                                <x:String>System Default</x:String>
-                            </Picker.Items>
-                        </Picker>
+                        <Picker
+                            Title="Select theme"
+                            ItemsSource="{Binding Themes}"
+                            SelectedItem="{Binding SelectedTheme}"/>
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="8">
@@ -119,19 +115,15 @@
                             FontSize="15"
                             FontAttributes="Bold"
                             TextColor="#111827"/>
-                        <Picker Title="Select language">
-                            <Picker.Items>
-                                <x:String>English</x:String>
-                                <x:String>Spanish</x:String>
-                                <x:String>Kurdish</x:String>
-                            </Picker.Items>
-                        </Picker>
+                        <Picker
+                            Title="Select language"
+                            ItemsSource="{Binding Languages}"
+                            SelectedItem="{Binding SelectedLanguage}"/>
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Productivity Card -->
             <Frame
                 Padding="20"
                 CornerRadius="18"
@@ -151,13 +143,10 @@
                             FontSize="15"
                             FontAttributes="Bold"
                             TextColor="#111827"/>
-                        <Picker Title="Choose default priority">
-                            <Picker.Items>
-                                <x:String>Low</x:String>
-                                <x:String>Medium</x:String>
-                                <x:String>High</x:String>
-                            </Picker.Items>
-                        </Picker>
+                        <Picker
+                            Title="Choose default priority"
+                            ItemsSource="{Binding Priorities}"
+                            SelectedItem="{Binding SelectedDefaultPriority}"/>
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="8">
@@ -166,24 +155,21 @@
                             FontSize="15"
                             FontAttributes="Bold"
                             TextColor="#111827"/>
-                        <Picker Title="Choose reminder frequency">
-                            <Picker.Items>
-                                <x:String>Daily</x:String>
-                                <x:String>Weekly</x:String>
-                                <x:String>Only for deadlines</x:String>
-                            </Picker.Items>
-                        </Picker>
+                        <Picker
+                            Title="Choose reminder frequency"
+                            ItemsSource="{Binding ReminderFrequencies}"
+                            SelectedItem="{Binding SelectedReminderFrequency}"/>
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Actions -->
             <Grid ColumnDefinitions="*,*"
                     ColumnSpacing="14">
                 <Button
                     Grid.Column="0"
                     Text="Save Settings"
+                    Command="{Binding SaveSettingsCommand}"
                     BackgroundColor="#2563EB"
                     TextColor="White"
                     CornerRadius="12"
@@ -192,13 +178,13 @@
                 <Button
                     Grid.Column="1"
                     Text="Reset"
+                    Command="{Binding ResetSettingsCommand}"
                     BackgroundColor="#E5E7EB"
                     TextColor="#111827"
                     CornerRadius="12"
                     HeightRequest="50"/>
             </Grid>
 
-            <!-- Logout Card -->
             <Frame
                 Padding="18"
                 CornerRadius="18"
@@ -218,6 +204,7 @@
 
                     <Button
                         Text="Logout"
+                        Command="{Binding LogoutCommand}"
                         BackgroundColor="White"
                         TextColor="#DC2626"
                         BorderColor="#FCA5A5"
