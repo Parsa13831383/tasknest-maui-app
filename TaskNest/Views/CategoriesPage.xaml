@@ -3,6 +3,8 @@
     x:Class="TaskNest.Views.CategoriesPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
+    x:DataType="viewModels:CategoriesViewModel"
     Title="Categories"
     BackgroundColor="#F7F8FC">
 
@@ -30,6 +32,7 @@
                 <Button
                     Grid.Column="0"
                     Text="+ Add Category"
+                    Command="{Binding AddCategoryCommand}"
                     BackgroundColor="#2563EB"
                     TextColor="White"
                     CornerRadius="12"
@@ -38,6 +41,7 @@
                 <Button
                     Grid.Column="1"
                     Text="Manage Categories"
+                    Command="{Binding ManageCategoriesCommand}"
                     BackgroundColor="#E5E7EB"
                     TextColor="#111827"
                     CornerRadius="12"
@@ -58,7 +62,7 @@
                             FontSize="14"
                             TextColor="#6B7280"/>
                         <Label
-                            Text="4"
+                            Text="{Binding TotalCategories}"
                             FontSize="24"
                             FontAttributes="Bold"
                             TextColor="#111827"/>
@@ -71,7 +75,7 @@
                             FontSize="14"
                             TextColor="#6B7280"/>
                         <Label
-                            Text="University"
+                            Text="{Binding MostActiveCategory}"
                             FontSize="20"
                             FontAttributes="Bold"
                             TextColor="#2563EB"/>
@@ -84,7 +88,7 @@
                             FontSize="14"
                             TextColor="#6B7280"/>
                         <Label
-                            Text="12"
+                            Text="{Binding TasksAssigned}"
                             FontSize="24"
                             FontAttributes="Bold"
                             TextColor="#10B981"/>
@@ -100,145 +104,49 @@
                     FontAttributes="Bold"
                     TextColor="#111827"/>
 
-                <!-- Category Card 1 -->
-                <Frame
-                    Padding="18"
-                    CornerRadius="18"
-                    BackgroundColor="White"
-                    HasShadow="True">
-                    <Grid ColumnDefinitions="*,Auto"
-                            ColumnSpacing="12">
-                        <VerticalStackLayout Spacing="6">
-                            <Label
-                                Text="University"
-                                FontSize="20"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
-                            <Label
-                                Text="Assignments, coursework, and revision tasks."
-                                FontSize="14"
-                                TextColor="#6B7280"/>
-                        </VerticalStackLayout>
+                <CollectionView
+                    ItemsSource="{Binding Categories}"
+                    SelectionMode="None">
 
-                        <Frame
-                            Padding="10,6"
-                            CornerRadius="14"
-                            HasShadow="False"
-                            BackgroundColor="#DBEAFE"
-                            VerticalOptions="Start">
-                            <Label
-                                Text="4 Tasks"
-                                FontSize="12"
-                                FontAttributes="Bold"
-                                TextColor="#1D4ED8"/>
-                        </Frame>
-                    </Grid>
-                </Frame>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:CategoryItem">
+                            <Frame
+                                Padding="18"
+                                Margin="0,0,0,14"
+                                CornerRadius="18"
+                                BackgroundColor="White"
+                                HasShadow="True">
+                                <Grid ColumnDefinitions="*,Auto"
+                                        ColumnSpacing="12">
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label
+                                            Text="{Binding Name}"
+                                            FontSize="20"
+                                            FontAttributes="Bold"
+                                            TextColor="#111827"/>
+                                        <Label
+                                            Text="{Binding Description}"
+                                            FontSize="14"
+                                            TextColor="#6B7280"/>
+                                    </VerticalStackLayout>
 
-                <!-- Category Card 2 -->
-                <Frame
-                    Padding="18"
-                    CornerRadius="18"
-                    BackgroundColor="White"
-                    HasShadow="True">
-                    <Grid ColumnDefinitions="*,Auto"
-                            ColumnSpacing="12">
-                        <VerticalStackLayout Spacing="6">
-                            <Label
-                                Text="Work"
-                                FontSize="20"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
-                            <Label
-                                Text="Shifts, responsibilities, and job-related tasks."
-                                FontSize="14"
-                                TextColor="#6B7280"/>
-                        </VerticalStackLayout>
-
-                        <Frame
-                            Padding="10,6"
-                            CornerRadius="14"
-                            HasShadow="False"
-                            BackgroundColor="#DCFCE7"
-                            VerticalOptions="Start">
-                            <Label
-                                Text="2 Tasks"
-                                FontSize="12"
-                                FontAttributes="Bold"
-                                TextColor="#15803D"/>
-                        </Frame>
-                    </Grid>
-                </Frame>
-
-                <!-- Category Card 3 -->
-                <Frame
-                    Padding="18"
-                    CornerRadius="18"
-                    BackgroundColor="White"
-                    HasShadow="True">
-                    <Grid ColumnDefinitions="*,Auto"
-                            ColumnSpacing="12">
-                        <VerticalStackLayout Spacing="6">
-                            <Label
-                                Text="Personal"
-                                FontSize="20"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
-                            <Label
-                                Text="Gym, lifestyle, errands, and self-development goals."
-                                FontSize="14"
-                                TextColor="#6B7280"/>
-                        </VerticalStackLayout>
-
-                        <Frame
-                            Padding="10,6"
-                            CornerRadius="14"
-                            HasShadow="False"
-                            BackgroundColor="#FEF3C7"
-                            VerticalOptions="Start">
-                            <Label
-                                Text="6 Tasks"
-                                FontSize="12"
-                                FontAttributes="Bold"
-                                TextColor="#B45309"/>
-                        </Frame>
-                    </Grid>
-                </Frame>
-
-                <!-- Category Card 4 -->
-                <Frame
-                    Padding="18"
-                    CornerRadius="18"
-                    BackgroundColor="White"
-                    HasShadow="True">
-                    <Grid ColumnDefinitions="*,Auto"
-                            ColumnSpacing="12">
-                        <VerticalStackLayout Spacing="6">
-                            <Label
-                                Text="Health"
-                                FontSize="20"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
-                            <Label
-                                Text="Meal prep, recovery, running, and physical wellbeing."
-                                FontSize="14"
-                                TextColor="#6B7280"/>
-                        </VerticalStackLayout>
-
-                        <Frame
-                            Padding="10,6"
-                            CornerRadius="14"
-                            HasShadow="False"
-                            BackgroundColor="#FCE7F3"
-                            VerticalOptions="Start">
-                            <Label
-                                Text="3 Tasks"
-                                FontSize="12"
-                                FontAttributes="Bold"
-                                TextColor="#BE185D"/>
-                        </Frame>
-                    </Grid>
-                </Frame>
+                                    <Frame
+                                        Padding="10,6"
+                                        CornerRadius="14"
+                                        HasShadow="False"
+                                        BackgroundColor="{Binding BadgeBackgroundColor}"
+                                        VerticalOptions="Start">
+                                        <Label
+                                            Text="{Binding TaskCountText}"
+                                            FontSize="12"
+                                            FontAttributes="Bold"
+                                            TextColor="{Binding BadgeTextColor}"/>
+                                    </Frame>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </VerticalStackLayout>
 
         </VerticalStackLayout>
