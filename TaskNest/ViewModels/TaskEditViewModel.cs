@@ -1,14 +1,18 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using TaskNest.Interfaces;
 
 namespace TaskNest.ViewModels;
 
 public class TaskEditViewModel : BaseViewModel
 {
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly Dictionary<string, int> _categoryIdByName = new(StringComparer.OrdinalIgnoreCase);
+
     private string _taskTitle = string.Empty;
     private string _description = string.Empty;
     private string _selectedCategory = string.Empty;
-    private string _selectedPriority = string.Empty;
+    private string _selectedPriority = "Medium";
     private DateTime _dueDate = DateTime.Today.AddDays(3);
     private bool _isCompleted;
 
@@ -54,37 +58,72 @@ public class TaskEditViewModel : BaseViewModel
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
 
-    public TaskEditViewModel()
+    public TaskEditViewModel(IUnitOfWork unitOfWork)
     {
-        Title = "Edit Task";
+        _unitOfWork = unitOfWork;
 
-        Categories.Add("Coursework");
-        Categories.Add("Development");
-        Categories.Add("Documentation");
-        Categories.Add("Personal");
+        Title = "Edit Task";
 
         Priorities.Add("High");
         Priorities.Add("Medium");
         Priorities.Add("Low");
 
-        TaskTitle = "Finish UI navigation";
-        Description = "Complete the remaining page flow and visual consistency.";
-        SelectedCategory = "Coursework";
-        SelectedPriority = "High";
-        DueDate = DateTime.Today.AddDays(3);
-        IsCompleted = false;
-
-        SaveCommand = new Command(async () => await SaveTask());
-        CancelCommand = new Command(async () => await GoBack());
+        SaveCommand = new Command(async () => await SaveTaskAsync());
+        CancelCommand = new Command(async () => await GoBackAsync());
     }
 
-    private async Task SaveTask()
+    public async Task LoadAsync()
     {
-        await Shell.Current.DisplayAlert("Saved", "Task changes saved successfully.", "OK");
-        await Shell.Current.GoToAsync("..");
+        if (IsBusy) return;
+
+        try
+        {
+            IsBusy = true;
+
+            Categories.Clear();
+            _categoryIdByName.Clear();
+
+            var categoryItems = await _unitOfWork.Categories.GetAllAsync();
+            foreach (var category in categoryItems)
+            {
+                Categories.Add(category.Name);
+                _categoryIdByName[category.Name] = category.Id;
+            }
+
+            if (Categories.Count > 0 && string.IsNullOrWhiteSpace(SelectedCategory))
+            {
+                SelectedCategory = Categories[0];
+            }
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
-    private async Task GoBack()
+    private async Task SaveTaskAsync()
+    {
+        if (string.IsNullOrWhiteSpace(TaskTitle))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Task title is required.", "OK");
+            return;
+        }
+
+        var task = new global::TaskNest.Models.TaskItem
+        {
+            Title = TaskTitle.Trim(),
+            Description = Description?.Trim() ?? string.Empty,
+            DueDate = DueDate,
+            Priority = string.IsNullOrWhiteSpace(SelectedPriority) ? "Medium" : SelectedPriority,
+            IsCompleted = IsCompleted
+        };
+
+        await _unitOfWork.Tasks.AddAsync(task);
+        await Shell.Current.DisplayAlert("Saved", "Task saved to database.", "OK");
+        await GoBackAsync();
+    }
+
+    private async Task GoBackAsync()
     {
         await Shell.Current.GoToAsync("..");
     }

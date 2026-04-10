@@ -1,6 +1,6 @@
 namespace TaskNest.ViewModels;
 
-public class TaskItem
+public class TaskListItem
 {
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";

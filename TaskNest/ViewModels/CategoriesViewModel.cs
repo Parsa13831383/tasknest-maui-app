@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Graphics;
 using TaskNest.Interfaces;
 using TaskNest.Models;
+using CategoryItemModel = TaskNest.Models.CategoryItem;
 
 namespace TaskNest.ViewModels;
 
@@ -10,7 +11,7 @@ public class CategoriesViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public ObservableCollection<CategoryItem> Categories { get; } = new();
+    public ObservableCollection<CategoryItemModel> Categories { get; } = new();
 
     private int _totalCategories;
     public int TotalCategories
@@ -93,7 +94,7 @@ public class CategoriesViewModel : BaseViewModel
 
         LoadCategoriesCommand = new Command(async () => await LoadCategoriesAsync());
         AddCategoryCommand = new Command(async () => await AddCategoryAsync());
-        DeleteCategoryCommand = new Command<CategoryItem>(async (category) => await DeleteCategoryAsync(category));
+        DeleteCategoryCommand = new Command<CategoryItemModel>(async (category) => await DeleteCategoryAsync(category));
         ManageCategoriesCommand = new Command(async () => await LoadCategoriesAsync());
     }
 
@@ -125,7 +126,7 @@ public class CategoriesViewModel : BaseViewModel
                 ? generatedName
                 : NewCategoryName.Trim();
 
-            var category = new CategoryItem
+            var category = new CategoryItemModel
             {
                 Name = categoryName,
                 Description = NewCategoryDescription.Trim(),
@@ -151,7 +152,7 @@ public class CategoriesViewModel : BaseViewModel
         }
     }
 
-    public async Task DeleteCategoryAsync(CategoryItem? category)
+    public async Task DeleteCategoryAsync(CategoryItemModel? category)
     {
         if (IsBusy) return;
         if (category is null) return;
@@ -169,7 +170,7 @@ public class CategoriesViewModel : BaseViewModel
         }
     }
 
-    public async Task UpdateCategoryAsync(CategoryItem category)
+    public async Task UpdateCategoryAsync(CategoryItemModel category)
     {
         if (IsBusy) return;
         if (category is null) return;

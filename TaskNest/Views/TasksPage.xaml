@@ -92,7 +92,7 @@
                     SelectionMode="None">
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="viewModels:TaskItem">
+                        <DataTemplate x:DataType="viewModels:TaskListItem">
                             <controls:TaskCard
                                 Title="{Binding Title}"
                                 Subtitle="{Binding Description}"

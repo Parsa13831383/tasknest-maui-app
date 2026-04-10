@@ -12,37 +12,37 @@ public class TaskRepository : ITaskRepository
         _database = database;
     }
 
-    public async Task<List<TaskNest.Models.TaskItem>> GetAllAsync()
+    public async Task<List<global::TaskNest.Models.TaskItem>> GetAllAsync()
     {
         var db = await _database.GetConnectionAsync();
 
-        return await db.Table<TaskNest.Models.TaskItem>()
+        return await db.Table<global::TaskNest.Models.TaskItem>()
             .OrderBy(t => t.Title)
             .ToListAsync();
     }
 
-    public async Task<TaskNest.Models.TaskItem?> GetByIdAsync(int id)
+    public async Task<global::TaskNest.Models.TaskItem?> GetByIdAsync(int id)
     {
         var db = await _database.GetConnectionAsync();
 
-        return await db.FindAsync<TaskNest.Models.TaskItem>(id);
+        return await db.FindAsync<global::TaskNest.Models.TaskItem>(id);
     }
 
-    public async Task<int> AddAsync(TaskNest.Models.TaskItem task)
+    public async Task<int> AddAsync(global::TaskNest.Models.TaskItem task)
     {
         var db = await _database.GetConnectionAsync();
 
         return await db.InsertAsync(task);
     }
 
-    public async Task<int> UpdateAsync(TaskNest.Models.TaskItem task)
+    public async Task<int> UpdateAsync(global::TaskNest.Models.TaskItem task)
     {
         var db = await _database.GetConnectionAsync();
 
         return await db.UpdateAsync(task);
     }
 
-    public async Task<int> DeleteAsync(TaskNest.Models.TaskItem task)
+    public async Task<int> DeleteAsync(global::TaskNest.Models.TaskItem task)
     {
         var db = await _database.GetConnectionAsync();
 

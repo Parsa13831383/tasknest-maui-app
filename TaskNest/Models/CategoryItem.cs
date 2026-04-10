@@ -18,7 +18,7 @@ public class CategoryItem
     public DateTime UpdatedAtUtc { get; set; } = DateTime.UtcNow;
     public bool IsDeleted { get; set; } = false;
 
-    // ❌ UI ONLY (ignored in DB)
+    //UI ONLY (ignored in DB)
     [Ignore]
     public string TaskCountText { get; set; } = string.Empty;
 

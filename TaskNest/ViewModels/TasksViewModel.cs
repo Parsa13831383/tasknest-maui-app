@@ -1,54 +1,61 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using TaskNest.Interfaces;
 
 namespace TaskNest.ViewModels;
 
 public class TaskListViewModel : BaseViewModel
 {
-    public ObservableCollection<TaskItem> Tasks { get; } = new();
+    private readonly IUnitOfWork _unitOfWork;
+
+    public ObservableCollection<TaskListItem> Tasks { get; } = new();
 
     public ICommand CreateTaskCommand { get; }
     public ICommand ViewTaskCommand { get; }
     public ICommand EditTaskCommand { get; }
 
-    public TaskListViewModel()
+    public TaskListViewModel(IUnitOfWork unitOfWork)
     {
+        _unitOfWork = unitOfWork;
         Title = "Tasks";
 
-        // Sample data (for UI demo)
-        Tasks.Add(new TaskItem
-        {
-            Title = "Finish UI navigation",
-            Description = "Complete the remaining page flow and visual consistency.",
-            DueDate = "10 Apr 2026",
-            Category = "Coursework",
-            PriorityText = "High",
-            PriorityColor = Colors.Red
-        });
-
-        Tasks.Add(new TaskItem
-        {
-            Title = "Refactor services",
-            Description = "Clean up app service layer and prepare for MVVM wiring.",
-            DueDate = "11 Apr 2026",
-            Category = "Development",
-            PriorityText = "Medium",
-            PriorityColor = Colors.Orange
-        });
-
-        Tasks.Add(new TaskItem
-        {
-            Title = "Write README",
-            Description = "Document setup, features, and app structure clearly.",
-            DueDate = "12 Apr 2026",
-            Category = "Documentation",
-            PriorityText = "Low",
-            PriorityColor = Colors.Green
-        });
-
         CreateTaskCommand = new Command(async () => await GoToCreate());
-        ViewTaskCommand = new Command<TaskItem>(async (task) => await GoToDetails(task));
-        EditTaskCommand = new Command<TaskItem>(async (task) => await GoToEdit(task));
+        ViewTaskCommand = new Command<TaskListItem>(async (task) => await GoToDetails(task));
+        EditTaskCommand = new Command<TaskListItem>(async (task) => await GoToEdit(task));
+    }
+
+    public async Task LoadTasksAsync()
+    {
+        if (IsBusy) return;
+
+        try
+        {
+            IsBusy = true;
+            Tasks.Clear();
+
+            var dbTasks = await _unitOfWork.Tasks.GetAllAsync();
+            var dbCategories = await _unitOfWork.Categories.GetAllAsync();
+            var categoryNamesById = dbCategories.ToDictionary(c => c.Id, c => c.Name);
+
+            foreach (global::TaskNest.Models.TaskItem dbTask in dbTasks)
+            {
+                var categoryText = "Uncategorized";
+
+                Tasks.Add(new TaskListItem
+                {
+                    Title = dbTask.Title,
+                    Description = dbTask.Description,
+                    DueDate = dbTask.DueDate?.ToString("dd MMM yyyy") ?? "No due date",
+                    Category = categoryText,
+                    PriorityText = dbTask.Priority,
+                    PriorityColor = dbTask.PriorityColor
+                });
+            }
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     private async Task GoToCreate()
@@ -56,8 +63,13 @@ public class TaskListViewModel : BaseViewModel
         await Shell.Current.GoToAsync("taskedit");
     }
 
-    private async Task GoToDetails(TaskItem task)
+    private async Task GoToDetails(TaskListItem? task)
     {
+        if (task is null)
+        {
+            return;
+        }
+
         var route = $"taskdetail?" +
                     $"title={Uri.EscapeDataString(task.Title)}&" +
                     $"description={Uri.EscapeDataString(task.Description)}&" +
@@ -68,8 +80,13 @@ public class TaskListViewModel : BaseViewModel
         await Shell.Current.GoToAsync(route);
     }
 
-    private async Task GoToEdit(TaskItem task)
+    private async Task GoToEdit(TaskListItem? task)
     {
+        if (task is null)
+        {
+            return;
+        }
+
         await Shell.Current.GoToAsync("taskedit");
     }
 }
