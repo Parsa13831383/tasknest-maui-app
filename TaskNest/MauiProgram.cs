@@ -3,6 +3,7 @@ using TaskNest.Interfaces;
 using TaskNest.Services;
 using TaskNest.ViewModels;
 using TaskNest.Data;
+using TaskNest.Repositories;
 
 namespace TaskNest;
 
@@ -27,6 +28,9 @@ public static class MauiProgram
 
 		// Database service used during app startup and by data features.
 		builder.Services.AddSingleton<AppDatabase>();
+		builder.Services.AddSingleton<ITaskRepository, TaskRepository>();
+		builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
+		builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

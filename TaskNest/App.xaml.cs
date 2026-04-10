@@ -1,18 +1,18 @@
-﻿using TaskNest.Data;
+﻿using TaskNest.Interfaces;
 
 namespace TaskNest;
 
 public partial class App : Application
 {
-	private readonly AppDatabase _database;
+	private readonly IUnitOfWork _unitOfWork;
 
-	public App(AppDatabase database)
+	public App(IUnitOfWork unitOfWork)
 	{
 		InitializeComponent();
 
-		_database = database;
+		_unitOfWork = unitOfWork;
 
-		Task.Run(async () => await _database.GetConnectionAsync());
+		Task.Run(async () => await _unitOfWork.InitializeAsync());
 	}
 
 	protected override Window CreateWindow(IActivationState? activationState)
