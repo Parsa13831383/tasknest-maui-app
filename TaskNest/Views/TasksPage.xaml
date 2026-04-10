@@ -94,12 +94,16 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:TaskListItem">
                             <controls:TaskCard
+                                TaskId="{Binding Id}"
                                 Title="{Binding Title}"
                                 Subtitle="{Binding Description}"
                                 DueDate="{Binding DueDate}"
                                 Category="{Binding Category}"
                                 PriorityText="{Binding PriorityText}"
-                                PriorityColor="{Binding PriorityColor}"/>
+                                PriorityColor="{Binding PriorityColor}"
+                                ViewTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewTaskCommand}"
+                                EditTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditTaskCommand}"
+                                DeleteTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"/>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 

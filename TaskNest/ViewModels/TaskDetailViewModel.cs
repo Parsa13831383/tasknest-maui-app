@@ -1,14 +1,25 @@
 using System.Windows.Input;
+using TaskNest.Interfaces;
 
 namespace TaskNest.ViewModels;
 
 public class TaskDetailViewModel : BaseViewModel
 {
+    private readonly IUnitOfWork _unitOfWork;
+    
+    private int _taskId;
     private string _taskTitle = string.Empty;
     private string _description = string.Empty;
     private string _dueDate = string.Empty;
     private string _category = string.Empty;
     private string _priorityText = string.Empty;
+    private bool _isCompleted;
+
+    public int TaskId
+    {
+        get => _taskId;
+        set => SetProperty(ref _taskId, value);
+    }
 
     public string TaskTitle
     {
@@ -40,27 +51,135 @@ public class TaskDetailViewModel : BaseViewModel
         set => SetProperty(ref _priorityText, value);
     }
 
+    public bool IsCompleted
+    {
+        get => _isCompleted;
+        set => SetProperty(ref _isCompleted, value);
+    }
+
     public ICommand EditCommand { get; }
+    public ICommand DeleteCommand { get; }
+    public ICommand ToggleCompleteCommand { get; }
     public ICommand BackCommand { get; }
 
-    public TaskDetailViewModel()
+    public TaskDetailViewModel(IUnitOfWork unitOfWork)
     {
+        _unitOfWork = unitOfWork;
+        
         // Set the Page Title (Inherited from BaseViewModel)
         Title = "Task Details";
 
         EditCommand = new Command(async () => await GoToEdit());
+        DeleteCommand = new Command(async () => await DeleteAsync());
+        ToggleCompleteCommand = new Command(async () => await ToggleCompleteAsync());
         BackCommand = new Command(async () => await GoBack());
+    }
+
+    /// <summary>
+    /// Loads task details from the database by task ID
+    /// </summary>
+    public async Task LoadAsync(int taskId)
+    {
+        if (IsBusy) return;
+        
+        try
+        {
+            IsBusy = true;
+            TaskId = taskId;
+
+            var task = await _unitOfWork.Tasks.GetByIdAsync(taskId);
+            
+            if (task != null)
+            {
+                TaskTitle = task.Title;
+                Description = task.Description;
+                PriorityText = task.Priority;
+                IsCompleted = task.IsCompleted;
+                DueDate = task.DueDate?.ToString("yyyy-MM-dd") ?? string.Empty;
+                
+                // Load category name if CategoryId exists
+                if (task.CategoryId.HasValue)
+                {
+                    var allCategories = await _unitOfWork.Categories.GetAllAsync();
+                    var categoryItem = allCategories.FirstOrDefault(c => c.Id == task.CategoryId);
+                    Category = categoryItem?.Name ?? string.Empty;
+                }
+                else
+                {
+                    Category = string.Empty;
+                }
+            }
+            else
+            {
+                TaskTitle = string.Empty;
+                Description = string.Empty;
+                PriorityText = string.Empty;
+                IsCompleted = false;
+                DueDate = string.Empty;
+                Category = string.Empty;
+            }
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     private async Task GoToEdit()
     {
-        // Navigates to the Edit page
-        await Shell.Current.GoToAsync("taskedit");
+        // Navigates to the Edit page with task ID
+        await Shell.Current.GoToAsync($"taskedit?id={TaskId}");
     }
 
     private async Task GoBack()
     {
         // Special ".." syntax tells Shell to go back to the previous page
         await Shell.Current.GoToAsync("..");
+    }
+
+    private async Task DeleteAsync()
+    {
+        if (TaskId <= 0)
+        {
+            return;
+        }
+
+        var shouldDelete = await Shell.Current.DisplayAlert(
+            "Delete Task",
+            $"Delete '{TaskTitle}'? This is a soft delete.",
+            "Delete",
+            "Cancel");
+
+        if (!shouldDelete)
+        {
+            return;
+        }
+
+        var task = await _unitOfWork.Tasks.GetByIdAsync(TaskId);
+        if (task is null)
+        {
+            return;
+        }
+
+        await _unitOfWork.Tasks.SoftDeleteAsync(task);
+        await GoBack();
+    }
+
+    private async Task ToggleCompleteAsync()
+    {
+        if (TaskId <= 0)
+        {
+            return;
+        }
+
+        var task = await _unitOfWork.Tasks.GetByIdAsync(TaskId);
+        if (task is null)
+        {
+            return;
+        }
+
+        task.IsCompleted = !task.IsCompleted;
+        await _unitOfWork.Tasks.UpdateAsync(task);
+        await LoadAsync(TaskId);
     }
 }

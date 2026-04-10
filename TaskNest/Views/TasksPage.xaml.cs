@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using TaskNest.Interfaces;
 using TaskNest.ViewModels;
 
 namespace TaskNest.Views;
@@ -10,10 +9,8 @@ public partial class TasksPage : ContentPage
     {
         InitializeComponent();
 
-        var unitOfWork = Application.Current?.Handler?.MauiContext?.Services.GetService<IUnitOfWork>()
-            ?? throw new InvalidOperationException("IUnitOfWork service is not registered.");
-
-        BindingContext = new TaskListViewModel(unitOfWork);
+        BindingContext = Application.Current?.Handler?.MauiContext?.Services.GetService<TaskListViewModel>()
+            ?? throw new InvalidOperationException("TaskListViewModel service is not registered.");
     }
 
     protected override async void OnAppearing()

@@ -85,6 +85,7 @@ public class CategoriesViewModel : BaseViewModel
 
     public ICommand LoadCategoriesCommand { get; }
     public ICommand AddCategoryCommand { get; }
+    public ICommand EditCategoryCommand { get; }
     public ICommand DeleteCategoryCommand { get; }
     public ICommand ManageCategoriesCommand { get; }
 
@@ -94,6 +95,7 @@ public class CategoriesViewModel : BaseViewModel
 
         LoadCategoriesCommand = new Command(async () => await LoadCategoriesAsync());
         AddCategoryCommand = new Command(async () => await AddCategoryAsync());
+        EditCategoryCommand = new Command<CategoryItemModel>(async (category) => await EditCategoryAsync(category));
         DeleteCategoryCommand = new Command<CategoryItemModel>(async (category) => await DeleteCategoryAsync(category));
         ManageCategoriesCommand = new Command(async () => await LoadCategoriesAsync());
     }
@@ -136,6 +138,13 @@ public class CategoriesViewModel : BaseViewModel
                 BadgeTextColor = Colors.Black
             };
 
+            var existingCategories = await _unitOfWork.Categories.GetAllAsync();
+            if (existingCategories.Any(c => string.Equals(c.Name, category.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                await Shell.Current.DisplayAlert("Validation", "Category name already exists.", "OK");
+                return;
+            }
+
             await _unitOfWork.Categories.AddAsync(category);
 
             NewCategoryName = string.Empty;
@@ -161,6 +170,18 @@ public class CategoriesViewModel : BaseViewModel
         {
             IsBusy = true;
 
+            var shouldDelete = await Shell.Current.DisplayAlert(
+                "Delete Category",
+                $"Delete '{category.Name}'? Tasks in this category will be uncategorized.",
+                "Delete",
+                "Cancel");
+
+            if (!shouldDelete)
+            {
+                return;
+            }
+
+            await _unitOfWork.Tasks.ClearCategoryAsync(category.Id);
             await _unitOfWork.Categories.DeleteAsync(category);
             await RefreshCategoriesAsync();
         }
@@ -188,14 +209,52 @@ public class CategoriesViewModel : BaseViewModel
         }
     }
 
+    public async Task EditCategoryAsync(CategoryItemModel? category)
+    {
+        if (IsBusy) return;
+        if (category is null) return;
+
+        var newName = await Shell.Current.DisplayPromptAsync(
+            "Edit Category",
+            "Update category name",
+            "Save",
+            "Cancel",
+            initialValue: category.Name,
+            maxLength: 100);
+
+        if (string.IsNullOrWhiteSpace(newName))
+        {
+            return;
+        }
+
+        var normalizedName = newName.Trim();
+        if (!string.Equals(normalizedName, category.Name, StringComparison.OrdinalIgnoreCase)
+            && Categories.Any(c => c.Id != category.Id && string.Equals(c.Name, normalizedName, StringComparison.OrdinalIgnoreCase)))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Category name already exists.", "OK");
+            return;
+        }
+
+        category.Name = normalizedName;
+        await UpdateCategoryAsync(category);
+    }
+
     private async Task RefreshCategoriesAsync()
     {
         Categories.Clear();
 
         var categories = await _unitOfWork.Categories.GetAllAsync();
 
+        var taskItems = await _unitOfWork.Tasks.GetAllAsync();
+        var taskCountByCategoryId = taskItems
+            .Where(t => t.CategoryId.HasValue)
+            .GroupBy(t => t.CategoryId!.Value)
+            .ToDictionary(g => g.Key, g => g.Count());
+
         foreach (var category in categories)
         {
+            var taskCount = taskCountByCategoryId.TryGetValue(category.Id, out var count) ? count : 0;
+            category.Count = taskCount;
             category.TaskCountText = $"{category.Count} tasks";
             category.BadgeBackgroundColor = Colors.LightGray;
             category.BadgeTextColor = Colors.Black;
@@ -204,7 +263,7 @@ public class CategoriesViewModel : BaseViewModel
         }
 
         TotalCategories = Categories.Count;
-        TasksAssigned = Categories.Sum(c => c.Count);
+        TasksAssigned = taskItems.Count;
         MostActiveCategory = Categories
             .OrderByDescending(c => c.Count)
             .Select(c => c.Name)

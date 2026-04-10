@@ -8,6 +8,7 @@ public class TaskEditViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly Dictionary<string, int> _categoryIdByName = new(StringComparer.OrdinalIgnoreCase);
+    private int? _editingTaskId;
 
     private string _taskTitle = string.Empty;
     private string _description = string.Empty;
@@ -15,6 +16,7 @@ public class TaskEditViewModel : BaseViewModel
     private string _selectedPriority = "Medium";
     private DateTime _dueDate = DateTime.Today.AddDays(3);
     private bool _isCompleted;
+    private bool _isEditMode;
 
     public string TaskTitle
     {
@@ -52,6 +54,12 @@ public class TaskEditViewModel : BaseViewModel
         set => SetProperty(ref _isCompleted, value);
     }
 
+    public bool IsEditMode
+    {
+        get => _isEditMode;
+        set => SetProperty(ref _isEditMode, value);
+    }
+
     public ObservableCollection<string> Categories { get; } = new();
     public ObservableCollection<string> Priorities { get; } = new();
 
@@ -62,7 +70,7 @@ public class TaskEditViewModel : BaseViewModel
     {
         _unitOfWork = unitOfWork;
 
-        Title = "Edit Task";
+        Title = "Create Task";
 
         Priorities.Add("High");
         Priorities.Add("Medium");
@@ -72,7 +80,7 @@ public class TaskEditViewModel : BaseViewModel
         CancelCommand = new Command(async () => await GoBackAsync());
     }
 
-    public async Task LoadAsync()
+    public async Task LoadAsync(int? taskId = null)
     {
         if (IsBusy) return;
 
@@ -94,6 +102,36 @@ public class TaskEditViewModel : BaseViewModel
             {
                 SelectedCategory = Categories[0];
             }
+
+            if (taskId.HasValue && taskId.Value > 0)
+            {
+                var task = await _unitOfWork.Tasks.GetByIdAsync(taskId.Value);
+                if (task is not null)
+                {
+                    _editingTaskId = task.Id;
+                    IsEditMode = true;
+                    Title = "Edit Task";
+
+                    TaskTitle = task.Title;
+                    Description = task.Description;
+                    SelectedPriority = task.Priority;
+                    DueDate = task.DueDate ?? DateTime.Today;
+                    IsCompleted = task.IsCompleted;
+                    SelectedCategory = task.CategoryId.HasValue
+                        ? categoryItems.FirstOrDefault(c => c.Id == task.CategoryId.Value)?.Name ?? string.Empty
+                        : string.Empty;
+                    return;
+                }
+            }
+
+            _editingTaskId = null;
+            IsEditMode = false;
+            Title = "Create Task";
+            TaskTitle = string.Empty;
+            Description = string.Empty;
+            SelectedPriority = "Medium";
+            DueDate = DateTime.Today.AddDays(3);
+            IsCompleted = false;
         }
         finally
         {
@@ -109,17 +147,45 @@ public class TaskEditViewModel : BaseViewModel
             return;
         }
 
-        var task = new global::TaskNest.Models.TaskItem
-        {
-            Title = TaskTitle.Trim(),
-            Description = Description?.Trim() ?? string.Empty,
-            DueDate = DueDate,
-            Priority = string.IsNullOrWhiteSpace(SelectedPriority) ? "Medium" : SelectedPriority,
-            IsCompleted = IsCompleted
-        };
+        var categoryId = _categoryIdByName.TryGetValue(SelectedCategory ?? string.Empty, out var resolvedCategoryId)
+            ? resolvedCategoryId
+            : (int?)null;
 
-        await _unitOfWork.Tasks.AddAsync(task);
-        await Shell.Current.DisplayAlert("Saved", "Task saved to database.", "OK");
+        if (_editingTaskId.HasValue)
+        {
+            var existing = await _unitOfWork.Tasks.GetByIdAsync(_editingTaskId.Value);
+            if (existing is null)
+            {
+                await Shell.Current.DisplayAlert("Error", "Task could not be found.", "OK");
+                return;
+            }
+
+            existing.Title = TaskTitle.Trim();
+            existing.Description = Description?.Trim() ?? string.Empty;
+            existing.DueDate = DueDate;
+            existing.Priority = string.IsNullOrWhiteSpace(SelectedPriority) ? "Medium" : SelectedPriority;
+            existing.IsCompleted = IsCompleted;
+            existing.CategoryId = categoryId;
+
+            await _unitOfWork.Tasks.UpdateAsync(existing);
+            await Shell.Current.DisplayAlert("Saved", "Task updated.", "OK");
+        }
+        else
+        {
+            var task = new global::TaskNest.Models.TaskItem
+            {
+                Title = TaskTitle.Trim(),
+                Description = Description?.Trim() ?? string.Empty,
+                DueDate = DueDate,
+                Priority = string.IsNullOrWhiteSpace(SelectedPriority) ? "Medium" : SelectedPriority,
+                IsCompleted = IsCompleted,
+                CategoryId = categoryId
+            };
+
+            await _unitOfWork.Tasks.AddAsync(task);
+            await Shell.Current.DisplayAlert("Saved", "Task created.", "OK");
+        }
+
         await GoBackAsync();
     }
 

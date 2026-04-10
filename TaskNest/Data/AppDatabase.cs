@@ -13,6 +13,7 @@ public class AppDatabase
             return _database;
 
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "tasknest.db");
+        System.Diagnostics.Debug.WriteLine($"DB PATH: {dbPath}");
 
         _database = new SQLiteAsyncConnection(dbPath);
 

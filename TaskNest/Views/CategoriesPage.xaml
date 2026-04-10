@@ -129,6 +129,28 @@
                                             Text="{Binding Description}"
                                             FontSize="14"
                                             TextColor="#6B7280"/>
+
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Button
+                                                Text="Edit"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCategoryCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#E5E7EB"
+                                                TextColor="#111827"
+                                                FontSize="12"
+                                                CornerRadius="10"
+                                                HeightRequest="36"/>
+
+                                            <Button
+                                                Text="Delete"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCategoryCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#FEE2E2"
+                                                TextColor="#B91C1C"
+                                                FontSize="12"
+                                                CornerRadius="10"
+                                                HeightRequest="36"/>
+                                        </HorizontalStackLayout>
                                     </VerticalStackLayout>
 
                                     <Frame

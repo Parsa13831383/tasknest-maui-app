@@ -1,19 +1,44 @@
 using Microsoft.Extensions.DependencyInjection;
-using TaskNest.Interfaces;
 using TaskNest.ViewModels;
 
 namespace TaskNest.Views;
 
-public partial class TaskEditPage : ContentPage
+public partial class TaskEditPage : ContentPage, IQueryAttributable
 {
+    private int? _taskId;
+
     public TaskEditPage()
     {
         InitializeComponent();
 
-        var unitOfWork = Application.Current?.Handler?.MauiContext?.Services.GetService<IUnitOfWork>()
-            ?? throw new InvalidOperationException("IUnitOfWork service is not registered.");
+        BindingContext = Application.Current?.Handler?.MauiContext?.Services.GetService<TaskEditViewModel>()
+            ?? throw new InvalidOperationException("TaskEditViewModel service is not registered.");
+    }
 
-        BindingContext = new TaskEditViewModel(unitOfWork);
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        _taskId = null;
+
+        if (!query.TryGetValue("id", out var rawId) || rawId is null)
+        {
+            return;
+        }
+
+        if (rawId is int intId)
+        {
+            _taskId = intId;
+            return;
+        }
+
+        if (int.TryParse(rawId.ToString(), out var parsedId))
+        {
+            _taskId = parsedId;
+        }
+
+        if (BindingContext is TaskEditViewModel viewModel)
+        {
+            _ = viewModel.LoadAsync(_taskId);
+        }
     }
 
     protected override async void OnAppearing()
@@ -22,7 +47,7 @@ public partial class TaskEditPage : ContentPage
 
         if (BindingContext is TaskEditViewModel viewModel)
         {
-            await viewModel.LoadAsync();
+            await viewModel.LoadAsync(_taskId);
         }
     }
 }

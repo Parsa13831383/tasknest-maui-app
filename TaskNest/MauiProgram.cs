@@ -25,6 +25,10 @@ public static class MauiProgram
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
 		builder.Services.AddTransient<BaseViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
+		builder.Services.AddTransient<TaskListViewModel>();
+		builder.Services.AddTransient<TaskDetailViewModel>();
+		builder.Services.AddTransient<TaskEditViewModel>();
+		builder.Services.AddTransient<CategoriesViewModel>();
 
 		// Database service used during app startup and by data features.
 		builder.Services.AddSingleton<AppDatabase>();

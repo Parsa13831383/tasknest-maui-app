@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
     x:Class="TaskNest.Controls.TaskCard"
+    x:Name="This"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:TaskNest.Controls">
@@ -58,7 +59,7 @@
             </Grid>
 
             <!-- Actions -->
-            <Grid ColumnDefinitions="*,*"
+                <Grid ColumnDefinitions="*,*,*"
                     ColumnSpacing="12">
 
                 <Button
@@ -77,6 +78,16 @@
                     CommandParameter="{Binding .}"
                     BackgroundColor="#2563EB"
                     TextColor="White"
+                    CornerRadius="12"
+                    HeightRequest="42"/>
+
+                <Button
+                    Grid.Column="2"
+                    Text="Delete"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"
+                    CommandParameter="{Binding .}"
+                    BackgroundColor="#FEE2E2"
+                    TextColor="#B91C1C"
                     CornerRadius="12"
                     HeightRequest="42"/>
 

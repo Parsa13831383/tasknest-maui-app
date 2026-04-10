@@ -1,99 +1,61 @@
 using Microsoft.Maui.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using TaskNest.ViewModels;
 
 namespace TaskNest.Views;
 
-[QueryProperty(nameof(TaskTitle), "title")]
-[QueryProperty(nameof(Description), "description")]
-[QueryProperty(nameof(DueDate), "dueDate")]
-[QueryProperty(nameof(Category), "category")]
-[QueryProperty(nameof(PriorityText), "priorityText")]
-public partial class TaskDetailPage : ContentPage
+public partial class TaskDetailPage : ContentPage, IQueryAttributable
 {
-    private string taskTitle = string.Empty;
-    private string description = string.Empty;
-    private string dueDate = string.Empty;
-    private string category = string.Empty;
-    private string priorityText = string.Empty;
+    private int taskId;
 
     public TaskDetailPage()
     {
         InitializeComponent();
-        BindingContext = new TaskDetailViewModel();
-        ApplyValues();
+
+        BindingContext = Application.Current?.Handler?.MauiContext?.Services.GetService<TaskDetailViewModel>()
+            ?? throw new InvalidOperationException("TaskDetailViewModel service is not registered.");
+    }
+
+    public int TaskId
+    {
+        get => taskId;
+        set
+        {
+            taskId = value;
+            _ = LoadTaskDetailsAsync();
+        }
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (!query.TryGetValue("id", out var idValue) || idValue is null)
+        {
+            return;
+        }
+
+        if (idValue is int intId)
+        {
+            TaskId = intId;
+            return;
+        }
+
+        if (int.TryParse(idValue.ToString(), out var parsedId))
+        {
+            TaskId = parsedId;
+        }
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        ApplyValues();
+        _ = LoadTaskDetailsAsync();
     }
 
-    public string TaskTitle
+    private async Task LoadTaskDetailsAsync()
     {
-        get => taskTitle;
-        set
-        {
-            taskTitle = value ?? string.Empty;
-            ApplyValues();
-        }
-    }
-
-    public string Description
-    {
-        get => description;
-        set
-        {
-            description = value ?? string.Empty;
-            ApplyValues();
-        }
-    }
-
-    public string DueDate
-    {
-        get => dueDate;
-        set
-        {
-            dueDate = value ?? string.Empty;
-            ApplyValues();
-        }
-    }
-
-    public string Category
-    {
-        get => category;
-        set
-        {
-            category = value ?? string.Empty;
-            ApplyValues();
-        }
-    }
-
-    public string PriorityText
-    {
-        get => priorityText;
-        set
-        {
-            priorityText = value ?? string.Empty;
-            ApplyValues();
-        }
-    }
-
-    protected override void OnBindingContextChanged()
-    {
-        base.OnBindingContextChanged();
-        ApplyValues();
-    }
-
-    private void ApplyValues()
-    {
-        if (BindingContext is not TaskDetailViewModel viewModel)
+        if (TaskId <= 0 || BindingContext is not TaskDetailViewModel viewModel)
             return;
 
-        viewModel.TaskTitle = taskTitle;
-        viewModel.Description = description;
-        viewModel.DueDate = dueDate;
-        viewModel.Category = category;
-        viewModel.PriorityText = priorityText;
+        await viewModel.LoadAsync(TaskId);
     }
 }
