@@ -14,7 +14,5 @@ public class TaskListItem
 
     public string Category { get; set; } = string.Empty;
 
-    public string PriorityText { get; set; } = string.Empty;
-
-    public Color PriorityColor { get; set; } = Colors.Gray;
+    public Color TaskColor { get; set; } = Colors.Gray;
 }

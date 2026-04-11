@@ -1,15 +1,22 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using TaskNest.Services;
 
 namespace TaskNest.ViewModels;
 
 public class SettingsViewModel : BaseViewModel
 {
+    private const string DarkModePreferenceKey = "settings.darkmode";
+    private const string ThemePreferenceKey = "settings.theme";
+    private const string LanguagePreferenceKey = "settings.language";
+    private const string ReminderPreferenceKey = "settings.reminder";
+
+    private readonly LocalizationService _localization = LocalizationService.Instance;
+
     private bool _notificationsEnabled;
     private bool _darkModeEnabled;
     private string _selectedTheme = string.Empty;
     private string _selectedLanguage = string.Empty;
-    private string _selectedDefaultPriority = string.Empty;
     private string _selectedReminderFrequency = string.Empty;
 
     public bool NotificationsEnabled
@@ -21,25 +28,37 @@ public class SettingsViewModel : BaseViewModel
     public bool DarkModeEnabled
     {
         get => _darkModeEnabled;
-        set => SetProperty(ref _darkModeEnabled, value);
+        set
+        {
+            if (SetProperty(ref _darkModeEnabled, value))
+            {
+                ApplyDarkMode(value);
+            }
+        }
     }
 
     public string SelectedTheme
     {
         get => _selectedTheme;
-        set => SetProperty(ref _selectedTheme, value);
+        set
+        {
+            if (SetProperty(ref _selectedTheme, value))
+            {
+                DarkModeEnabled = string.Equals(value, "Dark", StringComparison.OrdinalIgnoreCase);
+            }
+        }
     }
 
     public string SelectedLanguage
     {
         get => _selectedLanguage;
-        set => SetProperty(ref _selectedLanguage, value);
-    }
-
-    public string SelectedDefaultPriority
-    {
-        get => _selectedDefaultPriority;
-        set => SetProperty(ref _selectedDefaultPriority, value);
+        set
+        {
+            if (SetProperty(ref _selectedLanguage, value))
+            {
+                _localization.SetLanguage(value);
+            }
+        }
     }
 
     public string SelectedReminderFrequency
@@ -50,7 +69,6 @@ public class SettingsViewModel : BaseViewModel
 
     public ObservableCollection<string> Themes { get; } = new();
     public ObservableCollection<string> Languages { get; } = new();
-    public ObservableCollection<string> Priorities { get; } = new();
     public ObservableCollection<string> ReminderFrequencies { get; } = new();
 
     public ICommand SaveSettingsCommand { get; }
@@ -66,23 +84,15 @@ public class SettingsViewModel : BaseViewModel
         Themes.Add("System Default");
 
         Languages.Add("English");
+        Languages.Add("French");
         Languages.Add("Spanish");
-        Languages.Add("Kurdish");
-
-        Priorities.Add("Low");
-        Priorities.Add("Medium");
-        Priorities.Add("High");
 
         ReminderFrequencies.Add("Daily");
         ReminderFrequencies.Add("Weekly");
         ReminderFrequencies.Add("Only for deadlines");
 
         NotificationsEnabled = true;
-        DarkModeEnabled = false;
-        SelectedTheme = "Light";
-        SelectedLanguage = "English";
-        SelectedDefaultPriority = "Medium";
-        SelectedReminderFrequency = "Daily";
+        LoadPreferences();
 
         SaveSettingsCommand = new Command(async () => await SaveSettings());
         ResetSettingsCommand = new Command(ResetSettings);
@@ -91,7 +101,15 @@ public class SettingsViewModel : BaseViewModel
 
     private async Task SaveSettings()
     {
-        await Shell.Current.DisplayAlert("Settings", "Settings saved successfully.", "OK");
+        Preferences.Default.Set(DarkModePreferenceKey, DarkModeEnabled);
+        Preferences.Default.Set(ThemePreferenceKey, SelectedTheme);
+        Preferences.Default.Set(LanguagePreferenceKey, SelectedLanguage);
+        Preferences.Default.Set(ReminderPreferenceKey, SelectedReminderFrequency);
+
+        await Shell.Current.DisplayAlert(
+            _localization.Translate("Settings"),
+            _localization.Translate("Settings saved successfully."),
+            _localization.Translate("OK"));
     }
 
     private void ResetSettings()
@@ -100,13 +118,53 @@ public class SettingsViewModel : BaseViewModel
         DarkModeEnabled = false;
         SelectedTheme = "Light";
         SelectedLanguage = "English";
-        SelectedDefaultPriority = "Medium";
         SelectedReminderFrequency = "Daily";
+
+        Preferences.Default.Set(DarkModePreferenceKey, DarkModeEnabled);
+        Preferences.Default.Set(ThemePreferenceKey, SelectedTheme);
+        Preferences.Default.Set(LanguagePreferenceKey, SelectedLanguage);
+        Preferences.Default.Set(ReminderPreferenceKey, SelectedReminderFrequency);
     }
 
     private async Task Logout()
     {
-        await Shell.Current.DisplayAlert("Logout", "You have been signed out.", "OK");
+        await Shell.Current.DisplayAlert(
+            _localization.Translate("Logout"),
+            _localization.Translate("You have been signed out."),
+            _localization.Translate("OK"));
         await Shell.Current.GoToAsync("login");
+    }
+
+    private void LoadPreferences()
+    {
+        var savedDarkMode = Preferences.Default.Get(DarkModePreferenceKey, false);
+        var savedTheme = Preferences.Default.Get(ThemePreferenceKey, savedDarkMode ? "Dark" : "Light");
+        var savedLanguage = Preferences.Default.Get(LanguagePreferenceKey, "English");
+        var savedReminder = Preferences.Default.Get(ReminderPreferenceKey, "Daily");
+
+        _darkModeEnabled = savedDarkMode;
+        OnPropertyChanged(nameof(DarkModeEnabled));
+        ApplyDarkMode(savedDarkMode);
+
+        _selectedTheme = savedTheme;
+        OnPropertyChanged(nameof(SelectedTheme));
+
+        _selectedLanguage = savedLanguage;
+        OnPropertyChanged(nameof(SelectedLanguage));
+        _localization.SetLanguage(savedLanguage);
+
+        _selectedReminderFrequency = savedReminder;
+        OnPropertyChanged(nameof(SelectedReminderFrequency));
+    }
+
+    private static void ApplyDarkMode(bool isDarkMode)
+    {
+        if (Application.Current is null)
+        {
+            return;
+        }
+
+        Application.Current.UserAppTheme = isDarkMode ? AppTheme.Dark : AppTheme.Light;
+        Preferences.Default.Set(DarkModePreferenceKey, isDarkMode);
     }
 }

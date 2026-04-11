@@ -6,7 +6,7 @@
     xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
     x:DataType="viewModels:SettingsViewModel"
     Title="Settings"
-    BackgroundColor="#F7F8FC">
+    BackgroundColor="{AppThemeBinding Light=#F7F8FC, Dark=#0F141B}">
 
     <ScrollView>
         <VerticalStackLayout Padding="24"
@@ -17,18 +17,19 @@
                     Text="Settings"
                     FontSize="32"
                     FontAttributes="Bold"
-                    TextColor="#111827"/>
+                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                 <Label
                     Text="Manage your app preferences and account experience."
                     FontSize="15"
-                    TextColor="#6B7280"/>
+                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
             </VerticalStackLayout>
 
             <Frame
                 Padding="20"
                 CornerRadius="18"
-                BackgroundColor="White"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
+                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}"
                 HasShadow="True">
                 <VerticalStackLayout Spacing="18">
 
@@ -36,7 +37,7 @@
                         Text="Preferences"
                         FontSize="20"
                         FontAttributes="Bold"
-                        TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                     <Grid ColumnDefinitions="*,Auto"
                             RowDefinitions="Auto,Auto"
@@ -49,11 +50,11 @@
                                 Text="Enable Notifications"
                                 FontSize="16"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
+                                TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                             <Label
                                 Text="Receive reminders about task deadlines."
                                 FontSize="14"
-                                TextColor="#6B7280"/>
+                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                         </VerticalStackLayout>
                         <Switch
                             Grid.Row="0"
@@ -68,11 +69,11 @@
                                 Text="Dark Mode"
                                 FontSize="16"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
+                                TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                             <Label
                                 Text="Toggle a darker appearance for the app."
                                 FontSize="14"
-                                TextColor="#6B7280"/>
+                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                         </VerticalStackLayout>
                         <Switch
                             Grid.Row="1"
@@ -87,7 +88,8 @@
             <Frame
                 Padding="20"
                 CornerRadius="18"
-                BackgroundColor="White"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
+                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}"
                 HasShadow="True">
                 <VerticalStackLayout Spacing="18">
 
@@ -95,16 +97,18 @@
                         Text="Appearance &amp; Language"
                         FontSize="20"
                         FontAttributes="Bold"
-                        TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                     <VerticalStackLayout Spacing="8">
                         <Label
                             Text="Theme"
                             FontSize="15"
                             FontAttributes="Bold"
-                            TextColor="#111827"/>
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Picker
                             Title="Select theme"
+                            BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#111827}"
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
                             ItemsSource="{Binding Themes}"
                             SelectedItem="{Binding SelectedTheme}"/>
                     </VerticalStackLayout>
@@ -114,9 +118,11 @@
                             Text="Language"
                             FontSize="15"
                             FontAttributes="Bold"
-                            TextColor="#111827"/>
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Picker
                             Title="Select language"
+                            BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#111827}"
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
                             ItemsSource="{Binding Languages}"
                             SelectedItem="{Binding SelectedLanguage}"/>
                     </VerticalStackLayout>
@@ -127,7 +133,8 @@
             <Frame
                 Padding="20"
                 CornerRadius="18"
-                BackgroundColor="White"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
+                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}"
                 HasShadow="True">
                 <VerticalStackLayout Spacing="18">
 
@@ -135,28 +142,18 @@
                         Text="Productivity"
                         FontSize="20"
                         FontAttributes="Bold"
-                        TextColor="#111827"/>
-
-                    <VerticalStackLayout Spacing="8">
-                        <Label
-                            Text="Default Task Priority"
-                            FontSize="15"
-                            FontAttributes="Bold"
-                            TextColor="#111827"/>
-                        <Picker
-                            Title="Choose default priority"
-                            ItemsSource="{Binding Priorities}"
-                            SelectedItem="{Binding SelectedDefaultPriority}"/>
-                    </VerticalStackLayout>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                     <VerticalStackLayout Spacing="8">
                         <Label
                             Text="Reminder Frequency"
                             FontSize="15"
                             FontAttributes="Bold"
-                            TextColor="#111827"/>
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Picker
                             Title="Choose reminder frequency"
+                            BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#111827}"
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
                             ItemsSource="{Binding ReminderFrequencies}"
                             SelectedItem="{Binding SelectedReminderFrequency}"/>
                     </VerticalStackLayout>
@@ -179,8 +176,8 @@
                     Grid.Column="1"
                     Text="Reset"
                     Command="{Binding ResetSettingsCommand}"
-                    BackgroundColor="#E5E7EB"
-                    TextColor="#111827"
+                    BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
+                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
                     CornerRadius="12"
                     HeightRequest="50"/>
             </Grid>
@@ -188,26 +185,27 @@
             <Frame
                 Padding="18"
                 CornerRadius="18"
-                BackgroundColor="#FEF2F2"
+                BackgroundColor="{AppThemeBinding Light=#FEF2F2, Dark=#2A1719}"
+                BorderColor="{AppThemeBinding Light=#FECACA, Dark=#5B2428}"
                 HasShadow="False">
                 <VerticalStackLayout Spacing="10">
                     <Label
                         Text="Account"
                         FontSize="18"
                         FontAttributes="Bold"
-                        TextColor="#991B1B"/>
+                        TextColor="{AppThemeBinding Light=#991B1B, Dark=#FCA5A5}"/>
 
                     <Label
                         Text="Sign out of your account on this device."
                         FontSize="14"
-                        TextColor="#B91C1C"/>
+                        TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
 
                     <Button
                         Text="Logout"
                         Command="{Binding LogoutCommand}"
-                        BackgroundColor="White"
-                        TextColor="#DC2626"
-                        BorderColor="#FCA5A5"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#3B1E21}"
+                        TextColor="{AppThemeBinding Light=#DC2626, Dark=#FCA5A5}"
+                        BorderColor="{AppThemeBinding Light=#FCA5A5, Dark=#7F2C33}"
                         BorderWidth="1"
                         CornerRadius="12"
                         HeightRequest="48"/>

@@ -34,11 +34,6 @@ public partial class TaskEditPage : ContentPage, IQueryAttributable
         {
             _taskId = parsedId;
         }
-
-        if (BindingContext is TaskEditViewModel viewModel)
-        {
-            _ = viewModel.LoadAsync(_taskId);
-        }
     }
 
     protected override async void OnAppearing()

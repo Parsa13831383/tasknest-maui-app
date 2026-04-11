@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
         x:DataType="viewModels:TaskEditViewModel"
         Title="Edit Task"
-        BackgroundColor="#F7F8FC">
+        BackgroundColor="{AppThemeBinding Light=#F7F8FC, Dark=#0F172A}">
 
         <ScrollView>
                 <VerticalStackLayout Padding="24"
@@ -17,42 +17,30 @@
                                         Text="Edit Task"
                                         FontSize="32"
                                         FontAttributes="Bold"
-                                        TextColor="#111827"/>
+                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
 
                                 <Label
                                         Text="Update task details, deadline, and progress."
                                         FontSize="15"
-                                        TextColor="#6B7280"/>
+                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
                         </VerticalStackLayout>
 
                         <Frame
                                 Padding="22"
                                 CornerRadius="18"
-                                BackgroundColor="White"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark=#111827}"
+                                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
                                 HasShadow="True">
 
                                 <VerticalStackLayout Spacing="18">
 
-                                        <Grid ColumnDefinitions="*,Auto"
+                                        <Grid ColumnDefinitions="*"
                                                         ColumnSpacing="12">
                                                 <Label
                                                         Text="Task Information"
                                                         FontSize="20"
                                                         FontAttributes="Bold"
-                                                        TextColor="#111827"/>
-
-                                                <Frame
-                                                        Padding="10,6"
-                                                        CornerRadius="14"
-                                                        HasShadow="False"
-                                                        BackgroundColor="#FEE2E2"
-                                                        VerticalOptions="Start">
-                                                        <Label
-                                                                Text="{Binding SelectedPriority}"
-                                                                FontSize="12"
-                                                                FontAttributes="Bold"
-                                                                TextColor="#B91C1C"/>
-                                                </Frame>
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                         </Grid>
 
                                         <VerticalStackLayout Spacing="8">
@@ -60,12 +48,12 @@
                                                         Text="Task Title"
                                                         FontSize="15"
                                                         FontAttributes="Bold"
-                                                        TextColor="#111827"/>
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                                 <Entry
                                                         Text="{Binding TaskTitle}"
                                                         Placeholder="Enter task title"
-                                                        BackgroundColor="#F9FAFB"
-                                                        TextColor="#111827"/>
+                                                        BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                         </VerticalStackLayout>
 
                                         <VerticalStackLayout Spacing="8">
@@ -73,80 +61,140 @@
                                                         Text="Description"
                                                         FontSize="15"
                                                         FontAttributes="Bold"
-                                                        TextColor="#111827"/>
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                                 <Editor
                                                         Text="{Binding Description}"
                                                         Placeholder="Enter task description"
                                                         AutoSize="TextChanges"
                                                         HeightRequest="120"
-                                                        BackgroundColor="#F9FAFB"
-                                                        TextColor="#111827"/>
+                                                        BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                         </VerticalStackLayout>
 
                                         <Label
                                                 Text="Status &amp; Deadline"
                                                 FontSize="18"
                                                 FontAttributes="Bold"
-                                                TextColor="#111827"/>
-
-                                        <Grid ColumnDefinitions="*,*"
-                                                        ColumnSpacing="12">
-                                                <VerticalStackLayout Spacing="8">
-                                                        <Label
-                                                                Text="Category"
-                                                                FontSize="15"
-                                                                FontAttributes="Bold"
-                                                                TextColor="#111827"/>
-                                                        <Picker
-                                                                Title="Select category"
-                                                                ItemsSource="{Binding Categories}"
-                                                                SelectedItem="{Binding SelectedCategory}"/>
-                                                </VerticalStackLayout>
-
-                                                <VerticalStackLayout Grid.Column="1"
-                                                                Spacing="8">
-                                                        <Label
-                                                                Text="Priority"
-                                                                FontSize="15"
-                                                                FontAttributes="Bold"
-                                                                TextColor="#111827"/>
-                                                        <Picker
-                                                                Title="Select priority"
-                                                                ItemsSource="{Binding Priorities}"
-                                                                SelectedItem="{Binding SelectedPriority}"/>
-                                                </VerticalStackLayout>
-                                        </Grid>
+                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
 
                                         <VerticalStackLayout Spacing="8">
                                                 <Label
-                                                        Text="Due Date"
+                                                        Text="Category"
                                                         FontSize="15"
                                                         FontAttributes="Bold"
-                                                        TextColor="#111827"/>
-                                                <DatePicker
-                                                        Date="{Binding DueDate}"/>
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                                <Entry
+                                                        Text="{Binding SelectedCategory, Mode=TwoWay}"
+                                                        Placeholder="Type a category"
+                                                        BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                         </VerticalStackLayout>
 
-                                        <Grid ColumnDefinitions="*,Auto"
+                                        <VerticalStackLayout Spacing="8">
+                                                <Label
+                                                        Text="Task Color"
+                                                        FontSize="15"
+                                                        FontAttributes="Bold"
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+
+                                                <CollectionView
+                                                        ItemsSource="{Binding AvailableTaskColors}"
+                                                        SelectionMode="None"
+                                                        HeightRequest="42">
+                                                        <CollectionView.ItemsLayout>
+                                                                <LinearItemsLayout Orientation="Horizontal"
+                                                                        ItemSpacing="10"/>
+                                                        </CollectionView.ItemsLayout>
+
+                                                        <CollectionView.ItemTemplate>
+                                                                <DataTemplate x:DataType="viewModels:TaskColorOption">
+                                                                        <Border
+                                                                                WidthRequest="28"
+                                                                                HeightRequest="28"
+                                                                                StrokeShape="RoundRectangle 14"
+                                                                                BackgroundColor="{Binding Color}"
+                                                                                Stroke="{AppThemeBinding Light=#D1D5DB, Dark=#64748B}"
+                                                                                StrokeThickness="1">
+                                                                                <Border.Triggers>
+                                                                                        <DataTrigger TargetType="Border"
+                                                                                                Binding="{Binding IsSelected}"
+                                                                                                Value="True">
+                                                                                                <Setter Property="Stroke"
+                                                                                                        Value="{AppThemeBinding Light=#111827, Dark=#E2E8F0}"/>
+                                                                                                <Setter Property="StrokeThickness"
+                                                                                                        Value="2"/>
+                                                                                        </DataTrigger>
+                                                                                </Border.Triggers>
+                                                                                <Border.GestureRecognizers>
+                                                                                        <TapGestureRecognizer
+                                                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectTaskColorCommand}"
+                                                                                                CommandParameter="{Binding .}"/>
+                                                                                </Border.GestureRecognizers>
+
+                                                                                <Label
+                                                                                        Text="✓"
+                                                                                        FontSize="14"
+                                                                                        HorizontalOptions="Center"
+                                                                                        VerticalOptions="Center"
+                                                                                        TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                                                                                        IsVisible="{Binding IsSelected}"/>
+                                                                        </Border>
+                                                                </DataTemplate>
+                                                        </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                        </VerticalStackLayout>
+
+                                        <Frame
+                                                Padding="14"
+                                                CornerRadius="14"
+                                                HasShadow="False"
+                                                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
+                                                BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1E293B}">
+                                                <Grid ColumnDefinitions="Auto,*"
                                                         ColumnSpacing="12">
+                                                        <Label
+                                                                Text="●"
+                                                                FontSize="18"
+                                                                TextColor="{AppThemeBinding Light=#2563EB, Dark=#60A5FA}"
+                                                                VerticalOptions="Center"/>
+
+                                                        <VerticalStackLayout Grid.Column="1"
+                                                                Spacing="6">
+                                                                <Label
+                                                                        Text="Due Date"
+                                                                        FontSize="13"
+                                                                        FontAttributes="Bold"
+                                                                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
+                                                                <DatePicker
+                                                                        Date="{Binding DueDate}"
+                                                                        Format="ddd, dd MMM yyyy"
+                                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"
+                                                                        BackgroundColor="Transparent"/>
+                                                        </VerticalStackLayout>
+                                                </Grid>
+                                        </Frame>
+
+                                        <VerticalStackLayout Spacing="8">
                                                 <VerticalStackLayout Spacing="4">
                                                         <Label
-                                                                Text="Mark as Completed"
+                                                                Text="Task Reflection"
                                                                 FontSize="16"
                                                                 FontAttributes="Bold"
-                                                                TextColor="#111827"/>
+                                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                                         <Label
-                                                                Text="Toggle task completion status."
+                                                                Text="Write quick notes about progress, blockers, or what you learned."
                                                                 FontSize="14"
-                                                                TextColor="#6B7280"/>
+                                                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
                                                 </VerticalStackLayout>
 
-                                                <Switch
-                                                        Grid.Column="1"
-                                                        IsToggled="{Binding IsCompleted}"
-                                                        OnColor="#2563EB"
-                                                        VerticalOptions="Center"/>
-                                        </Grid>
+                                                <Editor
+                                                        Text="{Binding Reflection}"
+                                                        Placeholder="Add your reflection here..."
+                                                        AutoSize="TextChanges"
+                                                        HeightRequest="110"
+                                                        BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                        </VerticalStackLayout>
 
                                         <Grid ColumnDefinitions="*,*"
                                                         ColumnSpacing="14">
@@ -154,8 +202,8 @@
                                                         Grid.Column="0"
                                                         Text="Cancel"
                                                         Command="{Binding CancelCommand}"
-                                                        BackgroundColor="#E5E7EB"
-                                                        TextColor="#111827"
+                                                        BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"
                                                         CornerRadius="12"
                                                         HeightRequest="50"/>
 
@@ -163,7 +211,7 @@
                                                         Grid.Column="1"
                                                         Text="Save Changes"
                                                         Command="{Binding SaveCommand}"
-                                                        BackgroundColor="#2563EB"
+                                                        BackgroundColor="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"
                                                         TextColor="White"
                                                         CornerRadius="12"
                                                         HeightRequest="50"/>

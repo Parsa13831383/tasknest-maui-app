@@ -19,7 +19,7 @@ public partial class DashboardViewModel : BaseViewModel
     private int categoryCount = 4;
 
     [ObservableProperty]
-    private string highPrioritySummary = "2 high priority";
+    private string openTaskSummary = "2 open tasks";
 
     [ObservableProperty]
     private string categorySummary = "Work, Study, Health...";
@@ -34,7 +34,7 @@ public partial class DashboardViewModel : BaseViewModel
 
         FocusItems = new ObservableCollection<FocusItem>
         {
-            new("Finish mobile app UI implementation", "High priority task for the dashboard release", "Today", "UI / High", Colors.Blue),
+            new("Finish mobile app UI implementation", "Prepare polished views for the dashboard release", "Today", "UI", Colors.Blue),
             new("Review task navigation and custom controls", "Check interaction polish across the main flows", "Afternoon", "Review / Med", Colors.Green),
             new("Prepare polished screens for demo", "Tighten spacing, contrast, and layout consistency", "Later", "Demo / Low", Colors.Orange)
         };
@@ -58,8 +58,8 @@ public partial class DashboardViewModel : BaseViewModel
             CompletedThisWeek = tasks.Count(t => t.IsCompleted && t.UpdatedAtUtc >= DateTime.UtcNow.AddDays(-7));
             CategoryCount = categories.Count;
 
-            var highPriorityOpen = tasks.Count(t => !t.IsCompleted && string.Equals(t.Priority, "High", StringComparison.OrdinalIgnoreCase));
-            HighPrioritySummary = $"{highPriorityOpen} high priority";
+            var openTasks = tasks.Count(t => !t.IsCompleted);
+            OpenTaskSummary = $"{openTasks} open tasks";
 
             var topCategories = categories
                 .OrderByDescending(c => tasks.Count(t => t.CategoryId == c.Id))

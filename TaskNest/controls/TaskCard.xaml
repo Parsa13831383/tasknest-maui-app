@@ -3,38 +3,42 @@
     x:Class="TaskNest.Controls.TaskCard"
     x:Name="This"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TaskNest.Controls">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Frame
         Padding="18"
         Margin="0,0,0,14"
         CornerRadius="18"
-        BackgroundColor="White"
+        BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
+        BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}"
         HasShadow="True">
 
         <VerticalStackLayout Spacing="12">
 
-            <!-- Title + Priority -->
-            <Grid ColumnDefinitions="*,Auto"
-                    ColumnSpacing="12">
+            <!-- Title + Color -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <VerticalStackLayout Spacing="4">
                     <Label
                         Text="{Binding Title}"
                         FontSize="20"
                         FontAttributes="Bold"
-                        TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                     <Label
                         Text="{Binding Description}"
                         FontSize="14"
-                        TextColor="#6B7280"/>
+                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                 </VerticalStackLayout>
 
-                <controls:PriorityBadge
+                <Border
                     Grid.Column="1"
-                    PriorityText="{Binding PriorityText}"
-                    PriorityColor="{Binding PriorityColor}"/>
+                    WidthRequest="16"
+                    HeightRequest="16"
+                    BackgroundColor="{Binding TaskColor}"
+                    Stroke="#D1D5DB"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8"
+                    VerticalOptions="Center"/>
             </Grid>
 
             <!-- Metadata -->
@@ -43,13 +47,13 @@
                 <Label
                     Text="Due:"
                     FontSize="13"
-                    TextColor="#6B7280"/>
+                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
 
                 <Label
                     Grid.Column="1"
                     Text="{Binding DueDate}"
                     FontSize="13"
-                    TextColor="#111827"/>
+                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                 <Label
                     Grid.Column="2"
@@ -66,8 +70,8 @@
                     Text="View Details"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewTaskCommand}"
                     CommandParameter="{Binding .}"
-                    BackgroundColor="#E5E7EB"
-                    TextColor="#111827"
+                    BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
+                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
                     CornerRadius="12"
                     HeightRequest="42"/>
 

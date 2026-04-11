@@ -6,7 +6,7 @@
     xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
     x:DataType="viewModels:DashboardViewModel"
     Title="Dashboard"
-    BackgroundColor="#F7F8FC">
+    BackgroundColor="{AppThemeBinding Light=#F7F8FC, Dark=#0F141B}">
 
     <ScrollView>
         <VerticalStackLayout Padding="24"
@@ -16,18 +16,18 @@
                 <Label
                     Text="WELCOME BACK"
                     FontSize="16"
-                    TextColor="#6B7280"/>
+                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
 
                 <Label
                     Text="TaskNest Dashboard"
                     FontSize="32"
                     FontAttributes="Bold"
-                    TextColor="#111827"/>
+                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                 <Label
-                    Text="Stay on top of your tasks, priorities, and progress."
+                    Text="Stay on top of your tasks and progress."
                     FontSize="15"
-                    TextColor="#6B7280"/>
+                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
             </VerticalStackLayout>
 
             <Grid ColumnDefinitions="*,*,*"
@@ -36,25 +36,25 @@
                     Grid.Column="0"
                     Padding="18"
                     CornerRadius="18"
-                    BackgroundColor="#EEF4FF"
-                    BorderColor="#4F7CFF"
+                    BackgroundColor="{AppThemeBinding Light=#EEF4FF, Dark=#1E293B}"
+                    BorderColor="{AppThemeBinding Light=#4F7CFF, Dark=#60A5FA}"
                     HasShadow="False">
                     <VerticalStackLayout Spacing="6">
                         <Label Text="Today"
                                 FontSize="14"
                                 FontAttributes="Bold"
-                                TextColor="#2563EB"/>
+                        TextColor="{AppThemeBinding Light=#2563EB, Dark=#60A5FA}"/>
                         <Label Text="{Binding TodayTaskCount}"
                                 FontSize="24"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Label Text="Tasks"
                                 FontSize="16"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
-                        <Label Text="{Binding HighPrioritySummary}"
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                        <Label Text="{Binding OpenTaskSummary}"
                                 FontSize="14"
-                                TextColor="#6B7280"/>
+                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                     </VerticalStackLayout>
                 </Frame>
 
@@ -62,21 +62,21 @@
                     Grid.Column="1"
                     Padding="18"
                     CornerRadius="18"
-                    BackgroundColor="White"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
                     HasShadow="False"
-                    BorderColor="#E5E7EB">
+                    BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}">
                     <VerticalStackLayout Spacing="6">
                         <Label Text="Completed"
                                 FontSize="14"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Label Text="{Binding CompletedThisWeek}"
                                 FontSize="24"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Label Text="This week"
                                 FontSize="14"
-                                TextColor="#6B7280"/>
+                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                     </VerticalStackLayout>
                 </Frame>
 
@@ -84,18 +84,18 @@
                     Grid.Column="2"
                     Padding="18"
                     CornerRadius="18"
-                    BackgroundColor="White"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
                     HasShadow="False"
-                    BorderColor="#E5E7EB">
+                    BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}">
                     <VerticalStackLayout Spacing="6">
                         <Label Text="Categories"
                                 FontSize="14"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Label Text="{Binding CategoryCount}"
                                 FontSize="24"
                                 FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                         <Label Text="{Binding CategorySummary}"
                                 FontSize="14"
                                 TextColor="#2563EB"/>
@@ -106,15 +106,15 @@
             <Frame
                 Padding="20"
                 CornerRadius="18"
-                BackgroundColor="White"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
                 HasShadow="False"
-                BorderColor="#E5E7EB">
+                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}">
                 <VerticalStackLayout Spacing="16">
                     <Label
                         Text="Quick Actions"
                         FontSize="20"
                         FontAttributes="Bold"
-                        TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                     <HorizontalStackLayout Spacing="12">
                         <Button
@@ -129,8 +129,8 @@
                         <Button
                             Text="View Tasks"
                             Command="{Binding ViewTasksCommand}"
-                            BackgroundColor="#E5E7EB"
-                            TextColor="#111827"
+                            BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
                             CornerRadius="14"
                             HeightRequest="52"
                             Padding="18,0"/>
@@ -138,8 +138,8 @@
                         <Button
                             Text="Categories"
                             Command="{Binding ViewCategoriesCommand}"
-                            BackgroundColor="#E5E7EB"
-                            TextColor="#111827"
+                            BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
                             CornerRadius="14"
                             HeightRequest="52"
                             Padding="18,0"/>
@@ -150,15 +150,15 @@
             <Frame
                 Padding="20"
                 CornerRadius="18"
-                BackgroundColor="White"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
                 HasShadow="False"
-                BorderColor="#E5E7EB">
+                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}">
                 <VerticalStackLayout Spacing="16">
                     <Label
                         Text="Today's Focus"
                         FontSize="20"
                         FontAttributes="Bold"
-                        TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                     <CollectionView ItemsSource="{Binding FocusItems}"
                             SelectionMode="None">
@@ -169,8 +169,8 @@
                                     Margin="0,0,0,12"
                                     CornerRadius="16"
                                     HasShadow="False"
-                                    BackgroundColor="#FAFAFA"
-                                    BorderColor="#E5E7EB">
+                                    BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#111827}"
+                                    BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}">
                                     <Grid ColumnDefinitions="Auto,*,Auto"
                                             ColumnSpacing="14">
                                         <BoxView
@@ -186,11 +186,11 @@
                                                 Text="{Binding Title}"
                                                 FontSize="17"
                                                 FontAttributes="Bold"
-                                                TextColor="#111827"/>
+                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
                                             <Label
                                                 Text="{Binding Subtitle}"
                                                 FontSize="14"
-                                                TextColor="#6B7280"/>
+                                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                                         </VerticalStackLayout>
 
                                         <VerticalStackLayout Grid.Column="2"
@@ -205,7 +205,7 @@
                                             <Label
                                                 Text="{Binding MetaLabel}"
                                                 FontSize="14"
-                                                TextColor="#6B7280"
+                                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
                                                 HorizontalTextAlignment="End"/>
                                         </VerticalStackLayout>
                                     </Grid>

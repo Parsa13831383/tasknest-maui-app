@@ -1,5 +1,6 @@
 using TaskNest.Data;
 using TaskNest.Interfaces;
+using TaskNest.Models.Enums;
 
 namespace TaskNest.Repositories;
 
@@ -75,6 +76,7 @@ public class TaskRepository : ITaskRepository
         task.CreatedAtUtc = DateTime.UtcNow;
         task.UpdatedAtUtc = DateTime.UtcNow;
         task.IsDeleted = false;
+        task.SyncStatus = SyncStatus.PendingCreate;
 
         return await db.InsertAsync(task);
     }
@@ -84,6 +86,11 @@ public class TaskRepository : ITaskRepository
         var db = await _database.GetConnectionAsync();
 
         task.UpdatedAtUtc = DateTime.UtcNow;
+
+        if (task.SyncStatus != SyncStatus.PendingCreate)
+        {
+            task.SyncStatus = SyncStatus.PendingUpdate;
+        }
 
         return await db.UpdateAsync(task);
     }
@@ -100,6 +107,12 @@ public class TaskRepository : ITaskRepository
         {
             task.CategoryId = null;
             task.UpdatedAtUtc = DateTime.UtcNow;
+
+            if (task.SyncStatus != SyncStatus.PendingCreate)
+            {
+                task.SyncStatus = SyncStatus.PendingUpdate;
+            }
+
             await db.UpdateAsync(task);
         }
 
@@ -112,6 +125,7 @@ public class TaskRepository : ITaskRepository
 
         task.IsDeleted = true;
         task.UpdatedAtUtc = DateTime.UtcNow;
+        task.SyncStatus = SyncStatus.PendingDelete;
 
         return await db.UpdateAsync(task);
     }

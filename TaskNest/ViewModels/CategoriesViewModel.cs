@@ -9,6 +9,16 @@ namespace TaskNest.ViewModels;
 
 public class CategoriesViewModel : BaseViewModel
 {
+    private static readonly Color[] AccentPalette =
+    {
+        Color.FromArgb("#3B82F6"), // Electric blue
+        Color.FromArgb("#84CC16"), // Sage green
+        Color.FromArgb("#F59E0B"), // Deep amber
+        Color.FromArgb("#14B8A6"),
+        Color.FromArgb("#8B5CF6"),
+        Color.FromArgb("#EF4444")
+    };
+
     private readonly IUnitOfWork _unitOfWork;
 
     public ObservableCollection<CategoryItemModel> Categories { get; } = new();
@@ -88,6 +98,7 @@ public class CategoriesViewModel : BaseViewModel
     public ICommand EditCategoryCommand { get; }
     public ICommand DeleteCategoryCommand { get; }
     public ICommand ManageCategoriesCommand { get; }
+    public ICommand OpenCategoryCommand { get; }
 
     public CategoriesViewModel(IUnitOfWork unitOfWork)
     {
@@ -98,6 +109,7 @@ public class CategoriesViewModel : BaseViewModel
         EditCategoryCommand = new Command<CategoryItemModel>(async (category) => await EditCategoryAsync(category));
         DeleteCategoryCommand = new Command<CategoryItemModel>(async (category) => await DeleteCategoryAsync(category));
         ManageCategoriesCommand = new Command(async () => await LoadCategoriesAsync());
+        OpenCategoryCommand = new Command<CategoryItemModel>(async category => await OpenCategoryAsync(category));
     }
 
     public async Task LoadCategoriesAsync()
@@ -239,6 +251,17 @@ public class CategoriesViewModel : BaseViewModel
         await UpdateCategoryAsync(category);
     }
 
+    public async Task OpenCategoryAsync(CategoryItemModel? category)
+    {
+        if (category is null)
+        {
+            return;
+        }
+
+        var encodedCategory = Uri.EscapeDataString(category.Name ?? string.Empty);
+        await Shell.Current.GoToAsync($"//tasks?category={encodedCategory}");
+    }
+
     private async Task RefreshCategoriesAsync()
     {
         Categories.Clear();
@@ -251,13 +274,29 @@ public class CategoriesViewModel : BaseViewModel
             .GroupBy(t => t.CategoryId!.Value)
             .ToDictionary(g => g.Key, g => g.Count());
 
+        var completedTaskCountByCategoryId = taskItems
+            .Where(t => t.CategoryId.HasValue && t.IsCompleted)
+            .GroupBy(t => t.CategoryId!.Value)
+            .ToDictionary(g => g.Key, g => g.Count());
+
         foreach (var category in categories)
         {
             var taskCount = taskCountByCategoryId.TryGetValue(category.Id, out var count) ? count : 0;
+            var completedCount = completedTaskCountByCategoryId.TryGetValue(category.Id, out var completed) ? completed : 0;
+
             category.Count = taskCount;
             category.TaskCountText = $"{category.Count} tasks";
-            category.BadgeBackgroundColor = Colors.LightGray;
-            category.BadgeTextColor = Colors.Black;
+            category.CompletedCount = completedCount;
+            category.ProgressValue = taskCount == 0 ? 0 : (double)completedCount / taskCount;
+            category.ProgressText = $"{completedCount}/{taskCount} tasks completed";
+            category.IsEmptyState = taskCount == 0;
+            category.AccentColor = GetAccentColor(category.Name);
+            category.IconGlyph = GetCategoryGlyph(category.Name);
+            category.ShowQuickActions = false;
+            category.BadgeBackgroundColor = category.IsEmptyState
+                ? Colors.LightGray
+                : Color.FromRgba(category.AccentColor.Red, category.AccentColor.Green, category.AccentColor.Blue, 0.14f);
+            category.BadgeTextColor = category.IsEmptyState ? Colors.Black : category.AccentColor;
 
             Categories.Add(category);
         }
@@ -268,5 +307,34 @@ public class CategoriesViewModel : BaseViewModel
             .OrderByDescending(c => c.Count)
             .Select(c => c.Name)
             .FirstOrDefault() ?? "N/A";
+    }
+
+    private static Color GetAccentColor(string? categoryName)
+    {
+        if (string.IsNullOrWhiteSpace(categoryName))
+        {
+            return AccentPalette[0];
+        }
+
+        var hash = Math.Abs(categoryName.GetHashCode());
+        return AccentPalette[hash % AccentPalette.Length];
+    }
+
+    private static string GetCategoryGlyph(string? categoryName)
+    {
+        if (string.IsNullOrWhiteSpace(categoryName))
+        {
+            return "◉";
+        }
+
+        var name = categoryName.Trim().ToLowerInvariant();
+
+        if (name.Contains("work")) return "◈";
+        if (name.Contains("study") || name.Contains("school")) return "◬";
+        if (name.Contains("personal") || name.Contains("home")) return "◎";
+        if (name.Contains("health") || name.Contains("gym")) return "◍";
+        if (name.Contains("urgent")) return "◆";
+
+        return "◉";
     }
 }

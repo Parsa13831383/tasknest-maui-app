@@ -15,13 +15,17 @@ public class TaskItem
     [MaxLength(1000)]
     public string Description { get; set; } = "";
 
-    public DateTime? DueDate { get; set; }
+    [MaxLength(2000)]
+    public string Reflection { get; set; } = "";
 
-    public string Priority { get; set; } = "Low";
+    public DateTime? DueDate { get; set; }
 
     public bool IsCompleted { get; set; }
 
     public int? CategoryId { get; set; }
+
+    [MaxLength(32)]
+    public string? TaskColorHex { get; set; }
 
     // Sync-ready fields (HIGH MARKS)
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
@@ -31,11 +35,16 @@ public class TaskItem
 
     //DO NOT STORE IN DB
     [Ignore]
-    public Color PriorityColor => Priority switch
+    public Color TaskColor
     {
-        "High" => Colors.Red,
-        "Medium" => Colors.Orange,
-        "Low" => Colors.Green,
-        _ => Colors.Gray
-    };
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(TaskColorHex) && Color.TryParse(TaskColorHex.Trim(), out var customColor))
+            {
+                return customColor;
+            }
+
+            return Colors.Gray;
+        }
+    }
 }

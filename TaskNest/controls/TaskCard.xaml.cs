@@ -16,11 +16,8 @@ public partial class TaskCard : ContentView
     public static readonly BindableProperty SubtitleProperty =
         BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(TaskCard), string.Empty);
 
-    public static readonly BindableProperty PriorityTextProperty =
-        BindableProperty.Create(nameof(PriorityText), typeof(string), typeof(TaskCard), string.Empty);
-
-    public static readonly BindableProperty PriorityColorProperty =
-        BindableProperty.Create(nameof(PriorityColor), typeof(Color), typeof(TaskCard), Colors.Red);
+    public static readonly BindableProperty TaskColorProperty =
+        BindableProperty.Create(nameof(TaskColor), typeof(Color), typeof(TaskCard), Colors.Gray);
 
     public static readonly BindableProperty DueDateProperty =
         BindableProperty.Create(nameof(DueDate), typeof(string), typeof(TaskCard), string.Empty);
@@ -55,16 +52,10 @@ public partial class TaskCard : ContentView
         set => SetValue(SubtitleProperty, value);
     }
 
-    public string PriorityText
+    public Color TaskColor
     {
-        get => (string)GetValue(PriorityTextProperty);
-        set => SetValue(PriorityTextProperty, value);
-    }
-
-    public Color PriorityColor
-    {
-        get => (Color)GetValue(PriorityColorProperty);
-        set => SetValue(PriorityColorProperty, value);
+        get => (Color)GetValue(TaskColorProperty);
+        set => SetValue(TaskColorProperty, value);
     }
 
     public string DueDate

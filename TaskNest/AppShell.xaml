@@ -7,37 +7,47 @@
     FlyoutBehavior="Flyout"
     Title="TaskNest">
 
-    <FlyoutItem Title="Dashboard"
+        <FlyoutItem x:Name="DashboardFlyout"
+            Title="Dashboard"
             Route="dashboard">
         <ShellContent
+            x:Name="DashboardContent"
             Title="Dashboard"
             ContentTemplate="{DataTemplate views:DashboardPage}"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Tasks"
+        <FlyoutItem x:Name="TasksFlyout"
+            Title="Tasks"
             Route="tasks">
         <ShellContent
+            x:Name="TasksContent"
             Title="Tasks"
             ContentTemplate="{DataTemplate views:TasksPage}"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Categories"
+        <FlyoutItem x:Name="CategoriesFlyout"
+            Title="Categories"
             Route="categories">
         <ShellContent
+            x:Name="CategoriesContent"
             Title="Categories"
             ContentTemplate="{DataTemplate views:CategoriesPage}"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Settings"
+        <FlyoutItem x:Name="SettingsFlyout"
+            Title="Settings"
             Route="settings">
         <ShellContent
+            x:Name="SettingsContent"
             Title="Settings"
             ContentTemplate="{DataTemplate views:SettingsPage}"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Profile"
+        <FlyoutItem x:Name="ProfileFlyout"
+            Title="Profile"
             Route="profile">
         <ShellContent
+            x:Name="ProfileContent"
             Title="Profile"
             ContentTemplate="{DataTemplate views:ProfilePage}"/>
     </FlyoutItem>

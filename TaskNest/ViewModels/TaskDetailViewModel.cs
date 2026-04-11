@@ -10,9 +10,9 @@ public class TaskDetailViewModel : BaseViewModel
     private int _taskId;
     private string _taskTitle = string.Empty;
     private string _description = string.Empty;
+    private string _reflection = string.Empty;
     private string _dueDate = string.Empty;
     private string _category = string.Empty;
-    private string _priorityText = string.Empty;
     private bool _isCompleted;
 
     public int TaskId
@@ -33,6 +33,12 @@ public class TaskDetailViewModel : BaseViewModel
         set => SetProperty(ref _description, value);
     }
 
+    public string Reflection
+    {
+        get => _reflection;
+        set => SetProperty(ref _reflection, value);
+    }
+
     public string DueDate
     {
         get => _dueDate;
@@ -45,12 +51,6 @@ public class TaskDetailViewModel : BaseViewModel
         set => SetProperty(ref _category, value);
     }
 
-    public string PriorityText
-    {
-        get => _priorityText;
-        set => SetProperty(ref _priorityText, value);
-    }
-
     public bool IsCompleted
     {
         get => _isCompleted;
@@ -59,7 +59,6 @@ public class TaskDetailViewModel : BaseViewModel
 
     public ICommand EditCommand { get; }
     public ICommand DeleteCommand { get; }
-    public ICommand ToggleCompleteCommand { get; }
     public ICommand BackCommand { get; }
 
     public TaskDetailViewModel(IUnitOfWork unitOfWork)
@@ -71,7 +70,6 @@ public class TaskDetailViewModel : BaseViewModel
 
         EditCommand = new Command(async () => await GoToEdit());
         DeleteCommand = new Command(async () => await DeleteAsync());
-        ToggleCompleteCommand = new Command(async () => await ToggleCompleteAsync());
         BackCommand = new Command(async () => await GoBack());
     }
 
@@ -93,7 +91,7 @@ public class TaskDetailViewModel : BaseViewModel
             {
                 TaskTitle = task.Title;
                 Description = task.Description;
-                PriorityText = task.Priority;
+                Reflection = string.IsNullOrWhiteSpace(task.Reflection) ? "No reflection yet." : task.Reflection;
                 IsCompleted = task.IsCompleted;
                 DueDate = task.DueDate?.ToString("yyyy-MM-dd") ?? string.Empty;
                 
@@ -113,7 +111,7 @@ public class TaskDetailViewModel : BaseViewModel
             {
                 TaskTitle = string.Empty;
                 Description = string.Empty;
-                PriorityText = string.Empty;
+                Reflection = "No reflection yet.";
                 IsCompleted = false;
                 DueDate = string.Empty;
                 Category = string.Empty;
@@ -165,21 +163,4 @@ public class TaskDetailViewModel : BaseViewModel
         await GoBack();
     }
 
-    private async Task ToggleCompleteAsync()
-    {
-        if (TaskId <= 0)
-        {
-            return;
-        }
-
-        var task = await _unitOfWork.Tasks.GetByIdAsync(TaskId);
-        if (task is null)
-        {
-            return;
-        }
-
-        task.IsCompleted = !task.IsCompleted;
-        await _unitOfWork.Tasks.UpdateAsync(task);
-        await LoadAsync(TaskId);
-    }
 }
