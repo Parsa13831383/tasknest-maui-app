@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using TaskNest.Interfaces;
 using TaskNest.Models;
+using TaskListItem = TaskNest.ViewModels.TaskListItem;
 
 namespace TaskNest.ViewModels;
 

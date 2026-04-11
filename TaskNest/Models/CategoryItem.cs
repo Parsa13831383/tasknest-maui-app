@@ -1,5 +1,6 @@
 using SQLite;
 using Microsoft.Maui.Graphics;
+using TaskNest.Models.Enums;
 
 namespace TaskNest.Models;
 
@@ -17,6 +18,7 @@ public class CategoryItem
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAtUtc { get; set; } = DateTime.UtcNow;
     public bool IsDeleted { get; set; } = false;
+    public SyncStatus SyncStatus { get; set; } = SyncStatus.PendingCreate;
 
     //UI ONLY (ignored in DB)
     [Ignore]
