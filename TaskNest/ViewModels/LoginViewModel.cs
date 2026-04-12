@@ -6,7 +6,7 @@ namespace TaskNest.ViewModels;
 
 public partial class LoginViewModel : BaseViewModel
 {
-    private readonly ISupabaseAuthService _authService;
+    private readonly ISupabaseAuthService authService;
 
     [ObservableProperty]
     private string email = string.Empty;
@@ -14,9 +14,13 @@ public partial class LoginViewModel : BaseViewModel
     [ObservableProperty]
     private string password = string.Empty;
 
+    [ObservableProperty]
+    private bool rememberMe = true;
+
     public LoginViewModel(ISupabaseAuthService authService)
     {
-        _authService = authService;
+        this.authService = authService;
+        Title = "Login";
     }
 
     [RelayCommand]
@@ -28,7 +32,9 @@ public partial class LoginViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            await _authService.SignInAsync(Email.Trim(), Password);
+
+            await authService.SignInAsync(Email.Trim(), Password, RememberMe);
+
             await Shell.Current.GoToAsync("//dashboard");
         }
         catch (Exception ex)
@@ -40,4 +46,7 @@ public partial class LoginViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    [RelayCommand]
+    private Task NavigateToRegisterAsync() => NavigateAsync("register");
 }

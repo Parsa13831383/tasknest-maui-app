@@ -1,34 +1,48 @@
-using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
+using TaskNest.ViewModels;
 
 namespace TaskNest.Views;
 
-public partial class TaskEditPage : ContentPage
+public partial class TaskEditPage : ContentPage, IQueryAttributable
 {
+    private int? _taskId;
+
     public TaskEditPage()
     {
         InitializeComponent();
 
-        CategoryPicker.ItemsSource = new List<string>
-        {
-            "Work",
-            "Personal",
-            "Study",
-            "Health",
-            "Finance",
-            "Design"
-        };
+        BindingContext = Application.Current?.Handler?.MauiContext?.Services.GetService<TaskEditViewModel>()
+            ?? throw new InvalidOperationException("TaskEditViewModel service is not registered.");
+    }
 
-        PriorityPicker.ItemsSource = new List<string>
-        {
-            "Low",
-            "Medium",
-            "High",
-            "Urgent"
-        };
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        _taskId = null;
 
-        CategoryPicker.SelectedIndex = 0;
-        PriorityPicker.SelectedIndex = 2;
-        DueDatePicker.Date = DateTime.Today.AddDays(2);
-        CompletedSwitch.IsToggled = false;
+        if (!query.TryGetValue("id", out var rawId) || rawId is null)
+        {
+            return;
+        }
+
+        if (rawId is int intId)
+        {
+            _taskId = intId;
+            return;
+        }
+
+        if (int.TryParse(rawId.ToString(), out var parsedId))
+        {
+            _taskId = parsedId;
+        }
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is TaskEditViewModel viewModel)
+        {
+            await viewModel.LoadAsync(_taskId);
+        }
     }
 }

@@ -7,6 +7,9 @@ namespace TaskNest.Services.Supabase;
 
 public class SupabaseAuthService : ISupabaseAuthService
 {
+    private const string AccessTokenKey = "auth.access_token";
+    private const string UserIdKey = "auth.user_id";
+
     private readonly HttpClient _httpClient;
 
     private string? _accessToken;
@@ -24,6 +27,7 @@ public class SupabaseAuthService : ISupabaseAuthService
         };
 
         _httpClient.DefaultRequestHeaders.Add("apikey", SupabaseConfig.SupabaseAnonKey);
+        TryRestoreSession();
     }
 
     public async Task<AuthResponse?> SignUpAsync(string email, string password)
@@ -42,7 +46,7 @@ public class SupabaseAuthService : ISupabaseAuthService
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Sign-up failed: {responseBody}");
+            throw new Exception(GetSupabaseErrorMessage(responseBody, "Sign-up failed."));
         }
 
         var authResponse = JsonSerializer.Deserialize<AuthResponse>(
@@ -54,7 +58,7 @@ public class SupabaseAuthService : ISupabaseAuthService
         return authResponse;
     }
 
-    public async Task<AuthResponse?> SignInAsync(string email, string password)
+    public async Task<AuthResponse?> SignInAsync(string email, string password, bool rememberSession = true)
     {
         var payload = new SignInRequest
         {
@@ -70,28 +74,101 @@ public class SupabaseAuthService : ISupabaseAuthService
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Sign-in failed: {responseBody}");
+            throw new Exception(GetSupabaseErrorMessage(responseBody, "Sign-in failed."));
         }
 
         var authResponse = JsonSerializer.Deserialize<AuthResponse>(
             responseBody,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        SetSession(authResponse);
+        SetSession(authResponse, rememberSession);
 
         return authResponse;
     }
 
     public Task SignOutAsync()
     {
-        _accessToken = null;
-        _userId = null;
+        ClearSession();
         return Task.CompletedTask;
     }
 
-    private void SetSession(AuthResponse? authResponse)
+    public bool TryRestoreSession()
+    {
+        var token = Preferences.Default.Get(AccessTokenKey, string.Empty);
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            ClearSession();
+            return false;
+        }
+
+        _accessToken = token;
+        _userId = Preferences.Default.Get(UserIdKey, string.Empty);
+        return true;
+    }
+
+    private void SetSession(AuthResponse? authResponse, bool persistSession = true)
     {
         _accessToken = authResponse?.AccessToken;
         _userId = authResponse?.User?.Id;
+
+        if (!persistSession)
+        {
+            Preferences.Default.Remove(AccessTokenKey);
+            Preferences.Default.Remove(UserIdKey);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(_accessToken))
+        {
+            Preferences.Default.Remove(AccessTokenKey);
+            Preferences.Default.Remove(UserIdKey);
+            return;
+        }
+
+        Preferences.Default.Set(AccessTokenKey, _accessToken);
+        Preferences.Default.Set(UserIdKey, _userId ?? string.Empty);
+    }
+
+    private void ClearSession()
+    {
+        _accessToken = null;
+        _userId = null;
+        Preferences.Default.Remove(AccessTokenKey);
+        Preferences.Default.Remove(UserIdKey);
+    }
+
+    private static string GetSupabaseErrorMessage(string responseBody, string fallbackMessage)
+    {
+        if (string.IsNullOrWhiteSpace(responseBody))
+        {
+            return fallbackMessage;
+        }
+
+        try
+        {
+            using var document = JsonDocument.Parse(responseBody);
+            var root = document.RootElement;
+
+            if (root.TryGetProperty("msg", out var msg) && msg.ValueKind == JsonValueKind.String)
+            {
+                return msg.GetString() ?? fallbackMessage;
+            }
+
+            if (root.TryGetProperty("error_description", out var desc) && desc.ValueKind == JsonValueKind.String)
+            {
+                return desc.GetString() ?? fallbackMessage;
+            }
+
+            if (root.TryGetProperty("message", out var message) && message.ValueKind == JsonValueKind.String)
+            {
+                return message.GetString() ?? fallbackMessage;
+            }
+        }
+        catch (JsonException)
+        {
+            // Ignore parse errors and fall back to a generic message.
+        }
+
+        return fallbackMessage;
     }
 }

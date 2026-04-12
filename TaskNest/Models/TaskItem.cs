@@ -1,21 +1,50 @@
+using SQLite;
 using Microsoft.Maui.Graphics;
+using TaskNest.Models.Enums;
 
 namespace TaskNest.Models;
 
 public class TaskItem
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
+
+    [MaxLength(150)]
     public string Title { get; set; } = "";
+
+    [MaxLength(1000)]
     public string Description { get; set; } = "";
+
+    [MaxLength(2000)]
+    public string Reflection { get; set; } = "";
+
     public DateTime? DueDate { get; set; }
-    public string Priority { get; set; } = "Low";
+
     public bool IsCompleted { get; set; }
 
-    public Color PriorityColor => Priority switch
+    public int? CategoryId { get; set; }
+
+    [MaxLength(32)]
+    public string? TaskColorHex { get; set; }
+
+    // Sync-ready fields (HIGH MARKS)
+    public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAtUtc { get; set; } = DateTime.UtcNow;
+    public bool IsDeleted { get; set; } = false;
+    public SyncStatus SyncStatus { get; set; } = SyncStatus.PendingCreate;
+
+    //DO NOT STORE IN DB
+    [Ignore]
+    public Color TaskColor
     {
-        "High" => Colors.Red,
-        "Medium" => Colors.Orange,
-        "Low" => Colors.Green,
-        _ => Colors.Gray
-    };
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(TaskColorHex) && Color.TryParse(TaskColorHex.Trim(), out var customColor))
+            {
+                return customColor;
+            }
+
+            return Colors.Gray;
+        }
+    }
 }

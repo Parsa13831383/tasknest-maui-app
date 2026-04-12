@@ -14,7 +14,6 @@
                 VerticalOptions="Center"
                 Spacing="22">
 
-                <!-- Header -->
                 <VerticalStackLayout Spacing="6">
                     <Label
                         Text="Welcome back"
@@ -33,7 +32,6 @@
                         TextColor="#6B7280"/>
                 </VerticalStackLayout>
 
-                <!-- Login Card -->
                 <Frame
                     Padding="22"
                     CornerRadius="18"
@@ -57,6 +55,7 @@
                             <Entry
                                 Placeholder="Enter your email"
                                 Keyboard="Email"
+                                Text="{Binding Email}"
                                 TextColor="#111827"
                                 BackgroundColor="#F9FAFB"/>
                         </VerticalStackLayout>
@@ -70,6 +69,7 @@
                             <Entry
                                 Placeholder="Enter your password"
                                 IsPassword="True"
+                                Text="{Binding Password}"
                                 TextColor="#111827"
                                 BackgroundColor="#F9FAFB"/>
                         </VerticalStackLayout>
@@ -79,7 +79,7 @@
                             <HorizontalStackLayout Spacing="10"
                                     VerticalOptions="Center">
                                 <Switch
-                                    IsToggled="True"
+                                    IsToggled="{Binding RememberMe}"
                                     OnColor="#2563EB"/>
                                 <Label
                                     Text="Remember me"
@@ -96,6 +96,7 @@
 
                         <Button
                             Text="Login"
+                            Command="{Binding LoginCommand}"
                             BackgroundColor="#2563EB"
                             TextColor="White"
                             CornerRadius="12"
@@ -103,16 +104,15 @@
 
                         <Button
                             Text="Create an account"
+                            Command="{Binding NavigateToRegisterCommand}"
                             BackgroundColor="#E5E7EB"
                             TextColor="#111827"
                             CornerRadius="12"
-                            HeightRequest="50"
-                            Clicked="OnRegisterClicked"/>
+                            HeightRequest="50"/>
 
                     </VerticalStackLayout>
                 </Frame>
 
-                <!-- Footer Note -->
                 <Frame
                     Padding="16"
                     CornerRadius="16"

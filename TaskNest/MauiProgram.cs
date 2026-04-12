@@ -2,6 +2,9 @@
 using TaskNest.Interfaces;
 using TaskNest.Services;
 using TaskNest.ViewModels;
+using TaskNest.Data;
+using TaskNest.Repositories;
+using TaskNest.Services.Supabase;
 
 namespace TaskNest;
 
@@ -10,6 +13,7 @@ public static class MauiProgram
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
+
 		builder
 			.UseMauiApp<App>()
 			.ConfigureFonts(fonts =>
@@ -18,13 +22,25 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		// 🔥 EXISTING
+		builder.Services.AddSingleton<AppShell>();
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
+		builder.Services.AddSingleton<ISupabaseAuthService, SupabaseAuthService>();
 		builder.Services.AddTransient<BaseViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
+		builder.Services.AddTransient<TaskListViewModel>();
+		builder.Services.AddTransient<TaskDetailViewModel>();
+		builder.Services.AddTransient<TaskEditViewModel>();
+		builder.Services.AddTransient<CategoriesViewModel>();
+
+		// Database service used during app startup and by data features.
+		builder.Services.AddSingleton<AppDatabase>();
+		builder.Services.AddSingleton<ITaskRepository, TaskRepository>();
+		builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
+		builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
-
 #endif
 
 		return builder.Build();

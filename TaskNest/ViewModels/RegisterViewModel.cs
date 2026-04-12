@@ -5,49 +5,81 @@ namespace TaskNest.ViewModels;
 
 public class RegisterViewModel : BaseViewModel
 {
-    private readonly ISupabaseAuthService _authService;
+    private readonly ISupabaseAuthService authService;
 
-    private string _email = string.Empty;
-    public string Email
+    private string name = string.Empty;
+    public string Name
     {
-        get => _email;
-        set
-        {
-            _email = value;
-            OnPropertyChanged();
-        }
+        get => name;
+        set => SetProperty(ref name, value);
     }
 
-    private string _password = string.Empty;
+    private string email = string.Empty;
+    public string Email
+    {
+        get => email;
+        set => SetProperty(ref email, value);
+    }
+
+    private string password = string.Empty;
     public string Password
     {
-        get => _password;
-        set
-        {
-            _password = value;
-            OnPropertyChanged();
-        }
+        get => password;
+        set => SetProperty(ref password, value);
+    }
+
+    private string confirmPassword = string.Empty;
+    public string ConfirmPassword
+    {
+        get => confirmPassword;
+        set => SetProperty(ref confirmPassword, value);
     }
 
     public ICommand RegisterCommand { get; }
+    public ICommand NavigateToLoginCommand { get; }
 
     public RegisterViewModel(ISupabaseAuthService authService)
     {
-        _authService = authService;
+        this.authService = authService;
+        Title = "Register";
         RegisterCommand = new Command(async () => await RegisterAsync());
+        NavigateToLoginCommand = new Command(async () => await NavigateToLoginAsync());
     }
 
     private async Task RegisterAsync()
     {
-        if (IsBusy) return;
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password)) return;
+        if (IsBusy)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Email and password are required.", "OK");
+            return;
+        }
+
+        if (!string.Equals(Password, ConfirmPassword, StringComparison.Ordinal))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Passwords do not match.", "OK");
+            return;
+        }
 
         try
         {
             IsBusy = true;
-            await _authService.SignUpAsync(Email.Trim(), Password);
-            await Shell.Current.DisplayAlert("Success", "Account created successfully.", "OK");
-            await Shell.Current.GoToAsync("//login");
+
+            var result = await authService.SignUpAsync(Email.Trim(), Password);
+            var requiresEmailConfirmation = string.IsNullOrWhiteSpace(result?.AccessToken);
+
+            await Shell.Current.DisplayAlert(
+                "Success",
+                requiresEmailConfirmation
+                    ? "Account created. Please confirm your email, then log in."
+                    : "Account created successfully.",
+                "OK");
+
+            await NavigateToLoginAsync();
         }
         catch (Exception ex)
         {
@@ -58,4 +90,6 @@ public class RegisterViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    private Task NavigateToLoginAsync() => NavigateAsync("login");
 }

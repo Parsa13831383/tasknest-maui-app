@@ -1,33 +1,80 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TaskNest.Interfaces;
 
 namespace TaskNest.ViewModels;
 
 public partial class DashboardViewModel : BaseViewModel
 {
-    [ObservableProperty]
-    private int todayCount = 5;
+    private readonly IUnitOfWork _unitOfWork;
 
     [ObservableProperty]
-    private int completedCount = 12;
+    private int todayTaskCount = 5;
+
+    [ObservableProperty]
+    private int completedThisWeek = 12;
 
     [ObservableProperty]
     private int categoryCount = 4;
 
     [ObservableProperty]
-    private ObservableCollection<DashboardFocusItem> focusItems = new();
+    private string openTaskSummary = "2 open tasks";
 
-    public DashboardViewModel()
+    [ObservableProperty]
+    private string categorySummary = "Work, Study, Health...";
+
+    [ObservableProperty]
+    private ObservableCollection<FocusItem> focusItems = new();
+
+    public DashboardViewModel(IUnitOfWork unitOfWork)
     {
+        _unitOfWork = unitOfWork;
         Title = "Dashboard";
 
-        FocusItems = new ObservableCollection<DashboardFocusItem>
+        FocusItems = new ObservableCollection<FocusItem>
         {
-            new("Finish mobile app UI implementation", "High priority task for the dashboard release", "Today", "UI / High", Colors.Blue),
+            new("Finish mobile app UI implementation", "Prepare polished views for the dashboard release", "Today", "UI", Colors.Blue),
             new("Review task navigation and custom controls", "Check interaction polish across the main flows", "Afternoon", "Review / Med", Colors.Green),
             new("Prepare polished screens for demo", "Tighten spacing, contrast, and layout consistency", "Later", "Demo / Low", Colors.Orange)
         };
+    }
+
+    public async Task LoadAsync()
+    {
+        if (IsBusy)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+
+            var tasks = await _unitOfWork.Tasks.GetAllAsync();
+            var categories = await _unitOfWork.Categories.GetAllAsync();
+
+            TodayTaskCount = tasks.Count(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today && !t.IsCompleted);
+            CompletedThisWeek = tasks.Count(t => t.IsCompleted && t.UpdatedAtUtc >= DateTime.UtcNow.AddDays(-7));
+            CategoryCount = categories.Count;
+
+            var openTasks = tasks.Count(t => !t.IsCompleted);
+            OpenTaskSummary = $"{openTasks} open tasks";
+
+            var topCategories = categories
+                .OrderByDescending(c => tasks.Count(t => t.CategoryId == c.Id))
+                .Take(3)
+                .Select(c => c.Name)
+                .ToList();
+
+            CategorySummary = topCategories.Count > 0
+                ? string.Join(", ", topCategories)
+                : "No categories yet";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
@@ -40,9 +87,9 @@ public partial class DashboardViewModel : BaseViewModel
     private Task ViewCategoriesAsync() => NavigateAsync("categories");
 }
 
-public sealed record DashboardFocusItem(
+public sealed record FocusItem(
     string Title,
     string Subtitle,
-    string DueLabel,
-    string Tag,
+    string TimeLabel,
+    string MetaLabel,
     Color AccentColor);

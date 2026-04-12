@@ -14,26 +14,21 @@
                 VerticalOptions="Center"
                 Spacing="22">
 
-                <!-- Header -->
+                <!-- HEADER -->
                 <VerticalStackLayout Spacing="6">
                     <Label
-                        Text="Create your account"
-                        FontSize="16"
-                        TextColor="#6B7280"/>
-
-                    <Label
-                        Text="Join TaskNest"
+                        Text="Create account"
                         FontSize="32"
                         FontAttributes="Bold"
                         TextColor="#111827"/>
 
                     <Label
-                        Text="Set up your account to manage tasks, categories, and productivity goals."
+                        Text="Join TaskNest and manage your productivity."
                         FontSize="15"
                         TextColor="#6B7280"/>
                 </VerticalStackLayout>
 
-                <!-- Register Card -->
+                <!-- FORM CARD -->
                 <Frame
                     Padding="22"
                     CornerRadius="18"
@@ -43,90 +38,68 @@
                     <VerticalStackLayout Spacing="18">
 
                         <Label
-                            Text="Account Registration"
+                            Text="Register"
                             FontSize="20"
                             FontAttributes="Bold"
                             TextColor="#111827"/>
 
-                        <VerticalStackLayout Spacing="8">
-                            <Label
-                                Text="Full Name"
-                                FontSize="15"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        <!-- NAME -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Full Name"
+                                    FontAttributes="Bold"/>
                             <Entry
-                                Placeholder="Enter your full name"
-                                TextColor="#111827"
-                                BackgroundColor="#F9FAFB"/>
+                                Placeholder="Enter your name"
+                                Text="{Binding Name}"/>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="8">
-                            <Label
-                                Text="Email Address"
-                                FontSize="15"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        <!-- EMAIL -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Email"
+                                    FontAttributes="Bold"/>
                             <Entry
                                 Placeholder="Enter your email"
                                 Keyboard="Email"
-                                TextColor="#111827"
-                                BackgroundColor="#F9FAFB"/>
+                                Text="{Binding Email}"/>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="8">
-                            <Label
-                                Text="Password"
-                                FontSize="15"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        <!-- PASSWORD -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Password"
+                                    FontAttributes="Bold"/>
                             <Entry
-                                Placeholder="Create a password"
+                                Placeholder="Create password"
                                 IsPassword="True"
-                                TextColor="#111827"
-                                BackgroundColor="#F9FAFB"/>
+                                Text="{Binding Password}"/>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="8">
-                            <Label
-                                Text="Confirm Password"
-                                FontSize="15"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
+                        <!-- CONFIRM -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Confirm Password"
+                                    FontAttributes="Bold"/>
                             <Entry
-                                Placeholder="Re-enter your password"
+                                Placeholder="Confirm password"
                                 IsPassword="True"
-                                TextColor="#111827"
-                                BackgroundColor="#F9FAFB"/>
+                                Text="{Binding ConfirmPassword}"/>
                         </VerticalStackLayout>
 
+                        <!-- BUTTONS -->
                         <Button
                             Text="Create Account"
+                            Command="{Binding RegisterCommand}"
                             BackgroundColor="#2563EB"
                             TextColor="White"
                             CornerRadius="12"
                             HeightRequest="50"/>
 
                         <Button
-                            Text="Back to Login"
+                            Text="Already have an account? Login"
+                            Command="{Binding NavigateToLoginCommand}"
                             BackgroundColor="#E5E7EB"
                             TextColor="#111827"
                             CornerRadius="12"
-                            HeightRequest="50"
-                            Clicked="OnLoginClicked"/>
+                            HeightRequest="50"/>
 
                     </VerticalStackLayout>
-                </Frame>
-
-                <!-- Footer Note -->
-                <Frame
-                    Padding="16"
-                    CornerRadius="16"
-                    BackgroundColor="#F0FDF4"
-                    HasShadow="False">
-                    <Label
-                        Text="Register screen prepared for TaskNest user onboarding flow."
-                        FontSize="14"
-                        TextColor="#166534"/>
                 </Frame>
 
             </VerticalStackLayout>
