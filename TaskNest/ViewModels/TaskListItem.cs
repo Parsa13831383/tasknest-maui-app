@@ -4,7 +4,7 @@ namespace TaskNest.ViewModels;
 
 public class TaskListItem
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public string Title { get; set; } = string.Empty;
 

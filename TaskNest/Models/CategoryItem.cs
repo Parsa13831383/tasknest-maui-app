@@ -8,8 +8,8 @@ namespace TaskNest.Models;
 
 public class CategoryItem : INotifyPropertyChanged
 {
-    [PrimaryKey, AutoIncrement]
-    public int Id { get; set; }
+    [PrimaryKey]
+    public string Id { get; set; } = string.Empty;
 
     [MaxLength(100), Unique]
     public string Name { get; set; } = string.Empty;

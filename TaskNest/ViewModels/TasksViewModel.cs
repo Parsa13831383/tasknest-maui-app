@@ -85,7 +85,7 @@ public class TaskListViewModel : BaseViewModel
             foreach (TaskItem dbTask in dbTasks)
             {
                 var categoryText = "Uncategorized";
-                if (dbTask.CategoryId.HasValue && categoryNamesById.TryGetValue(dbTask.CategoryId.Value, out var categoryName))
+                if (!string.IsNullOrWhiteSpace(dbTask.CategoryId) && categoryNamesById.TryGetValue(dbTask.CategoryId, out var categoryName))
                 {
                     categoryText = categoryName;
                 }
@@ -152,10 +152,7 @@ public class TaskListViewModel : BaseViewModel
 
             if (existing != null)
             {
-                // 2. Perform Soft Delete (Fix 1)
                 var rows = await _unitOfWork.Tasks.DeleteAsync(existing);
-
-                // 3. Debug confirmation (Fix 2)
                 System.Diagnostics.Debug.WriteLine($"Deleted rows: {rows}");
 
                 if (rows > 0)
@@ -163,15 +160,20 @@ public class TaskListViewModel : BaseViewModel
                     _allTasks.RemoveAll(t => t.Id == task.Id);
                     PopulateCategoryFilters();
                     ApplyFilters();
-
-                    // 5. Final safety refresh (Fix 3)
                     await LoadTasksAsync();
+                    return;
                 }
+
+                await Shell.Current.DisplayAlert(
+                    "Delete Error",
+                    "Task delete request did not affect any rows. Check Supabase RLS update policy for tasks.",
+                    "OK");
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error during delete: {ex.Message}");
+            await Shell.Current.DisplayAlert("Delete Error", ex.Message, "OK");
         }
         finally
         {

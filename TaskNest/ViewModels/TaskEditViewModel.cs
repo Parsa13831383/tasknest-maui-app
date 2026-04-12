@@ -9,9 +9,9 @@ namespace TaskNest.ViewModels;
 public class TaskEditViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly Dictionary<string, int> _categoryIdByName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _categoryIdByName = new(StringComparer.OrdinalIgnoreCase);
 
-    private int? _editingTaskId;
+    private string? _editingTaskId;
     private string _taskTitle = string.Empty;
     private string _description = string.Empty;
     private string _reflection = string.Empty;
@@ -101,7 +101,7 @@ public class TaskEditViewModel : BaseViewModel
         SelectTaskColorCommand = new Command<TaskColorOption>(SelectTaskColor);
     }
 
-    public async Task LoadAsync(int? taskId = null)
+    public async Task LoadAsync(string? taskId = null)
     {
         if (IsBusy) return;
 
@@ -117,9 +117,9 @@ public class TaskEditViewModel : BaseViewModel
                 _categoryIdByName[category.Name] = category.Id;
             }
 
-            if (taskId.HasValue && taskId.Value > 0)
+            if (!string.IsNullOrWhiteSpace(taskId))
             {
-                var task = await _unitOfWork.Tasks.GetByIdAsync(taskId.Value);
+                var task = await _unitOfWork.Tasks.GetByIdAsync(taskId);
                 if (task is not null)
                 {
                     _editingTaskId = task.Id;
@@ -135,9 +135,9 @@ public class TaskEditViewModel : BaseViewModel
                     DueDate = task.DueDate ?? DateTime.Today;
                     IsCompleted = task.IsCompleted;
 
-                    if (task.CategoryId.HasValue)
+                    if (!string.IsNullOrWhiteSpace(task.CategoryId))
                     {
-                        var cat = categoryItems.FirstOrDefault(c => c.Id == task.CategoryId.Value);
+                        var cat = categoryItems.FirstOrDefault(c => c.Id == task.CategoryId);
                         SelectedCategory = cat?.Name ?? string.Empty;
                     }
 
@@ -174,41 +174,48 @@ public class TaskEditViewModel : BaseViewModel
             return;
         }
 
-        var categoryId = await ResolveCategoryIdAsync(SelectedCategory);
-        var taskColorHex = NormalizeColorHex(SelectedTaskColor);
-
-        if (_editingTaskId.HasValue)
+        try
         {
-            var existing = await _unitOfWork.Tasks.GetByIdAsync(_editingTaskId.Value);
-            if (existing is null) return;
+            var categoryId = await ResolveCategoryIdAsync(SelectedCategory);
+            var taskColorHex = NormalizeColorHex(SelectedTaskColor);
 
-            existing.Title = TaskTitle.Trim();
-            existing.Description = Description?.Trim() ?? string.Empty;
-            existing.Reflection = Reflection?.Trim() ?? string.Empty;
-            existing.DueDate = DueDate;
-            existing.TaskColorHex = taskColorHex;
-            existing.IsCompleted = IsCompleted;
-            existing.CategoryId = categoryId;
-
-            await _unitOfWork.Tasks.UpdateAsync(existing);
-        }
-        else
-        {
-            var task = new TaskItem
+            if (!string.IsNullOrWhiteSpace(_editingTaskId))
             {
-                Title = TaskTitle.Trim(),
-                Description = Description?.Trim() ?? string.Empty,
-                Reflection = Reflection?.Trim() ?? string.Empty,
-                DueDate = DueDate,
-                TaskColorHex = taskColorHex,
-                IsCompleted = IsCompleted,
-                CategoryId = categoryId
-            };
+                var existing = await _unitOfWork.Tasks.GetByIdAsync(_editingTaskId);
+                if (existing is null) return;
 
-            await _unitOfWork.Tasks.AddAsync(task);
+                existing.Title = TaskTitle.Trim();
+                existing.Description = Description?.Trim() ?? string.Empty;
+                existing.Reflection = Reflection?.Trim() ?? string.Empty;
+                existing.DueDate = DueDate;
+                existing.TaskColorHex = taskColorHex;
+                existing.IsCompleted = IsCompleted;
+                existing.CategoryId = categoryId;
+
+                await _unitOfWork.Tasks.UpdateAsync(existing);
+            }
+            else
+            {
+                var task = new TaskItem
+                {
+                    Title = TaskTitle.Trim(),
+                    Description = Description?.Trim() ?? string.Empty,
+                    Reflection = Reflection?.Trim() ?? string.Empty,
+                    DueDate = DueDate,
+                    TaskColorHex = taskColorHex,
+                    IsCompleted = IsCompleted,
+                    CategoryId = categoryId
+                };
+
+                await _unitOfWork.Tasks.AddAsync(task);
+            }
+
+            await GoBackAsync();
         }
-
-        await GoBackAsync();
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Task Save Error", ex.Message, "OK");
+        }
     }
 
     private async Task GoBackAsync()
@@ -216,7 +223,7 @@ public class TaskEditViewModel : BaseViewModel
         await Shell.Current.GoToAsync("..");
     }
 
-    private async Task<int?> ResolveCategoryIdAsync(string? categoryName)
+    private async Task<string?> ResolveCategoryIdAsync(string? categoryName)
     {
         var normalizedName = categoryName?.Trim();
 

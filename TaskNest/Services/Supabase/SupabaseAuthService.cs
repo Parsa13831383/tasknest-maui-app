@@ -103,6 +103,16 @@ public class SupabaseAuthService : ISupabaseAuthService
 
         _accessToken = token;
         _userId = Preferences.Default.Get(UserIdKey, string.Empty);
+
+        if (string.IsNullOrWhiteSpace(_userId))
+        {
+            _userId = TryExtractUserIdFromJwt(token);
+            if (!string.IsNullOrWhiteSpace(_userId))
+            {
+                Preferences.Default.Set(UserIdKey, _userId);
+            }
+        }
+
         return true;
     }
 
@@ -170,5 +180,46 @@ public class SupabaseAuthService : ISupabaseAuthService
         }
 
         return fallbackMessage;
+    }
+
+    private static string? TryExtractUserIdFromJwt(string jwt)
+    {
+        var parts = jwt.Split('.');
+        if (parts.Length < 2)
+        {
+            return null;
+        }
+
+        var payload = parts[1]
+            .Replace('-', '+')
+            .Replace('_', '/');
+
+        switch (payload.Length % 4)
+        {
+            case 2:
+                payload += "==";
+                break;
+            case 3:
+                payload += "=";
+                break;
+        }
+
+        try
+        {
+            var bytes = Convert.FromBase64String(payload);
+            var json = Encoding.UTF8.GetString(bytes);
+            using var document = JsonDocument.Parse(json);
+            if (document.RootElement.TryGetProperty("sub", out var sub)
+                && sub.ValueKind == JsonValueKind.String)
+            {
+                return sub.GetString();
+            }
+        }
+        catch
+        {
+            // Ignore invalid JWT payload format and leave user id empty.
+        }
+
+        return null;
     }
 }

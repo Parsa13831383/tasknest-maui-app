@@ -23,7 +23,7 @@ public class CategoryRepository : ICategoryRepository
             .ToListAsync();
     }
 
-    public async Task<CategoryItem?> GetByIdAsync(int id)
+    public async Task<CategoryItem?> GetByIdAsync(string id)
     {
         var db = await _database.GetConnectionAsync();
 
@@ -35,6 +35,11 @@ public class CategoryRepository : ICategoryRepository
     public async Task<int> AddAsync(CategoryItem category)
     {
         var db = await _database.GetConnectionAsync();
+
+        if (string.IsNullOrWhiteSpace(category.Id))
+        {
+            category.Id = Guid.NewGuid().ToString("N");
+        }
 
         category.CreatedAtUtc = DateTime.UtcNow;
         category.UpdatedAtUtc = DateTime.UtcNow;

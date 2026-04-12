@@ -270,13 +270,13 @@ public class CategoriesViewModel : BaseViewModel
 
         var taskItems = await _unitOfWork.Tasks.GetAllAsync();
         var taskCountByCategoryId = taskItems
-            .Where(t => t.CategoryId.HasValue)
-            .GroupBy(t => t.CategoryId!.Value)
+            .Where(t => !string.IsNullOrWhiteSpace(t.CategoryId))
+            .GroupBy(t => t.CategoryId!)
             .ToDictionary(g => g.Key, g => g.Count());
 
         var completedTaskCountByCategoryId = taskItems
-            .Where(t => t.CategoryId.HasValue && t.IsCompleted)
-            .GroupBy(t => t.CategoryId!.Value)
+            .Where(t => !string.IsNullOrWhiteSpace(t.CategoryId) && t.IsCompleted)
+            .GroupBy(t => t.CategoryId!)
             .ToDictionary(g => g.Key, g => g.Count());
 
         foreach (var category in categories)

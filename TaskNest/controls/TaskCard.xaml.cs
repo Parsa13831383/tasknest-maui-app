@@ -8,7 +8,7 @@ public partial class TaskCard : ContentView
     }
 
     public static readonly BindableProperty TaskIdProperty =
-        BindableProperty.Create(nameof(TaskId), typeof(int), typeof(TaskCard), 0);
+        BindableProperty.Create(nameof(TaskId), typeof(string), typeof(TaskCard), string.Empty);
 
     public static readonly BindableProperty TitleProperty =
         BindableProperty.Create(nameof(Title), typeof(string), typeof(TaskCard), string.Empty);
@@ -34,9 +34,9 @@ public partial class TaskCard : ContentView
     public static readonly BindableProperty DeleteTaskCommandProperty =
         BindableProperty.Create(nameof(DeleteTaskCommand), typeof(System.Windows.Input.ICommand), typeof(TaskCard));
 
-    public int TaskId
+    public string TaskId
     {
-        get => (int)GetValue(TaskIdProperty);
+        get => (string)GetValue(TaskIdProperty);
         set => SetValue(TaskIdProperty, value);
     }
 
@@ -90,7 +90,7 @@ public partial class TaskCard : ContentView
 
     private async void OnViewDetailsClicked(object sender, EventArgs e)
     {
-        if (TaskId > 0)
+        if (!string.IsNullOrWhiteSpace(TaskId))
         {
             await Shell.Current.GoToAsync($"taskdetail?id={TaskId}");
         }
@@ -98,7 +98,7 @@ public partial class TaskCard : ContentView
 
     private async void OnEditTaskClicked(object sender, EventArgs e)
     {
-        if (TaskId > 0)
+        if (!string.IsNullOrWhiteSpace(TaskId))
         {
             await Shell.Current.GoToAsync($"taskedit?id={TaskId}");
         }

@@ -5,7 +5,7 @@ namespace TaskNest.Views;
 
 public partial class TaskEditPage : ContentPage, IQueryAttributable
 {
-    private int? _taskId;
+    private string? _taskId;
 
     public TaskEditPage()
     {
@@ -24,16 +24,7 @@ public partial class TaskEditPage : ContentPage, IQueryAttributable
             return;
         }
 
-        if (rawId is int intId)
-        {
-            _taskId = intId;
-            return;
-        }
-
-        if (int.TryParse(rawId.ToString(), out var parsedId))
-        {
-            _taskId = parsedId;
-        }
+        _taskId = rawId.ToString();
     }
 
     protected override async void OnAppearing()

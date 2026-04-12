@@ -56,6 +56,7 @@ public class AppDatabase
 
         var workCategory = new CategoryItem
         {
+            Id = Guid.NewGuid().ToString("N"),
             Name = "Work",
             Description = "Work-related tasks",
             CreatedAtUtc = now,
@@ -66,6 +67,7 @@ public class AppDatabase
 
         var studyCategory = new CategoryItem
         {
+            Id = Guid.NewGuid().ToString("N"),
             Name = "Study",
             Description = "University and revision tasks",
             CreatedAtUtc = now,
@@ -76,6 +78,7 @@ public class AppDatabase
 
         var personalCategory = new CategoryItem
         {
+            Id = Guid.NewGuid().ToString("N"),
             Name = "Personal",
             Description = "Personal reminders and life admin",
             CreatedAtUtc = now,
@@ -92,6 +95,7 @@ public class AppDatabase
         {
             new TaskItem
             {
+                Id = Guid.NewGuid().ToString("N"),
                 Title = "Prepare project demo",
                 Description = "Review core app screens before recording the demo.",
                 DueDate = DateTime.Today.AddDays(2),
@@ -105,6 +109,7 @@ public class AppDatabase
             },
             new TaskItem
             {
+                Id = Guid.NewGuid().ToString("N"),
                 Title = "Revise database design",
                 Description = "Go over SQLite integration and repository pattern notes.",
                 DueDate = DateTime.Today.AddDays(3),
@@ -118,6 +123,7 @@ public class AppDatabase
             },
             new TaskItem
             {
+                Id = Guid.NewGuid().ToString("N"),
                 Title = "Buy groceries",
                 Description = "Get essentials for the week.",
                 DueDate = DateTime.Today.AddDays(1),

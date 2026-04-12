@@ -7,7 +7,7 @@ public class TaskDetailViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
     
-    private int _taskId;
+    private string _taskId = string.Empty;
     private string _taskTitle = string.Empty;
     private string _description = string.Empty;
     private string _reflection = string.Empty;
@@ -15,7 +15,7 @@ public class TaskDetailViewModel : BaseViewModel
     private string _category = string.Empty;
     private bool _isCompleted;
 
-    public int TaskId
+    public string TaskId
     {
         get => _taskId;
         set => SetProperty(ref _taskId, value);
@@ -76,7 +76,7 @@ public class TaskDetailViewModel : BaseViewModel
     /// <summary>
     /// Loads task details from the database by task ID
     /// </summary>
-    public async Task LoadAsync(int taskId)
+    public async Task LoadAsync(string taskId)
     {
         if (IsBusy) return;
         
@@ -96,7 +96,7 @@ public class TaskDetailViewModel : BaseViewModel
                 DueDate = task.DueDate?.ToString("yyyy-MM-dd") ?? string.Empty;
                 
                 // Load category name if CategoryId exists
-                if (task.CategoryId.HasValue)
+                if (!string.IsNullOrWhiteSpace(task.CategoryId))
                 {
                     var allCategories = await _unitOfWork.Categories.GetAllAsync();
                     var categoryItem = allCategories.FirstOrDefault(c => c.Id == task.CategoryId);
@@ -137,7 +137,7 @@ public class TaskDetailViewModel : BaseViewModel
 
     private async Task DeleteAsync()
     {
-        if (TaskId <= 0)
+        if (string.IsNullOrWhiteSpace(TaskId))
         {
             return;
         }

@@ -6,8 +6,8 @@ namespace TaskNest.Models;
 
 public class TaskItem
 {
-    [PrimaryKey, AutoIncrement]
-    public int Id { get; set; }
+    [PrimaryKey]
+    public string Id { get; set; } = string.Empty;
 
     [MaxLength(150)]
     public string Title { get; set; } = "";
@@ -22,7 +22,7 @@ public class TaskItem
 
     public bool IsCompleted { get; set; }
 
-    public int? CategoryId { get; set; }
+    public string? CategoryId { get; set; }
 
     [MaxLength(32)]
     public string? TaskColorHex { get; set; }

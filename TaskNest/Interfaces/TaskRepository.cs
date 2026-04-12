@@ -23,7 +23,7 @@ public class TaskRepository : ITaskRepository
             .ToListAsync();
     }
 
-    public async Task<List<global::TaskNest.Models.TaskItem>> GetByCategoryIdAsync(int categoryId)
+    public async Task<List<global::TaskNest.Models.TaskItem>> GetByCategoryIdAsync(string categoryId)
     {
         var db = await _database.GetConnectionAsync();
 
@@ -33,7 +33,7 @@ public class TaskRepository : ITaskRepository
             .ToListAsync();
     }
 
-    public async Task<global::TaskNest.Models.TaskItem?> GetByIdAsync(int id)
+    public async Task<global::TaskNest.Models.TaskItem?> GetByIdAsync(string id)
     {
         var db = await _database.GetConnectionAsync();
 
@@ -60,7 +60,7 @@ public class TaskRepository : ITaskRepository
             .CountAsync();
     }
 
-    public async Task<int> CountActiveByCategoryAsync(int categoryId)
+    public async Task<int> CountActiveByCategoryAsync(string categoryId)
     {
         var db = await _database.GetConnectionAsync();
 
@@ -72,6 +72,11 @@ public class TaskRepository : ITaskRepository
     public async Task<int> AddAsync(global::TaskNest.Models.TaskItem task)
     {
         var db = await _database.GetConnectionAsync();
+
+        if (string.IsNullOrWhiteSpace(task.Id))
+        {
+            task.Id = Guid.NewGuid().ToString("N");
+        }
 
         task.CreatedAtUtc = DateTime.UtcNow;
         task.UpdatedAtUtc = DateTime.UtcNow;
@@ -95,7 +100,7 @@ public class TaskRepository : ITaskRepository
         return await db.UpdateAsync(task);
     }
 
-    public async Task<int> ClearCategoryAsync(int categoryId)
+    public async Task<int> ClearCategoryAsync(string categoryId)
     {
         var db = await _database.GetConnectionAsync();
 

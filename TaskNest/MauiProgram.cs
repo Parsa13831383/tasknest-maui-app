@@ -33,11 +33,12 @@ public static class MauiProgram
 		builder.Services.AddTransient<TaskEditViewModel>();
 		builder.Services.AddTransient<CategoriesViewModel>();
 
-		// Database service used during app startup and by data features.
-		builder.Services.AddSingleton<AppDatabase>();
-		builder.Services.AddSingleton<ITaskRepository, TaskRepository>();
-		builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
-		builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
+		// Cloud data path (Supabase) used by repositories and view models.
+		builder.Services.AddSingleton<ITaskRepository, SupabaseTaskRepository>();
+		builder.Services.AddSingleton<ICategoryRepository, SupabaseCategoryRepository>();
+		builder.Services.AddSingleton<IUnitOfWork, SupabaseUnitOfWork>();
+		builder.Services.AddSingleton<ITaskCloudService, TaskCloudService>();
+		builder.Services.AddSingleton<ICategoryCloudService, CategoryCloudService>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

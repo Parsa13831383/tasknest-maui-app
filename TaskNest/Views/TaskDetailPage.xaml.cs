@@ -6,7 +6,7 @@ namespace TaskNest.Views;
 
 public partial class TaskDetailPage : ContentPage, IQueryAttributable
 {
-    private int taskId;
+    private string taskId = string.Empty;
 
     public TaskDetailPage()
     {
@@ -16,7 +16,7 @@ public partial class TaskDetailPage : ContentPage, IQueryAttributable
             ?? throw new InvalidOperationException("TaskDetailViewModel service is not registered.");
     }
 
-    public int TaskId
+    public string TaskId
     {
         get => taskId;
         set
@@ -33,16 +33,7 @@ public partial class TaskDetailPage : ContentPage, IQueryAttributable
             return;
         }
 
-        if (idValue is int intId)
-        {
-            TaskId = intId;
-            return;
-        }
-
-        if (int.TryParse(idValue.ToString(), out var parsedId))
-        {
-            TaskId = parsedId;
-        }
+        TaskId = idValue.ToString() ?? string.Empty;
     }
 
     protected override void OnAppearing()
@@ -53,7 +44,7 @@ public partial class TaskDetailPage : ContentPage, IQueryAttributable
 
     private async Task LoadTaskDetailsAsync()
     {
-        if (TaskId <= 0 || BindingContext is not TaskDetailViewModel viewModel)
+        if (string.IsNullOrWhiteSpace(TaskId) || BindingContext is not TaskDetailViewModel viewModel)
             return;
 
         await viewModel.LoadAsync(TaskId);
