@@ -7,6 +7,7 @@ namespace TaskNest.ViewModels;
 public partial class LoginViewModel : BaseViewModel
 {
     private readonly ISupabaseAuthService authService;
+    private readonly IInputValidationService validation;
 
     [ObservableProperty]
     private string email = string.Empty;
@@ -17,9 +18,10 @@ public partial class LoginViewModel : BaseViewModel
     [ObservableProperty]
     private bool rememberMe = true;
 
-    public LoginViewModel(ISupabaseAuthService authService)
+    public LoginViewModel(ISupabaseAuthService authService, IInputValidationService validation)
     {
         this.authService = authService;
+        this.validation = validation;
         Title = "Login";
     }
 
@@ -27,13 +29,24 @@ public partial class LoginViewModel : BaseViewModel
     private async Task LoginAsync()
     {
         if (IsBusy) return;
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password)) return;
+
+        if (!validation.TryValidateEmail(Email, out var normalizedEmail, out var emailError))
+        {
+            await Shell.Current.DisplayAlert("Validation", emailError, "OK");
+            return;
+        }
+
+        if (!validation.TryValidateRequiredText(Password, "Password", out _, out var passwordError, maxLength: 256))
+        {
+            await Shell.Current.DisplayAlert("Validation", passwordError, "OK");
+            return;
+        }
 
         try
         {
             IsBusy = true;
 
-            await authService.SignInAsync(Email.Trim(), Password, RememberMe);
+            await authService.SignInAsync(normalizedEmail, Password, RememberMe);
 
             await Shell.Current.GoToAsync("//dashboard");
         }

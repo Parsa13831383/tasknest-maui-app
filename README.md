@@ -35,3 +35,61 @@ Tip: the default Supabase template usually includes "powered by Supabase" and "O
 Important compatibility note:
 - If a template references unsupported variables (especially nested custom fields like `.Data.*` in some setups), Supabase can fall back to its default template.
 - The checked-in template now uses only safe core placeholders: `{{ .ConfirmationURL }}` and `{{ .Email }}`.
+
+## Supabase Access Control Checklist (RLS)
+
+TaskNest sends the user bearer token on all cloud requests and writes `user_id` when creating tasks/categories. Data isolation must be enforced by RLS policies in Supabase.
+
+Run and verify the following in Supabase SQL Editor:
+
+```sql
+alter table public.tasks enable row level security;
+alter table public.categories enable row level security;
+
+drop policy if exists "tasks_select_own" on public.tasks;
+create policy "tasks_select_own"
+on public.tasks for select
+using (auth.uid() = user_id);
+
+drop policy if exists "tasks_insert_own" on public.tasks;
+create policy "tasks_insert_own"
+on public.tasks for insert
+with check (auth.uid() = user_id);
+
+drop policy if exists "tasks_update_own" on public.tasks;
+create policy "tasks_update_own"
+on public.tasks for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+drop policy if exists "tasks_delete_own" on public.tasks;
+create policy "tasks_delete_own"
+on public.tasks for delete
+using (auth.uid() = user_id);
+
+drop policy if exists "categories_select_own" on public.categories;
+create policy "categories_select_own"
+on public.categories for select
+using (auth.uid() = user_id);
+
+drop policy if exists "categories_insert_own" on public.categories;
+create policy "categories_insert_own"
+on public.categories for insert
+with check (auth.uid() = user_id);
+
+drop policy if exists "categories_update_own" on public.categories;
+create policy "categories_update_own"
+on public.categories for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+drop policy if exists "categories_delete_own" on public.categories;
+create policy "categories_delete_own"
+on public.categories for delete
+using (auth.uid() = user_id);
+```
+
+Quick verification:
+1. Log in as user A and create tasks/categories.
+2. Log in as user B and confirm user A data is not visible.
+3. Try updating a user A row as user B; it should be blocked by RLS.

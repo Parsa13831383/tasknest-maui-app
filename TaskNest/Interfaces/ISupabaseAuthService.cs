@@ -7,7 +7,7 @@ public interface ISupabaseAuthService
     Task<AuthResponse?> SignUpAsync(string email, string password, string? fullName = null);
     Task<AuthResponse?> SignInAsync(string email, string password, bool rememberSession = true);
     Task SignOutAsync();
-    bool TryRestoreSession();
+    Task<bool> RestoreSessionAsync();
 
     string? AccessToken { get; }
     string? UserId { get; }

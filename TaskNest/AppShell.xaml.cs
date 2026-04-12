@@ -59,7 +59,7 @@ public partial class AppShell : Shell
 
 		_initialNavigationApplied = true;
 
-		if (_authService.IsAuthenticated || _authService.TryRestoreSession())
+		if (_authService.IsAuthenticated || await _authService.RestoreSessionAsync())
 		{
 			await GoToAsync("//dashboard");
 			return;

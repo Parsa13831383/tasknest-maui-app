@@ -7,9 +7,7 @@ namespace TaskNest.Services.Supabase;
 
 public class SupabaseAuthService : ISupabaseAuthService
 {
-    private const string AccessTokenKey = "auth.access_token";
-    private const string UserIdKey = "auth.user_id";
-
+    private readonly ISecureSessionService _secureSessionService;
     private readonly HttpClient _httpClient;
 
     private string? _accessToken;
@@ -19,15 +17,15 @@ public class SupabaseAuthService : ISupabaseAuthService
     public string? UserId => _userId;
     public bool IsAuthenticated => !string.IsNullOrWhiteSpace(_accessToken);
 
-    public SupabaseAuthService()
+    public SupabaseAuthService(ISecureSessionService secureSessionService)
     {
+        _secureSessionService = secureSessionService;
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri(SupabaseConfig.SupabaseUrl)
         };
 
         _httpClient.DefaultRequestHeaders.Add("apikey", SupabaseConfig.SupabaseAnonKey);
-        TryRestoreSession();
     }
 
     public async Task<AuthResponse?> SignUpAsync(string email, string password, string? fullName = null)
@@ -71,7 +69,7 @@ public class SupabaseAuthService : ISupabaseAuthService
             responseBody,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        SetSession(authResponse);
+        await SetSessionAsync(authResponse);
 
         return authResponse;
     }
@@ -124,70 +122,69 @@ public class SupabaseAuthService : ISupabaseAuthService
             responseBody,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        SetSession(authResponse, rememberSession);
+        await SetSessionAsync(authResponse, rememberSession);
 
         return authResponse;
     }
 
-    public Task SignOutAsync()
+    public async Task SignOutAsync()
     {
-        ClearSession();
-        return Task.CompletedTask;
+        await ClearSessionAsync();
     }
 
-    public bool TryRestoreSession()
+    public async Task<bool> RestoreSessionAsync()
     {
-        var token = Preferences.Default.Get(AccessTokenKey, string.Empty);
+        var session = await _secureSessionService.GetSessionAsync();
+        var token = session.AccessToken;
+
         if (string.IsNullOrWhiteSpace(token))
         {
-            ClearSession();
+            await ClearSessionAsync();
             return false;
         }
 
         _accessToken = token;
-        _userId = Preferences.Default.Get(UserIdKey, string.Empty);
+        _userId = session.UserId;
 
         if (string.IsNullOrWhiteSpace(_userId))
         {
             _userId = TryExtractUserIdFromJwt(token);
-            if (!string.IsNullOrWhiteSpace(_userId))
-            {
-                Preferences.Default.Set(UserIdKey, _userId);
-            }
+            await _secureSessionService.SaveSessionAsync(_accessToken, _userId ?? string.Empty);
         }
 
         return true;
     }
 
-    private void SetSession(AuthResponse? authResponse, bool persistSession = true)
+    private async Task SetSessionAsync(AuthResponse? authResponse, bool persistSession = true)
     {
         _accessToken = authResponse?.AccessToken;
         _userId = authResponse?.User?.Id;
 
+        if (string.IsNullOrWhiteSpace(_userId) && !string.IsNullOrWhiteSpace(_accessToken))
+        {
+            _userId = TryExtractUserIdFromJwt(_accessToken);
+        }
+
         if (!persistSession)
         {
-            Preferences.Default.Remove(AccessTokenKey);
-            Preferences.Default.Remove(UserIdKey);
+            await _secureSessionService.ClearSessionAsync();
             return;
         }
 
         if (string.IsNullOrWhiteSpace(_accessToken))
         {
-            Preferences.Default.Remove(AccessTokenKey);
-            Preferences.Default.Remove(UserIdKey);
+            await _secureSessionService.ClearSessionAsync();
             return;
         }
 
-        Preferences.Default.Set(AccessTokenKey, _accessToken);
-        Preferences.Default.Set(UserIdKey, _userId ?? string.Empty);
+        await _secureSessionService.SaveSessionAsync(_accessToken, _userId ?? string.Empty);
     }
 
-    private void ClearSession()
+    private async Task ClearSessionAsync()
     {
         _accessToken = null;
         _userId = null;
-        Preferences.Default.Remove(AccessTokenKey);
-        Preferences.Default.Remove(UserIdKey);
+        await _secureSessionService.ClearSessionAsync();
     }
 
     private static string GetSupabaseErrorMessage(string responseBody, string fallbackMessage)

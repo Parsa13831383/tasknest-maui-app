@@ -20,6 +20,7 @@ public class CategoriesViewModel : BaseViewModel
     };
 
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IInputValidationService _validation;
 
     public ObservableCollection<CategoryItemModel> Categories { get; } = new();
 
@@ -100,9 +101,10 @@ public class CategoriesViewModel : BaseViewModel
     public ICommand ManageCategoriesCommand { get; }
     public ICommand OpenCategoryCommand { get; }
 
-    public CategoriesViewModel(IUnitOfWork unitOfWork)
+    public CategoriesViewModel(IUnitOfWork unitOfWork, IInputValidationService validation)
     {
         _unitOfWork = unitOfWork;
+        _validation = validation;
 
         LoadCategoriesCommand = new Command(async () => await LoadCategoriesAsync());
         AddCategoryCommand = new Command(async () => await AddCategoryAsync());
@@ -140,10 +142,18 @@ public class CategoriesViewModel : BaseViewModel
                 ? generatedName
                 : NewCategoryName.Trim();
 
+            if (!_validation.TryValidateCategoryName(categoryName, out var normalizedCategoryName, out var categoryError))
+            {
+                await Shell.Current.DisplayAlert("Validation", categoryError, "OK");
+                return;
+            }
+
+            var normalizedDescription = _validation.NormalizeOptionalText(NewCategoryDescription, maxLength: 500);
+
             var category = new CategoryItemModel
             {
-                Name = categoryName,
-                Description = NewCategoryDescription.Trim(),
+                Name = normalizedCategoryName,
+                Description = normalizedDescription,
                 Count = 0,
                 TaskCountText = "0 tasks",
                 BadgeBackgroundColor = Colors.LightGray,
@@ -239,7 +249,12 @@ public class CategoriesViewModel : BaseViewModel
             return;
         }
 
-        var normalizedName = newName.Trim();
+        if (!_validation.TryValidateCategoryName(newName, out var normalizedName, out var nameError))
+        {
+            await Shell.Current.DisplayAlert("Validation", nameError, "OK");
+            return;
+        }
+
         if (!string.Equals(normalizedName, category.Name, StringComparison.OrdinalIgnoreCase)
             && Categories.Any(c => c.Id != category.Id && string.Equals(c.Name, normalizedName, StringComparison.OrdinalIgnoreCase)))
         {

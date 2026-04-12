@@ -1,4 +1,4 @@
-using TaskNest.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using TaskNest.ViewModels;
 
 namespace TaskNest.Views;
@@ -9,9 +9,7 @@ public partial class LoginPage : ContentPage
     {
         InitializeComponent();
 
-        var authService = Application.Current?.Handler?.MauiContext?.Services.GetService<ISupabaseAuthService>()
-            ?? throw new InvalidOperationException("ISupabaseAuthService is not registered in DI.");
-
-        BindingContext = new LoginViewModel(authService);
+        BindingContext = Application.Current?.Handler?.MauiContext?.Services.GetService<LoginViewModel>()
+            ?? throw new InvalidOperationException("LoginViewModel service is not registered.");
     }
 }

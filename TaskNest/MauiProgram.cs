@@ -4,7 +4,9 @@ using TaskNest.Services;
 using TaskNest.ViewModels;
 using TaskNest.Data;
 using TaskNest.Repositories;
+using TaskNest.Services.Security;
 using TaskNest.Services.Supabase;
+using TaskNest.Services.Validation;
 
 namespace TaskNest;
 
@@ -25,8 +27,12 @@ public static class MauiProgram
 		// 🔥 EXISTING
 		builder.Services.AddSingleton<AppShell>();
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
+		builder.Services.AddSingleton<ISecureSessionService, SecureSessionService>();
+		builder.Services.AddSingleton<IInputValidationService, InputValidationService>();
 		builder.Services.AddSingleton<ISupabaseAuthService, SupabaseAuthService>();
 		builder.Services.AddTransient<BaseViewModel>();
+		builder.Services.AddTransient<LoginViewModel>();
+		builder.Services.AddTransient<RegisterViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<TaskListViewModel>();
 		builder.Services.AddTransient<TaskDetailViewModel>();

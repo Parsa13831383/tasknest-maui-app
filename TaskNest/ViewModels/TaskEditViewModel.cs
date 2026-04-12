@@ -9,6 +9,7 @@ namespace TaskNest.ViewModels;
 public class TaskEditViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IInputValidationService _validation;
     private readonly Dictionary<string, string> _categoryIdByName = new(StringComparer.OrdinalIgnoreCase);
 
     private string? _editingTaskId;
@@ -89,9 +90,10 @@ public class TaskEditViewModel : BaseViewModel
     public ICommand CancelCommand { get; }
     public ICommand SelectTaskColorCommand { get; }
 
-    public TaskEditViewModel(IUnitOfWork unitOfWork)
+    public TaskEditViewModel(IUnitOfWork unitOfWork, IInputValidationService validation)
     {
         _unitOfWork = unitOfWork;
+        _validation = validation;
         Title = "Create Task";
 
         InitializeColorOptions();
@@ -168,9 +170,9 @@ public class TaskEditViewModel : BaseViewModel
 
     private async Task SaveTaskAsync()
     {
-        if (string.IsNullOrWhiteSpace(TaskTitle))
+        if (!_validation.TryValidateTaskTitle(TaskTitle, out var normalizedTitle, out var titleError))
         {
-            await Shell.Current.DisplayAlert("Validation", "Task title is required.", "OK");
+            await Shell.Current.DisplayAlert("Validation", titleError, "OK");
             return;
         }
 
@@ -178,15 +180,17 @@ public class TaskEditViewModel : BaseViewModel
         {
             var categoryId = await ResolveCategoryIdAsync(SelectedCategory);
             var taskColorHex = NormalizeColorHex(SelectedTaskColor);
+            var normalizedDescription = _validation.NormalizeOptionalText(Description, maxLength: 3000);
+            var normalizedReflection = _validation.NormalizeOptionalText(Reflection, maxLength: 3000);
 
             if (!string.IsNullOrWhiteSpace(_editingTaskId))
             {
                 var existing = await _unitOfWork.Tasks.GetByIdAsync(_editingTaskId);
                 if (existing is null) return;
 
-                existing.Title = TaskTitle.Trim();
-                existing.Description = Description?.Trim() ?? string.Empty;
-                existing.Reflection = Reflection?.Trim() ?? string.Empty;
+                existing.Title = normalizedTitle;
+                existing.Description = normalizedDescription;
+                existing.Reflection = normalizedReflection;
                 existing.DueDate = DueDate;
                 existing.TaskColorHex = taskColorHex;
                 existing.IsCompleted = IsCompleted;
@@ -198,9 +202,9 @@ public class TaskEditViewModel : BaseViewModel
             {
                 var task = new TaskItem
                 {
-                    Title = TaskTitle.Trim(),
-                    Description = Description?.Trim() ?? string.Empty,
-                    Reflection = Reflection?.Trim() ?? string.Empty,
+                    Title = normalizedTitle,
+                    Description = normalizedDescription,
+                    Reflection = normalizedReflection,
                     DueDate = DueDate,
                     TaskColorHex = taskColorHex,
                     IsCompleted = IsCompleted,

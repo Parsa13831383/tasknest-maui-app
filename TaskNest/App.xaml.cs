@@ -7,14 +7,16 @@ public partial class App : Application
 {
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly AppShell _appShell;
+	private readonly ISupabaseAuthService _authService;
 	private readonly LocalizationService _localization = LocalizationService.Instance;
 
-	public App(IUnitOfWork unitOfWork, AppShell appShell)
+	public App(IUnitOfWork unitOfWork, AppShell appShell, ISupabaseAuthService authService)
 	{
 		InitializeComponent();
 
 		_unitOfWork = unitOfWork;
 		_appShell = appShell;
+		_authService = authService;
 
 		// Apply persisted theme preference immediately on startup.
 		var isDarkMode = Preferences.Default.Get("settings.darkmode", false);
@@ -23,7 +25,11 @@ public partial class App : Application
 		// Ensure localization service is initialized early.
 		_ = _localization.CurrentLanguageCode;
 
-		Task.Run(async () => await _unitOfWork.InitializeAsync());
+		Task.Run(async () =>
+		{
+			await _unitOfWork.InitializeAsync();
+			await _authService.RestoreSessionAsync();
+		});
 	}
 
 	protected override Window CreateWindow(IActivationState? activationState)
