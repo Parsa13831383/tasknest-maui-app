@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Confirm your TaskNest account</title>
+  <style>
+    body, table, td, p, a {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    table, td {
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+    img {
+      -ms-interpolation-mode: bicubic;
+      border: 0;
+      outline: none;
+      text-decoration: none;
+    }
+    table {
+      border-collapse: collapse !important;
+    }
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      background: #eff3f8;
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+      color: #12263a;
+    }
+    .shell {
+      width: 100%;
+      padding: 24px 10px;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(11, 94, 255, 0.11) 0, rgba(11, 94, 255, 0) 40%),
+        radial-gradient(circle at 90% 0%, rgba(16, 185, 129, 0.12) 0, rgba(16, 185, 129, 0) 38%),
+        #eff3f8;
+    }
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #dbe4ef;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(18, 38, 58, 0.1);
+    }
+    .hero {
+      background: linear-gradient(125deg, #0f172a 0%, #0b5fff 45%, #00a6a6 100%);
+      color: #ffffff;
+      padding: 30px 30px 26px 30px;
+    }
+    .brand-row {
+      margin-bottom: 14px;
+    }
+    .brand-pill {
+      display: inline-block;
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 999px;
+      font-size: 12px;
+      line-height: 1;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .hero-title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.2;
+      font-weight: 750;
+      letter-spacing: -0.2px;
+    }
+    .hero-sub {
+      margin: 10px 0 0 0;
+      font-size: 15px;
+      line-height: 1.65;
+      opacity: 0.95;
+      max-width: 520px;
+    }
+    .main {
+      padding: 30px;
+    }
+    .hello {
+      margin: 0 0 10px 0;
+      font-size: 17px;
+      line-height: 1.4;
+      color: #0f172a;
+      font-weight: 650;
+    }
+    .copy {
+      margin: 0 0 16px 0;
+      font-size: 15px;
+      line-height: 1.72;
+      color: #334155;
+    }
+    .btn-wrap {
+      padding: 10px 0 16px 0;
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #0b5fff 0%, #0077ff 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1;
+      padding: 15px 24px;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(11, 94, 255, 0.32);
+    }
+    .panel {
+      margin-top: 14px;
+      border: 1px solid #dbe4ef;
+      border-radius: 12px;
+      background: #f8fbff;
+      padding: 14px 14px 12px 14px;
+    }
+    .panel-title {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: #1d4ed8;
+    }
+    .list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .list li {
+      margin: 0 0 6px 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #334155;
+    }
+    .linkbox {
+      margin-top: 16px;
+      padding: 11px 12px;
+      border: 1px dashed #bcd0ea;
+      border-radius: 10px;
+      background: #ffffff;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+      color: #475569;
+    }
+    .linkbox a {
+      color: #0b5fff;
+      text-decoration: underline;
+    }
+    .meta {
+      margin-top: 18px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #64748b;
+    }
+    .footer {
+      padding: 18px 30px 24px 30px;
+      border-top: 1px solid #e2e8f0;
+      background: #fafcff;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #7c8aa0;
+    }
+    .footer a {
+      color: #0b5fff;
+    }
+    .preheader {
+      display: none;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      mso-hide: all;
+    }
+    @media screen and (max-width: 620px) {
+      .hero, .main, .footer {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+      }
+      .hero-title {
+        font-size: 24px !important;
+      }
+      .copy {
+        font-size: 14px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="preheader">One final step: confirm your email and start using TaskNest. Template v2.</div>
+
+  <table role="presentation" width="100%" class="shell">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" class="container">
+          <tr>
+            <td class="hero">
+              <div class="brand-row">
+                <span class="brand-pill">TaskNest</span>
+              </div>
+              <h1 class="hero-title">Secure your account in one click</h1>
+              <p class="hero-sub">Welcome aboard. Confirm your email to activate your workspace and protect account access.</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="main">
+              <p class="hello">Hi there,</p>
+              <p class="copy">Thanks for signing up. Click the button below to verify your email address and finish setting up your account.</p>
+
+              <div class="btn-wrap">
+                <a href="{{ .ConfirmationURL }}" class="btn">Confirm Email Address</a>
+              </div>
+
+              <table role="presentation" width="100%" class="panel">
+                <tr>
+                  <td>
+                    <p class="panel-title">Why verify?</p>
+                    <ul class="list">
+                      <li>Protect your account from unauthorized use</li>
+                      <li>Enable full access to your TaskNest workspace</li>
+                      <li>Receive important account and security updates</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+
+              <div class="linkbox">
+                If the button does not work, copy and open this link:<br>
+                <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+              </div>
+
+              <p class="meta">If you did not create this account, you can safely ignore this email.</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="footer">
+              Sent to {{ .Email }} by TaskNest.<br>
+              Need help? Contact support@tasknest.app.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -30,12 +30,22 @@ public class SupabaseAuthService : ISupabaseAuthService
         TryRestoreSession();
     }
 
-    public async Task<AuthResponse?> SignUpAsync(string email, string password)
+    public async Task<AuthResponse?> SignUpAsync(string email, string password, string? fullName = null)
     {
+        var redirectUrl = string.IsNullOrWhiteSpace(SupabaseConfig.EmailConfirmationRedirectUrl)
+            ? null
+            : SupabaseConfig.EmailConfirmationRedirectUrl;
+
         var payload = new SignUpRequest
         {
             Email = email,
-            Password = password
+            Password = password,
+            EmailRedirectTo = redirectUrl,
+            Data = new SignUpMetadata
+            {
+                FullName = string.IsNullOrWhiteSpace(fullName) ? null : fullName.Trim(),
+                AppName = SupabaseConfig.AppName
+            }
         };
 
         var json = JsonSerializer.Serialize(payload);
@@ -46,7 +56,15 @@ public class SupabaseAuthService : ISupabaseAuthService
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception(GetSupabaseErrorMessage(responseBody, "Sign-up failed."));
+            var message = GetSupabaseErrorMessage(responseBody, "Sign-up failed.");
+
+            if (IsAlreadyRegisteredMessage(message)
+                && await TryResendSignupConfirmationAsync(email))
+            {
+                throw new Exception("This email is already registered but not yet confirmed. A new confirmation email has been sent.");
+            }
+
+            throw new Exception(message);
         }
 
         var authResponse = JsonSerializer.Deserialize<AuthResponse>(
@@ -56,6 +74,31 @@ public class SupabaseAuthService : ISupabaseAuthService
         SetSession(authResponse);
 
         return authResponse;
+    }
+
+    private async Task<bool> TryResendSignupConfirmationAsync(string email)
+    {
+        var payload = JsonSerializer.Serialize(new
+        {
+            type = "signup",
+            email
+        });
+
+        using var content = new StringContent(payload, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync("/auth/v1/resend", content);
+        return response.IsSuccessStatusCode;
+    }
+
+    private static bool IsAlreadyRegisteredMessage(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return false;
+        }
+
+        return message.Contains("already", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("registered", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("exists", StringComparison.OrdinalIgnoreCase);
     }
 
     public async Task<AuthResponse?> SignInAsync(string email, string password, bool rememberSession = true)

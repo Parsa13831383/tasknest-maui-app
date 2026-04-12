@@ -69,13 +69,13 @@ public class RegisterViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            var result = await authService.SignUpAsync(Email.Trim(), Password);
+            var result = await authService.SignUpAsync(Email.Trim(), Password, Name);
             var requiresEmailConfirmation = string.IsNullOrWhiteSpace(result?.AccessToken);
 
             await Shell.Current.DisplayAlert(
                 "Success",
                 requiresEmailConfirmation
-                    ? "Account created. Please confirm your email, then log in."
+                    ? "Account created. Please confirm your email from your inbox (or spam folder), then log in."
                     : "Account created successfully.",
                 "OK");
 
