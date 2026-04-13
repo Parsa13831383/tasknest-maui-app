@@ -18,6 +18,50 @@ public partial class LoginViewModel : BaseViewModel
     [ObservableProperty]
     private bool rememberMe = true;
 
+    private string _emailError = string.Empty;
+    private string _passwordError = string.Empty;
+    private string _authError = string.Empty;
+
+    public string EmailError
+    {
+        get => _emailError;
+        set
+        {
+            if (SetProperty(ref _emailError, value))
+            {
+                OnPropertyChanged(nameof(HasEmailError));
+            }
+        }
+    }
+
+    public string PasswordError
+    {
+        get => _passwordError;
+        set
+        {
+            if (SetProperty(ref _passwordError, value))
+            {
+                OnPropertyChanged(nameof(HasPasswordError));
+            }
+        }
+    }
+
+    public string AuthError
+    {
+        get => _authError;
+        set
+        {
+            if (SetProperty(ref _authError, value))
+            {
+                OnPropertyChanged(nameof(HasAuthError));
+            }
+        }
+    }
+
+    public bool HasEmailError => !string.IsNullOrWhiteSpace(EmailError);
+    public bool HasPasswordError => !string.IsNullOrWhiteSpace(PasswordError);
+    public bool HasAuthError => !string.IsNullOrWhiteSpace(AuthError);
+
     public LoginViewModel(ISupabaseAuthService authService, IInputValidationService validation)
     {
         this.authService = authService;
@@ -30,15 +74,19 @@ public partial class LoginViewModel : BaseViewModel
     {
         if (IsBusy) return;
 
+        EmailError = string.Empty;
+        PasswordError = string.Empty;
+        AuthError = string.Empty;
+
         if (!validation.TryValidateEmail(Email, out var normalizedEmail, out var emailError))
         {
-            await Shell.Current.DisplayAlert("Validation", emailError, "OK");
+            EmailError = emailError;
             return;
         }
 
         if (!validation.TryValidateRequiredText(Password, "Password", out _, out var passwordError, maxLength: 256))
         {
-            await Shell.Current.DisplayAlert("Validation", passwordError, "OK");
+            PasswordError = passwordError;
             return;
         }
 
@@ -52,11 +100,37 @@ public partial class LoginViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Login Error", ex.Message, "OK");
+            AuthError = ex.Message;
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    partial void OnEmailChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(EmailError))
+        {
+            EmailError = string.Empty;
+        }
+
+        if (!string.IsNullOrWhiteSpace(AuthError))
+        {
+            AuthError = string.Empty;
+        }
+    }
+
+    partial void OnPasswordChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(PasswordError))
+        {
+            PasswordError = string.Empty;
+        }
+
+        if (!string.IsNullOrWhiteSpace(AuthError))
+        {
+            AuthError = string.Empty;
         }
     }
 

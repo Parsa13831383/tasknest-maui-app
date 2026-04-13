@@ -58,6 +58,11 @@
                                 Text="{Binding Email}"
                                 TextColor="#111827"
                                 BackgroundColor="#F9FAFB"/>
+                            <Label
+                                Text="{Binding EmailError}"
+                                IsVisible="{Binding HasEmailError}"
+                                FontSize="12"
+                                TextColor="#DC2626"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="8">
@@ -72,7 +77,31 @@
                                 Text="{Binding Password}"
                                 TextColor="#111827"
                                 BackgroundColor="#F9FAFB"/>
+                            <Label
+                                Text="{Binding PasswordError}"
+                                IsVisible="{Binding HasPasswordError}"
+                                FontSize="12"
+                                TextColor="#DC2626"/>
                         </VerticalStackLayout>
+
+                        <Label
+                            Text="{Binding AuthError}"
+                            IsVisible="{Binding HasAuthError}"
+                            FontSize="13"
+                            TextColor="#B91C1C"/>
+
+                        <HorizontalStackLayout
+                            Spacing="10"
+                            VerticalOptions="Center"
+                            IsVisible="{Binding IsBusy}">
+                            <ActivityIndicator
+                                IsRunning="{Binding IsBusy}"
+                                Color="#2563EB"/>
+                            <Label
+                                Text="Signing in..."
+                                VerticalOptions="Center"
+                                TextColor="#374151"/>
+                        </HorizontalStackLayout>
 
                         <Grid ColumnDefinitions="*,Auto"
                                 VerticalOptions="Center">
@@ -97,6 +126,7 @@
                         <Button
                             Text="Login"
                             Command="{Binding LoginCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
                             BackgroundColor="#2563EB"
                             TextColor="White"
                             CornerRadius="12"
@@ -105,6 +135,7 @@
                         <Button
                             Text="Create an account"
                             Command="{Binding NavigateToRegisterCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
                             BackgroundColor="#E5E7EB"
                             TextColor="#111827"
                             CornerRadius="12"

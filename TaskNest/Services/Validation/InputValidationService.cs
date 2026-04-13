@@ -34,6 +34,62 @@ public class InputValidationService : IInputValidationService
         return true;
     }
 
+    public bool TryValidatePassword(string? password, out string normalizedPassword, out string errorMessage)
+    {
+        normalizedPassword = password ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(normalizedPassword))
+        {
+            errorMessage = "Password is required.";
+            return false;
+        }
+
+        if (normalizedPassword.Length < 12)
+        {
+            errorMessage = "Password must be at least 12 characters.";
+            return false;
+        }
+
+        if (normalizedPassword.Length > 128)
+        {
+            errorMessage = "Password must be 128 characters or fewer.";
+            return false;
+        }
+
+        if (normalizedPassword.Any(char.IsWhiteSpace))
+        {
+            errorMessage = "Password cannot contain spaces.";
+            return false;
+        }
+
+        if (!normalizedPassword.Any(char.IsUpper))
+        {
+            errorMessage = "Password must include at least one uppercase letter.";
+            return false;
+        }
+
+        if (!normalizedPassword.Any(char.IsLower))
+        {
+            errorMessage = "Password must include at least one lowercase letter.";
+            return false;
+        }
+
+        if (!normalizedPassword.Any(char.IsDigit))
+        {
+            errorMessage = "Password must include at least one number.";
+            return false;
+        }
+
+        if (!normalizedPassword.Any(ch => !char.IsLetterOrDigit(ch)))
+        {
+            errorMessage = "Password must include at least one special character.";
+            return false;
+        }
+
+        errorMessage = string.Empty;
+        return true;
+    }
+
     public bool TryValidateRequiredText(string? value, string fieldName, out string normalizedValue, out string errorMessage, int maxLength = 200)
     {
         normalizedValue = (value ?? string.Empty).Trim();

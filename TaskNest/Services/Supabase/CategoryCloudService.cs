@@ -6,6 +6,7 @@ using TaskNest.Models.Cloud;
 
 namespace TaskNest.Services.Supabase;
 
+// Handles cloud communication with Supabase REST API for category data.
 public class CategoryCloudService : ICategoryCloudService
 {
     private readonly ISupabaseAuthService _authService;
@@ -50,6 +51,8 @@ public class CategoryCloudService : ICategoryCloudService
 
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Get categories failed: {body}");
@@ -66,6 +69,8 @@ public class CategoryCloudService : ICategoryCloudService
             $"/rest/v1/categories?select=*&id=eq.{id}&is_deleted=eq.false");
 
         var body = await response.Content.ReadAsStringAsync();
+
+        await HandleUnauthorizedAsync(response);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -101,6 +106,8 @@ public class CategoryCloudService : ICategoryCloudService
         var response = await _httpClient.PostAsync("/rest/v1/categories", content);
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Create category failed: {body}");
@@ -127,6 +134,8 @@ public class CategoryCloudService : ICategoryCloudService
         var response = await _httpClient.PatchAsync($"/rest/v1/categories?id=eq.{id}", content);
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Update category failed: {body}");
@@ -152,11 +161,24 @@ public class CategoryCloudService : ICategoryCloudService
         var response = await _httpClient.PatchAsync($"/rest/v1/categories?id=eq.{id}", content);
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Delete category failed: {body}");
         }
 
         return JsonSerializer.Deserialize<List<CloudCategoryDto>>(body, _jsonOptions) ?? new();
+    }
+
+    private async Task HandleUnauthorizedAsync(HttpResponseMessage response)
+    {
+        if (response.StatusCode != System.Net.HttpStatusCode.Unauthorized)
+        {
+            return;
+        }
+
+        await _authService.HandleSessionExpiredAsync();
+        throw new UnauthorizedAccessException("Session expired");
     }
 }

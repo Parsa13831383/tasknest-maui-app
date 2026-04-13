@@ -6,6 +6,23 @@ TaskNest applies a basic security policy for authentication, local token handlin
 ## Token Storage
 Authentication session data is stored using .NET MAUI SecureStorage, which uses platform-secure storage mechanisms instead of plain local preferences or hardcoded values.
 
+## Threat Model
+
+Potential risks considered:
+- Unauthorized access to user data
+- Token exposure on device
+- Invalid or malicious input
+
+Mitigations:
+- Row Level Security (RLS) ensures user isolation
+- SecureStorage prevents plaintext token storage
+- Input validation prevents malformed requests
+
+## Data Protection Strategy
+- Sensitive tokens are stored using platform secure storage mechanisms where available
+- No passwords are stored locally
+- All cloud requests require JWT authentication
+
 ## Input Validation
 The application validates user input before sending it to cloud services:
 - email format validation

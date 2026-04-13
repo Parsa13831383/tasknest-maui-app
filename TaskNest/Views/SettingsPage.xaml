@@ -212,6 +212,72 @@
                 </VerticalStackLayout>
             </Frame>
 
+            <Frame
+                Padding="18"
+                CornerRadius="18"
+                BackgroundColor="{AppThemeBinding Light=#ECFDF5, Dark=#11251E}"
+                BorderColor="{AppThemeBinding Light=#A7F3D0, Dark=#1F4D3B}"
+                HasShadow="False">
+                <VerticalStackLayout Spacing="10">
+                    <Label
+                        Text="Security Proof"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="{AppThemeBinding Light=#065F46, Dark=#6EE7B7}"/>
+
+                    <Grid ColumnDefinitions="Auto,*"
+                            RowDefinitions="Auto,Auto,Auto"
+                            RowSpacing="6"
+                            ColumnSpacing="10">
+                        <Label Grid.Row="0" Grid.Column="0" Text="User ID:" TextColor="{AppThemeBinding Light=#065F46, Dark=#6EE7B7}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding SecurityUserId}" TextColor="{AppThemeBinding Light=#064E3B, Dark=#D1FAE5}"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Auth State:" TextColor="{AppThemeBinding Light=#065F46, Dark=#6EE7B7}"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding SecurityAuthState}" TextColor="{AppThemeBinding Light=#064E3B, Dark=#D1FAE5}"/>
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="Token Exists:" TextColor="{AppThemeBinding Light=#065F46, Dark=#6EE7B7}"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="{Binding SecurityTokenState}" TextColor="{AppThemeBinding Light=#064E3B, Dark=#D1FAE5}"/>
+                    </Grid>
+
+                    <Button
+                        Text="Refresh Security Proof"
+                        Command="{Binding RefreshSecurityProofCommand}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#123125}"
+                        TextColor="{AppThemeBinding Light=#047857, Dark=#A7F3D0}"
+                        BorderColor="{AppThemeBinding Light=#86EFAC, Dark=#1F4D3B}"
+                        BorderWidth="1"
+                        CornerRadius="12"
+                        HeightRequest="44"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame
+                Padding="18"
+                CornerRadius="18"
+                BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#141B26}"
+                BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                HasShadow="False">
+                <VerticalStackLayout Spacing="8">
+                    <Label
+                        Text="RLS Multi-User Demo Script"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="{AppThemeBinding Light=#0F172A, Dark=#E2E8F0}"/>
+                    <Label
+                        Text="1. Create and log in as User A, then create a task named 'A-only task'."
+                        FontSize="14"
+                        TextColor="{AppThemeBinding Light=#334155, Dark=#CBD5E1}"/>
+                    <Label
+                        Text="2. Log out, create/login as User B, and open Tasks."
+                        FontSize="14"
+                        TextColor="{AppThemeBinding Light=#334155, Dark=#CBD5E1}"/>
+                    <Label
+                        Text="3. Verify 'A-only task' is not visible for User B (RLS isolation proof)."
+                        FontSize="14"
+                        TextColor="{AppThemeBinding Light=#334155, Dark=#CBD5E1}"/>
+                </VerticalStackLayout>
+            </Frame>
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

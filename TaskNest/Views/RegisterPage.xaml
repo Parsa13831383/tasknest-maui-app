@@ -70,6 +70,10 @@
                                 Placeholder="Create password"
                                 IsPassword="True"
                                 Text="{Binding Password}"/>
+                            <Label
+                            Text="Use 12+ characters with uppercase, lowercase, number, and symbol."
+                            FontSize="12"
+                            TextColor="#6B7280"/>
                         </VerticalStackLayout>
 
                         <!-- CONFIRM -->

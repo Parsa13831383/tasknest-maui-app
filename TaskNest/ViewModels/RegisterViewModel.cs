@@ -6,6 +6,7 @@ namespace TaskNest.ViewModels;
 public class RegisterViewModel : BaseViewModel
 {
     private readonly ISupabaseAuthService authService;
+    private readonly IInputValidationService validation;
 
     private string name = string.Empty;
     public string Name
@@ -38,9 +39,10 @@ public class RegisterViewModel : BaseViewModel
     public ICommand RegisterCommand { get; }
     public ICommand NavigateToLoginCommand { get; }
 
-    public RegisterViewModel(ISupabaseAuthService authService)
+    public RegisterViewModel(ISupabaseAuthService authService, IInputValidationService validation)
     {
         this.authService = authService;
+        this.validation = validation;
         Title = "Register";
         RegisterCommand = new Command(async () => await RegisterAsync());
         NavigateToLoginCommand = new Command(async () => await NavigateToLoginAsync());
@@ -53,13 +55,19 @@ public class RegisterViewModel : BaseViewModel
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+        if (!validation.TryValidateEmail(Email, out var normalizedEmail, out var emailError))
         {
-            await Shell.Current.DisplayAlert("Validation", "Email and password are required.", "OK");
+            await Shell.Current.DisplayAlert("Validation", emailError, "OK");
             return;
         }
 
-        if (!string.Equals(Password, ConfirmPassword, StringComparison.Ordinal))
+        if (!validation.TryValidatePassword(Password, out var normalizedPassword, out var passwordError))
+        {
+            await Shell.Current.DisplayAlert("Validation", passwordError, "OK");
+            return;
+        }
+
+        if (!string.Equals(normalizedPassword, ConfirmPassword, StringComparison.Ordinal))
         {
             await Shell.Current.DisplayAlert("Validation", "Passwords do not match.", "OK");
             return;
@@ -69,7 +77,7 @@ public class RegisterViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            var result = await authService.SignUpAsync(Email.Trim(), Password, Name);
+            var result = await authService.SignUpAsync(normalizedEmail, normalizedPassword, Name);
             var requiresEmailConfirmation = string.IsNullOrWhiteSpace(result?.AccessToken);
 
             await Shell.Current.DisplayAlert(

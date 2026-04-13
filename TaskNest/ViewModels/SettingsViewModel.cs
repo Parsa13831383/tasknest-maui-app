@@ -20,6 +20,9 @@ public class SettingsViewModel : BaseViewModel
     private string _selectedTheme = string.Empty;
     private string _selectedLanguage = string.Empty;
     private string _selectedReminderFrequency = string.Empty;
+    private string _securityUserId = "N/A";
+    private string _securityAuthState = "Unauthenticated";
+    private string _securityTokenState = "No";
 
     public bool NotificationsEnabled
     {
@@ -73,9 +76,28 @@ public class SettingsViewModel : BaseViewModel
     public ObservableCollection<string> Languages { get; } = new();
     public ObservableCollection<string> ReminderFrequencies { get; } = new();
 
+    public string SecurityUserId
+    {
+        get => _securityUserId;
+        set => SetProperty(ref _securityUserId, value);
+    }
+
+    public string SecurityAuthState
+    {
+        get => _securityAuthState;
+        set => SetProperty(ref _securityAuthState, value);
+    }
+
+    public string SecurityTokenState
+    {
+        get => _securityTokenState;
+        set => SetProperty(ref _securityTokenState, value);
+    }
+
     public ICommand SaveSettingsCommand { get; }
     public ICommand ResetSettingsCommand { get; }
     public ICommand LogoutCommand { get; }
+    public ICommand RefreshSecurityProofCommand { get; }
 
     public SettingsViewModel(ISupabaseAuthService authService)
     {
@@ -100,6 +122,8 @@ public class SettingsViewModel : BaseViewModel
         SaveSettingsCommand = new Command(async () => await SaveSettings());
         ResetSettingsCommand = new Command(ResetSettings);
         LogoutCommand = new Command(async () => await Logout());
+        RefreshSecurityProofCommand = new Command(RefreshSecurityProof);
+        RefreshSecurityProof();
     }
 
     private async Task SaveSettings()
@@ -132,6 +156,7 @@ public class SettingsViewModel : BaseViewModel
     private async Task Logout()
     {
         await _authService.SignOutAsync();
+        RefreshSecurityProof();
 
         await Shell.Current.DisplayAlert(
             _localization.Translate("Logout"),
@@ -139,6 +164,15 @@ public class SettingsViewModel : BaseViewModel
             _localization.Translate("OK"));
 
         await Shell.Current.GoToAsync("login");
+    }
+
+    public void RefreshSecurityProof()
+    {
+        SecurityUserId = string.IsNullOrWhiteSpace(_authService.UserId)
+            ? "N/A"
+            : _authService.UserId!;
+        SecurityAuthState = _authService.IsAuthenticated ? "Authenticated" : "Unauthenticated";
+        SecurityTokenState = string.IsNullOrWhiteSpace(_authService.AccessToken) ? "No" : "Yes";
     }
 
     private void LoadPreferences()

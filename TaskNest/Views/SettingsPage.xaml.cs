@@ -5,6 +5,8 @@ namespace TaskNest.Views;
 
 public partial class SettingsPage : ContentPage
 {
+    private readonly SettingsViewModel _viewModel;
+
     public SettingsPage()
     {
         InitializeComponent();
@@ -12,6 +14,13 @@ public partial class SettingsPage : ContentPage
         var authService = Application.Current?.Handler?.MauiContext?.Services.GetService<ISupabaseAuthService>()
             ?? throw new InvalidOperationException("ISupabaseAuthService is not registered in DI.");
 
-        BindingContext = new SettingsViewModel(authService);
+        _viewModel = new SettingsViewModel(authService);
+        BindingContext = _viewModel;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _viewModel.RefreshSecurityProof();
     }
 }

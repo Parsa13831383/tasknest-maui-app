@@ -5,6 +5,7 @@ using TaskNest.Models.Enums;
 
 namespace TaskNest.Repositories;
 
+// Implements repository operations for tasks using cloud-backed data services.
 public class SupabaseTaskRepository : ITaskRepository
 {
     private readonly ITaskCloudService _taskCloudService;

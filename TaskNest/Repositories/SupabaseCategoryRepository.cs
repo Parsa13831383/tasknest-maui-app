@@ -5,6 +5,7 @@ using TaskNest.Models.Enums;
 
 namespace TaskNest.Repositories;
 
+// Implements repository operations for categories using cloud-backed data services.
 public class SupabaseCategoryRepository : ICategoryRepository
 {
     private readonly ICategoryCloudService _categoryCloudService;

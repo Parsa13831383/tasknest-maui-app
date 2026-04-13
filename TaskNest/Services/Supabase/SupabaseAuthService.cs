@@ -5,6 +5,7 @@ using TaskNest.Models.Auth;
 
 namespace TaskNest.Services.Supabase;
 
+// Handles authentication lifecycle and Supabase auth API interactions.
 public class SupabaseAuthService : ISupabaseAuthService
 {
     private readonly ISecureSessionService _secureSessionService;
@@ -12,6 +13,8 @@ public class SupabaseAuthService : ISupabaseAuthService
 
     private string? _accessToken;
     private string? _userId;
+
+    public event EventHandler<string>? SessionExpired;
 
     public string? AccessToken => _accessToken;
     public string? UserId => _userId;
@@ -130,6 +133,12 @@ public class SupabaseAuthService : ISupabaseAuthService
     public async Task SignOutAsync()
     {
         await ClearSessionAsync();
+    }
+
+    public async Task HandleSessionExpiredAsync(string reason = "Session expired")
+    {
+        await ClearSessionAsync();
+        SessionExpired?.Invoke(this, reason);
     }
 
     public async Task<bool> RestoreSessionAsync()

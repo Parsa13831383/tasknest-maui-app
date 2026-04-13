@@ -6,6 +6,7 @@ using TaskNest.Models.Cloud;
 
 namespace TaskNest.Services.Supabase;
 
+// Handles cloud communication with Supabase REST API for task data.
 public class TaskCloudService : ITaskCloudService
 {
     private readonly ISupabaseAuthService _authService;
@@ -50,6 +51,8 @@ public class TaskCloudService : ITaskCloudService
 
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Get tasks failed: {body}");
@@ -66,6 +69,8 @@ public class TaskCloudService : ITaskCloudService
             $"/rest/v1/tasks?select=*&id=eq.{id}&is_deleted=eq.false");
 
         var body = await response.Content.ReadAsStringAsync();
+
+        await HandleUnauthorizedAsync(response);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -104,6 +109,8 @@ public class TaskCloudService : ITaskCloudService
         var response = await _httpClient.PostAsync("/rest/v1/tasks", content);
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Create task failed: {body}");
@@ -134,6 +141,8 @@ public class TaskCloudService : ITaskCloudService
         var response = await _httpClient.PatchAsync($"/rest/v1/tasks?id=eq.{id}", content);
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Update task failed: {body}");
@@ -158,11 +167,24 @@ public class TaskCloudService : ITaskCloudService
         var response = await _httpClient.PatchAsync($"/rest/v1/tasks?id=eq.{id}", content);
         var body = await response.Content.ReadAsStringAsync();
 
+        await HandleUnauthorizedAsync(response);
+
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Delete task failed: {body}");
         }
 
         return JsonSerializer.Deserialize<List<CloudTaskDto>>(body, _jsonOptions) ?? new();
+    }
+
+    private async Task HandleUnauthorizedAsync(HttpResponseMessage response)
+    {
+        if (response.StatusCode != System.Net.HttpStatusCode.Unauthorized)
+        {
+            return;
+        }
+
+        await _authService.HandleSessionExpiredAsync();
+        throw new UnauthorizedAccessException("Session expired");
     }
 }

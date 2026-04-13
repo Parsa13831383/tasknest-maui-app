@@ -2,6 +2,7 @@ using TaskNest.Interfaces;
 
 namespace TaskNest.Repositories;
 
+// Coordinates repository access for the cloud-backed data layer.
 public class SupabaseUnitOfWork : IUnitOfWork
 {
     public ITaskRepository Tasks { get; }
