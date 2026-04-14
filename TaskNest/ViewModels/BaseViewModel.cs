@@ -60,3 +60,6 @@ public partial class BaseViewModel : ObservableObject
 }
 
 public sealed record ErrorMessage(string Message, Exception? Exception = null, string? Source = null);
+
+/// <summary>Broadcast when any task's completion status changes so subscribers can refresh their data.</summary>
+public sealed record TaskStatusChangedMessage();

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Graphics;
 using TaskNest.Interfaces;
 using TaskNest.Models;
@@ -214,6 +215,7 @@ public class TaskEditViewModel : BaseViewModel
                 await _unitOfWork.Tasks.AddAsync(task);
             }
 
+            WeakReferenceMessenger.Default.Send(new TaskStatusChangedMessage());
             await GoBackAsync();
         }
         catch (Exception ex)

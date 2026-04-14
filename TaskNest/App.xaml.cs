@@ -9,6 +9,7 @@ public partial class App : Application
 	private readonly AppShell _appShell;
 	private readonly ISupabaseAuthService _authService;
 	private readonly LocalizationService _localization = LocalizationService.Instance;
+	private Uri? _pendingDeepLink;
 
 	public App(IUnitOfWork unitOfWork, AppShell appShell, ISupabaseAuthService authService)
 	{
@@ -35,5 +36,29 @@ public partial class App : Application
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
 		return new Window(_appShell);
+	}
+
+	public async Task HandleIncomingUrlAsync(Uri uri)
+	{
+		if (_appShell.Handler?.MauiContext is not null)
+		{
+			await _appShell.HandleIncomingUrlAsync(uri);
+			return;
+		}
+
+		_pendingDeepLink = uri;
+	}
+
+	public async Task FlushPendingDeepLinkAsync()
+	{
+		if (_pendingDeepLink is null)
+		{
+			return;
+		}
+
+		var pendingDeepLink = _pendingDeepLink;
+		_pendingDeepLink = null;
+
+		await _appShell.HandleIncomingUrlAsync(pendingDeepLink);
 	}
 }

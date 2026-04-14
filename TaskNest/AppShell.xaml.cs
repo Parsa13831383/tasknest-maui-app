@@ -1,6 +1,8 @@
 ﻿using TaskNest.Views;
 using TaskNest.Services;
 using TaskNest.Interfaces;
+using System.Net;
+using TaskNest.ViewModels;
 
 namespace TaskNest;
 
@@ -20,6 +22,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("taskedit", typeof(TaskEditPage));
 		Routing.RegisterRoute("login", typeof(LoginPage));
 		Routing.RegisterRoute("register", typeof(RegisterPage));
+		Routing.RegisterRoute("resetpassword", typeof(ResetPasswordPage));
 
 		ApplyLocalizedShellText();
 		_localization.LanguageChanged += OnLanguageChanged;
@@ -31,7 +34,7 @@ public partial class AppShell : Shell
 
 	private void OnShellLoaded(object? sender, EventArgs e)
 	{
-		_ = ApplyInitialRouteAsync();
+		_ = ApplyInitialRouteAndPendingDeepLinkAsync();
 
 		if (CurrentPage is Page page)
 		{
@@ -39,11 +42,22 @@ public partial class AppShell : Shell
 		}
 	}
 
+	private async Task ApplyInitialRouteAndPendingDeepLinkAsync()
+	{
+		await ApplyInitialRouteAsync();
+
+		if (Application.Current is App app)
+		{
+			await app.FlushPendingDeepLinkAsync();
+		}
+	}
+
 	private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
 	{
 		var route = e.Current?.Location.OriginalString ?? string.Empty;
 		var isAuthRoute = route.Contains("login", StringComparison.OrdinalIgnoreCase)
-			|| route.Contains("register", StringComparison.OrdinalIgnoreCase);
+			|| route.Contains("register", StringComparison.OrdinalIgnoreCase)
+			|| route.Contains("resetpassword", StringComparison.OrdinalIgnoreCase);
 
 		FlyoutBehavior = isAuthRoute ? FlyoutBehavior.Disabled : FlyoutBehavior.Flyout;
 
@@ -62,6 +76,7 @@ public partial class AppShell : Shell
 
 		var targetRoute = e.Target.Location.OriginalString;
 		var navigatingToAuth = IsAuthRoute(targetRoute);
+		var navigatingToResetPassword = targetRoute.Contains("resetpassword", StringComparison.OrdinalIgnoreCase);
 		var navigatingToProtected = IsProtectedRoute(targetRoute);
 
 		if (navigatingToProtected && !_authService.IsAuthenticated)
@@ -71,11 +86,29 @@ public partial class AppShell : Shell
 			return;
 		}
 
-		if (navigatingToAuth && _authService.IsAuthenticated)
+		if (navigatingToAuth && _authService.IsAuthenticated && !navigatingToResetPassword)
 		{
 			e.Cancel();
 			_ = RedirectToDashboardAsync();
 		}
+	}
+
+	public async Task HandleIncomingUrlAsync(Uri uri)
+	{
+		if (!IsPasswordRecoveryUri(uri))
+		{
+			return;
+		}
+
+		if (!TryGetRecoveryAccessToken(uri, out var accessToken))
+		{
+			await MainThread.InvokeOnMainThreadAsync(() =>
+				Shell.Current?.DisplayAlert("Reset Password", "The reset link is missing a token.", "OK"));
+			return;
+		}
+
+		await _authService.ApplyRecoverySessionAsync(accessToken);
+		await GoToAsync("resetpassword");
 	}
 
 	private async Task ApplyInitialRouteAsync()
@@ -149,6 +182,58 @@ public partial class AppShell : Shell
 	{
 		return route.Contains("login", StringComparison.OrdinalIgnoreCase)
 			|| route.Contains("register", StringComparison.OrdinalIgnoreCase);
+	}
+
+	private static bool IsPasswordRecoveryUri(Uri uri)
+	{
+		return uri.Scheme.Equals("tasknest", StringComparison.OrdinalIgnoreCase)
+			&& (uri.Host.Equals("reset-password", StringComparison.OrdinalIgnoreCase)
+				|| uri.AbsolutePath.Contains("reset-password", StringComparison.OrdinalIgnoreCase)
+				|| uri.AbsolutePath.Contains("resetpassword", StringComparison.OrdinalIgnoreCase));
+	}
+
+	private static bool TryGetRecoveryAccessToken(Uri uri, out string accessToken)
+	{
+		var parameters = ParseParameters(uri);
+
+		if (parameters.TryGetValue("access_token", out accessToken!) && !string.IsNullOrWhiteSpace(accessToken))
+		{
+			return true;
+		}
+
+		accessToken = string.Empty;
+		return false;
+	}
+
+	private static Dictionary<string, string> ParseParameters(Uri uri)
+	{
+		var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		ParseParameterString(uri.Query, parameters);
+		ParseParameterString(uri.Fragment, parameters);
+		return parameters;
+	}
+
+	private static void ParseParameterString(string value, IDictionary<string, string> parameters)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+		{
+			return;
+		}
+
+		var trimmed = value.TrimStart('?', '#');
+
+		foreach (var pair in trimmed.Split('&', StringSplitOptions.RemoveEmptyEntries))
+		{
+			var parts = pair.Split('=', 2);
+			var key = WebUtility.UrlDecode(parts[0]);
+			if (string.IsNullOrWhiteSpace(key))
+			{
+				continue;
+			}
+
+			var decodedValue = parts.Length > 1 ? WebUtility.UrlDecode(parts[1]) : string.Empty;
+			parameters[key] = decodedValue ?? string.Empty;
+		}
 	}
 
 	private static bool IsProtectedRoute(string route)

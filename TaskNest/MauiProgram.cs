@@ -5,8 +5,10 @@ using TaskNest.ViewModels;
 using TaskNest.Data;
 using TaskNest.Repositories;
 using TaskNest.Services.Security;
+using TaskNest.Services.Profile;
 using TaskNest.Services.Supabase;
 using TaskNest.Services.Validation;
+using TaskNest.Services.Dashboard;
 
 namespace TaskNest;
 
@@ -33,11 +35,16 @@ public static class MauiProgram
 		builder.Services.AddTransient<BaseViewModel>();
 		builder.Services.AddTransient<LoginViewModel>();
 		builder.Services.AddTransient<RegisterViewModel>();
+		builder.Services.AddTransient<ResetPasswordViewModel>();
+		builder.Services.AddTransient<ProfileViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<TaskListViewModel>();
 		builder.Services.AddTransient<TaskDetailViewModel>();
 		builder.Services.AddTransient<TaskEditViewModel>();
 		builder.Services.AddTransient<CategoriesViewModel>();
+		builder.Services.AddTransient<SettingsViewModel>();
+		builder.Services.AddSingleton<IProfileService, ProfileService>();
+		builder.Services.AddSingleton<IDashboardService, DashboardService>();
 
 		// Cloud data path (Supabase) used by repositories and view models.
 		builder.Services.AddSingleton<ITaskRepository, SupabaseTaskRepository>();

@@ -21,6 +21,17 @@
 	<array>
 		<string>arm64</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.companyname.tasknest</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tasknest</string>
+			</array>
+		</dict>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

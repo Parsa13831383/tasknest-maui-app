@@ -1,5 +1,7 @@
 using System.Text;
 using System.Text.Json;
+using System.Net;
+using System.Net.Http.Headers;
 using TaskNest.Interfaces;
 using TaskNest.Models.Auth;
 
@@ -13,11 +15,13 @@ public class SupabaseAuthService : ISupabaseAuthService
 
     private string? _accessToken;
     private string? _userId;
+    private string? _userEmail;
 
     public event EventHandler<string>? SessionExpired;
 
     public string? AccessToken => _accessToken;
     public string? UserId => _userId;
+    public string? UserEmail => _userEmail;
     public bool IsAuthenticated => !string.IsNullOrWhiteSpace(_accessToken);
 
     public SupabaseAuthService(ISecureSessionService secureSessionService)
@@ -130,6 +134,135 @@ public class SupabaseAuthService : ISupabaseAuthService
         return authResponse;
     }
 
+    public async Task SendPasswordResetEmailAsync(string email)
+    {
+        var redirectUrl = string.IsNullOrWhiteSpace(SupabaseConfig.PasswordResetRedirectUrl)
+            ? null
+            : SupabaseConfig.PasswordResetRedirectUrl;
+
+        var payload = redirectUrl is null
+            ? JsonSerializer.Serialize(new { email })
+            : JsonSerializer.Serialize(new { email, redirect_to = redirectUrl });
+
+        using var content = new StringContent(payload, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync("/auth/v1/recover", content);
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(GetSupabaseErrorMessage(responseBody, "Could not send password reset email."));
+        }
+    }
+
+    public async Task ApplyRecoverySessionAsync(string accessToken)
+    {
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            throw new Exception("Password recovery token is missing.");
+        }
+
+        _accessToken = accessToken;
+        _userId = TryExtractUserIdFromJwt(accessToken);
+        _userEmail = TryExtractJwtStringClaim(accessToken, "email");
+
+        await _secureSessionService.SaveSessionAsync(_accessToken, _userId ?? string.Empty);
+    }
+
+    public async Task UpdatePasswordAsync(string newPassword)
+    {
+        if (string.IsNullOrWhiteSpace(_accessToken))
+        {
+            throw new Exception("Your password reset session has expired. Please request a new reset email.");
+        }
+
+        var payload = JsonSerializer.Serialize(new
+        {
+            password = newPassword
+        });
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, "/auth/v1/user");
+        request.Headers.Add("Authorization", $"Bearer {_accessToken}");
+        request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.SendAsync(request);
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(GetSupabaseErrorMessage(responseBody, "Could not update password."));
+        }
+    }
+
+    public async Task<AuthenticatedUserInfo?> GetCurrentUserAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_accessToken))
+        {
+            return null;
+        }
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/auth/v1/user");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+
+        var response = await _httpClient.SendAsync(request);
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            await HandleSessionExpiredAsync();
+            return null;
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(GetSupabaseErrorMessage(responseBody, "Could not load profile information."));
+        }
+
+        if (string.IsNullOrWhiteSpace(responseBody))
+        {
+            return BuildUserFromToken();
+        }
+
+        try
+        {
+            using var document = JsonDocument.Parse(responseBody);
+            var root = document.RootElement;
+
+            var id = root.TryGetProperty("id", out var idElement) && idElement.ValueKind == JsonValueKind.String
+                ? idElement.GetString() ?? string.Empty
+                : string.Empty;
+
+            var email = root.TryGetProperty("email", out var emailElement) && emailElement.ValueKind == JsonValueKind.String
+                ? emailElement.GetString() ?? string.Empty
+                : string.Empty;
+
+            string fullName = string.Empty;
+            if (root.TryGetProperty("user_metadata", out var metadataElement)
+                && metadataElement.ValueKind == JsonValueKind.Object)
+            {
+                fullName = TryGetMetadataField(metadataElement, "full_name")
+                    ?? TryGetMetadataField(metadataElement, "name")
+                    ?? TryGetMetadataField(metadataElement, "display_name")
+                    ?? string.Empty;
+            }
+
+            var jwtUser = BuildUserFromToken();
+
+            _userId = !string.IsNullOrWhiteSpace(id) ? id : jwtUser?.Id ?? _userId;
+            _userEmail = !string.IsNullOrWhiteSpace(email) ? email : jwtUser?.Email ?? _userEmail;
+
+            return new AuthenticatedUserInfo
+            {
+                Id = !string.IsNullOrWhiteSpace(id) ? id : jwtUser?.Id ?? _userId ?? string.Empty,
+                Email = !string.IsNullOrWhiteSpace(email) ? email : jwtUser?.Email ?? string.Empty,
+                FullName = !string.IsNullOrWhiteSpace(fullName) ? fullName : jwtUser?.FullName ?? string.Empty
+            };
+        }
+        catch (JsonException)
+        {
+            return BuildUserFromToken();
+        }
+    }
+
     public async Task SignOutAsync()
     {
         await ClearSessionAsync();
@@ -154,6 +287,7 @@ public class SupabaseAuthService : ISupabaseAuthService
 
         _accessToken = token;
         _userId = session.UserId;
+        _userEmail = TryExtractJwtStringClaim(token, "email");
 
         if (string.IsNullOrWhiteSpace(_userId))
         {
@@ -168,10 +302,16 @@ public class SupabaseAuthService : ISupabaseAuthService
     {
         _accessToken = authResponse?.AccessToken;
         _userId = authResponse?.User?.Id;
+        _userEmail = authResponse?.User?.Email;
 
         if (string.IsNullOrWhiteSpace(_userId) && !string.IsNullOrWhiteSpace(_accessToken))
         {
             _userId = TryExtractUserIdFromJwt(_accessToken);
+        }
+
+        if (string.IsNullOrWhiteSpace(_userEmail) && !string.IsNullOrWhiteSpace(_accessToken))
+        {
+            _userEmail = TryExtractJwtStringClaim(_accessToken, "email");
         }
 
         if (!persistSession)
@@ -193,6 +333,7 @@ public class SupabaseAuthService : ISupabaseAuthService
     {
         _accessToken = null;
         _userId = null;
+        _userEmail = null;
         await _secureSessionService.ClearSessionAsync();
     }
 
@@ -233,6 +374,79 @@ public class SupabaseAuthService : ISupabaseAuthService
 
     private static string? TryExtractUserIdFromJwt(string jwt)
     {
+        return TryExtractJwtStringClaim(jwt, "sub");
+    }
+
+    private AuthenticatedUserInfo? BuildUserFromToken()
+    {
+        if (string.IsNullOrWhiteSpace(_accessToken))
+        {
+            return null;
+        }
+
+        var id = TryExtractJwtStringClaim(_accessToken, "sub") ?? _userId ?? string.Empty;
+        var email = TryExtractJwtStringClaim(_accessToken, "email") ?? string.Empty;
+        var fullName = TryExtractJwtMetadataClaim(_accessToken, "full_name")
+            ?? TryExtractJwtMetadataClaim(_accessToken, "name")
+            ?? string.Empty;
+
+        return new AuthenticatedUserInfo
+        {
+            Id = id,
+            Email = email,
+            FullName = fullName
+        };
+    }
+
+    private static string? TryGetMetadataField(JsonElement metadataElement, string fieldName)
+    {
+        if (metadataElement.TryGetProperty(fieldName, out var field)
+            && field.ValueKind == JsonValueKind.String)
+        {
+            return field.GetString();
+        }
+
+        return null;
+    }
+
+    private static string? TryExtractJwtMetadataClaim(string jwt, string claimName)
+    {
+        var payload = TryDecodeJwtPayload(jwt);
+        if (payload is null)
+        {
+            return null;
+        }
+
+        using var document = JsonDocument.Parse(payload);
+        if (!document.RootElement.TryGetProperty("user_metadata", out var metadata)
+            || metadata.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        return TryGetMetadataField(metadata, claimName);
+    }
+
+    private static string? TryExtractJwtStringClaim(string jwt, string claimName)
+    {
+        var payload = TryDecodeJwtPayload(jwt);
+        if (payload is null)
+        {
+            return null;
+        }
+
+        using var document = JsonDocument.Parse(payload);
+        if (document.RootElement.TryGetProperty(claimName, out var value)
+            && value.ValueKind == JsonValueKind.String)
+        {
+            return value.GetString();
+        }
+
+        return null;
+    }
+
+    private static string? TryDecodeJwtPayload(string jwt)
+    {
         var parts = jwt.Split('.');
         if (parts.Length < 2)
         {
@@ -256,13 +470,7 @@ public class SupabaseAuthService : ISupabaseAuthService
         try
         {
             var bytes = Convert.FromBase64String(payload);
-            var json = Encoding.UTF8.GetString(bytes);
-            using var document = JsonDocument.Parse(json);
-            if (document.RootElement.TryGetProperty("sub", out var sub)
-                && sub.ValueKind == JsonValueKind.String)
-            {
-                return sub.GetString();
-            }
+            return Encoding.UTF8.GetString(bytes);
         }
         catch
         {

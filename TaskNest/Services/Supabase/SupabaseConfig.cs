@@ -9,4 +9,8 @@ public static class SupabaseConfig
     // Optional: set this to an allowed redirect URL in Supabase Auth URL Configuration.
     // Leave empty to use your Supabase project's default Site URL.
     public const string EmailConfirmationRedirectUrl = "";
+
+    // Optional: set this to an allowed reset redirect URL in Supabase Auth URL Configuration.
+    // Leave empty to use your Supabase project's default Site URL.
+    public const string PasswordResetRedirectUrl = "tasknest://reset-password";
 }

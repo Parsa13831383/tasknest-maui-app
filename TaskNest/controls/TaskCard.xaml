@@ -63,7 +63,7 @@
             </Grid>
 
             <!-- Actions -->
-                <Grid ColumnDefinitions="*,*,*"
+                <Grid ColumnDefinitions="*,*,*,*"
                     ColumnSpacing="12">
 
                 <Button
@@ -87,6 +87,25 @@
 
                 <Button
                     Grid.Column="2"
+                    Text="Complete"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CompleteTaskCommand}"
+                    CommandParameter="{Binding .}"
+                    BackgroundColor="{AppThemeBinding Light=#DBEAFE, Dark=#1E3A8A}"
+                    TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#BFDBFE}"
+                    CornerRadius="12"
+                    HeightRequest="42">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding IsCompleted}" Value="True">
+                            <Setter Property="Text" Value="Completed"/>
+                            <Setter Property="IsEnabled" Value="False"/>
+                            <Setter Property="BackgroundColor" Value="#DCFCE7"/>
+                            <Setter Property="TextColor" Value="#166534"/>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button
+                    Grid.Column="3"
                     Text="Delete"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"
                     CommandParameter="{Binding .}"

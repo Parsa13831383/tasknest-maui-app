@@ -15,4 +15,6 @@ public class TaskListItem
     public string Category { get; set; } = string.Empty;
 
     public Color TaskColor { get; set; } = Colors.Gray;
+
+    public bool IsCompleted { get; set; }
 }

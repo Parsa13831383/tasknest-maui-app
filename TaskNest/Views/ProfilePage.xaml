@@ -46,7 +46,7 @@
                             Padding="0">
                             <Grid>
                                 <Label
-                                    Text="P"
+                                    Text="{Binding Initials}"
                                     FontSize="32"
                                     FontAttributes="Bold"
                                     TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#BFDBFE}"
@@ -58,13 +58,13 @@
                         <VerticalStackLayout Spacing="6"
                                 VerticalOptions="Center">
                             <Label
-                                Text="Parsa Nanavazadeh"
+                                Text="{Binding FullName}"
                                 FontSize="22"
                                 FontAttributes="Bold"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
 
                             <Label
-                                Text="Student / TaskNest User"
+                                Text="{Binding Role}"
                                 FontSize="14"
                                 TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
 
@@ -75,7 +75,7 @@
                                 BackgroundColor="{AppThemeBinding Light=#DCFCE7, Dark=#14532D}"
                                 HorizontalOptions="Start">
                                 <Label
-                                    Text="Active"
+                                    Text="{Binding SessionStatus}"
                                     FontSize="12"
                                     FontAttributes="Bold"
                                     TextColor="{AppThemeBinding Light=#15803D, Dark=#BBF7D0}"/>
@@ -101,7 +101,7 @@
                                     FontSize="13"
                                     TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
                                 <Label
-                                    Text="12"
+                                    Text="{Binding CompletedTaskCount}"
                                     FontSize="22"
                                     FontAttributes="Bold"
                                     TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
@@ -120,7 +120,7 @@
                                     FontSize="13"
                                     TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
                                 <Label
-                                    Text="5"
+                                    Text="{Binding ActiveTaskCount}"
                                     FontSize="22"
                                     FontAttributes="Bold"
                                     TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
@@ -139,7 +139,7 @@
                                     FontSize="13"
                                     TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
                                 <Label
-                                    Text="4"
+                                    Text="{Binding CategoryCount}"
                                     FontSize="22"
                                     FontAttributes="Bold"
                                     TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
@@ -160,7 +160,8 @@
                                 FontAttributes="Bold"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Entry
-                                Text="Parsa Nanavazadeh"
+                                Text="{Binding FullName}"
+                                IsReadOnly="True"
                                 BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                         </VerticalStackLayout>
@@ -172,7 +173,8 @@
                                 FontAttributes="Bold"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Entry
-                                Text="parsa@example.com"
+                                Text="{Binding EmailAddress}"
+                                IsReadOnly="True"
                                 Keyboard="Email"
                                 BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
@@ -185,19 +187,40 @@
                                 FontAttributes="Bold"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Entry
-                                Text="Student Developer"
+                                Text="{Binding Role}"
+                                IsReadOnly="True"
                                 BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                         </VerticalStackLayout>
 
                     </VerticalStackLayout>
 
+                    <Label
+                        Text="{Binding ErrorMessage}"
+                        IsVisible="{Binding HasErrorMessage}"
+                        FontSize="13"
+                        TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
+
+                    <HorizontalStackLayout
+                        Spacing="10"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding IsBusy}">
+                        <ActivityIndicator
+                            IsRunning="{Binding IsBusy}"
+                            Color="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"/>
+                        <Label
+                            Text="Loading profile..."
+                            VerticalOptions="Center"
+                            TextColor="{AppThemeBinding Light=#374151, Dark=#CBD5E1}"/>
+                    </HorizontalStackLayout>
+
                     <!-- Actions -->
                     <Grid ColumnDefinitions="*,*"
                             ColumnSpacing="14">
                         <Button
                             Grid.Column="0"
-                            Text="Save Changes"
+                            Text="Read-only"
+                            IsEnabled="False"
                             BackgroundColor="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"
                             TextColor="White"
                             CornerRadius="12"
@@ -205,7 +228,9 @@
 
                         <Button
                             Grid.Column="1"
-                            Text="Edit Avatar"
+                            Text="Refresh"
+                            Command="{Binding LoadProfileCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
                             BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
                             TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"
                             CornerRadius="12"

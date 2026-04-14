@@ -1,43 +1,75 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.ApplicationModel;
 using TaskNest.Interfaces;
+using TaskNest.Models.Dashboard;
 
 namespace TaskNest.ViewModels;
 
 public partial class DashboardViewModel : BaseViewModel
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IDashboardService dashboardService;
 
     [ObservableProperty]
-    private int todayTaskCount = 5;
+    private string welcomeHeading = "WELCOME";
 
     [ObservableProperty]
-    private int completedThisWeek = 12;
+    private string welcomeTitle = "TaskNest Dashboard";
 
     [ObservableProperty]
-    private int categoryCount = 4;
+    private string welcomeSubtitle = "Your productivity snapshot updates in real time.";
 
     [ObservableProperty]
-    private string openTaskSummary = "2 open tasks";
+    private int todayTaskCount;
 
     [ObservableProperty]
-    private string categorySummary = "Work, Study, Health...";
+    private string todayCardSubtitle = "0 due today";
+
+    [ObservableProperty]
+    private int completedTaskCount;
+
+    [ObservableProperty]
+    private string completedSubtitle = "0 this week";
+
+    [ObservableProperty]
+    private int categoryCount;
+
+    [ObservableProperty]
+    private string openTaskSummary = "0 open tasks";
+
+    [ObservableProperty]
+    private string categorySummary = "No categories yet";
 
     [ObservableProperty]
     private ObservableCollection<FocusItem> focusItems = new();
 
-    public DashboardViewModel(IUnitOfWork unitOfWork)
+    [ObservableProperty]
+    private string focusEmptyStateText = "No focus tasks yet. Add a task to get started.";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasError))]
+    private string errorMessage = string.Empty;
+
+    public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
+
+    public DashboardViewModel(IDashboardService dashboardService)
     {
-        _unitOfWork = unitOfWork;
+        this.dashboardService = dashboardService;
         Title = "Dashboard";
 
-        FocusItems = new ObservableCollection<FocusItem>
+        // Reload dashboard immediately whenever a task is marked complete anywhere in the app.
+        WeakReferenceMessenger.Default.Register<TaskStatusChangedMessage>(this, (_, _) =>
         {
-            new("Finish mobile app UI implementation", "Prepare polished views for the dashboard release", "Today", "UI", Colors.Blue),
-            new("Review task navigation and custom controls", "Check interaction polish across the main flows", "Afternoon", "Review / Med", Colors.Green),
-            new("Prepare polished screens for demo", "Tighten spacing, contrast, and layout consistency", "Later", "Demo / Low", Colors.Orange)
-        };
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                if (!IsBusy)
+                {
+                    await LoadAsync();
+                }
+            });
+        });
     }
 
     public async Task LoadAsync()
@@ -50,26 +82,21 @@ public partial class DashboardViewModel : BaseViewModel
         try
         {
             IsBusy = true;
+            ErrorMessage = string.Empty;
 
-            var tasks = await _unitOfWork.Tasks.GetAllAsync();
-            var categories = await _unitOfWork.Categories.GetAllAsync();
-
-            TodayTaskCount = tasks.Count(t => t.DueDate.HasValue && t.DueDate.Value.Date == DateTime.Today && !t.IsCompleted);
-            CompletedThisWeek = tasks.Count(t => t.IsCompleted && t.UpdatedAtUtc >= DateTime.UtcNow.AddDays(-7));
-            CategoryCount = categories.Count;
-
-            var openTasks = tasks.Count(t => !t.IsCompleted);
-            OpenTaskSummary = $"{openTasks} open tasks";
-
-            var topCategories = categories
-                .OrderByDescending(c => tasks.Count(t => t.CategoryId == c.Id))
-                .Take(3)
-                .Select(c => c.Name)
-                .ToList();
-
-            CategorySummary = topCategories.Count > 0
-                ? string.Join(", ", topCategories)
-                : "No categories yet";
+            var summary = await dashboardService.GetDashboardSummaryAsync(focusLimit: 5);
+            ApplySummary(summary);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            ErrorMessage = "Your session has expired. Please sign in again.";
+            ApplySummary(new DashboardSummaryDto { IsAuthenticated = false, DisplayName = "User" });
+        }
+        catch (Exception exception)
+        {
+            ErrorMessage = $"Could not load dashboard data: {exception.Message}";
+            PublishError(ErrorMessage, exception);
+            ApplySummary(new DashboardSummaryDto { IsAuthenticated = false, DisplayName = "User" });
         }
         finally
         {
@@ -85,6 +112,69 @@ public partial class DashboardViewModel : BaseViewModel
 
     [RelayCommand]
     private Task ViewCategoriesAsync() => NavigateAsync("categories");
+
+    private void ApplySummary(DashboardSummaryDto summary)
+    {
+        WelcomeHeading = summary.IsAuthenticated ? "WELCOME BACK" : "WELCOME";
+        WelcomeTitle = summary.IsAuthenticated
+            ? $"Hello, {summary.DisplayName}"
+            : "Welcome to TaskNest";
+        WelcomeSubtitle = summary.IsAuthenticated
+            ? "Stay on top of your tasks and progress."
+            : "Sign in to view your live dashboard data.";
+
+        TodayTaskCount = summary.TotalActiveTasks;
+        TodayCardSubtitle = FormatDueTodaySummary(summary.TasksDueToday);
+        CompletedTaskCount = summary.CompletedTaskCount;
+        CompletedSubtitle = $"{summary.CompletedThisWeekCount} this week";
+        CategoryCount = summary.CategoryCount;
+        CategorySummary = summary.CategoryPreviewText;
+        OpenTaskSummary = FormatOpenTaskSummary(summary.TotalActiveTasks);
+
+        FocusItems.Clear();
+        foreach (var focusTask in summary.FocusTasks)
+        {
+            FocusItems.Add(new FocusItem(
+                focusTask.Title,
+                focusTask.Description,
+                focusTask.DueLabel,
+                BuildMetaLabel(focusTask),
+                ResolveAccentColor(focusTask.PriorityColorKey)));
+        }
+
+        FocusEmptyStateText = summary.IsAuthenticated
+            ? "No focus tasks yet. Create a task and it will appear here."
+            : "No session found. Please sign in to load your tasks.";
+    }
+
+    private static string BuildMetaLabel(DashboardFocusItemDto focusTask)
+    {
+        return $"{focusTask.CategoryName} / {focusTask.Priority}";
+    }
+
+    private static string FormatOpenTaskSummary(int activeTaskCount)
+    {
+        return activeTaskCount == 1
+            ? "1 open task"
+            : $"{activeTaskCount} open tasks";
+    }
+
+    private static string FormatDueTodaySummary(int dueTodayCount)
+    {
+        return dueTodayCount == 1
+            ? "1 due today"
+            : $"{dueTodayCount} due today";
+    }
+
+    private static Color ResolveAccentColor(string priorityColorKey)
+    {
+        return priorityColorKey switch
+        {
+            "High" => Color.FromArgb("#DC2626"),
+            "Medium" => Color.FromArgb("#D97706"),
+            _ => Color.FromArgb("#2563EB")
+        };
+    }
 }
 
 public sealed record FocusItem(

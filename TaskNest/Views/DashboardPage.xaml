@@ -14,20 +14,33 @@
 
             <VerticalStackLayout Spacing="6">
                 <Label
-                    Text="WELCOME BACK"
+                    Text="{Binding WelcomeHeading}"
                     FontSize="16"
                     TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
 
                 <Label
-                    Text="TaskNest Dashboard"
+                    Text="{Binding WelcomeTitle}"
                     FontSize="32"
                     FontAttributes="Bold"
                     TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                 <Label
-                    Text="Stay on top of your tasks and progress."
+                    Text="{Binding WelcomeSubtitle}"
                     FontSize="15"
                     TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+
+                <ActivityIndicator
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    Color="#2563EB"
+                    HeightRequest="28"
+                    HorizontalOptions="Start" />
+
+                <Label
+                    Text="{Binding ErrorMessage}"
+                    IsVisible="{Binding HasError}"
+                    FontSize="14"
+                    TextColor="#DC2626" />
             </VerticalStackLayout>
 
             <Grid ColumnDefinitions="*,*,*"
@@ -40,7 +53,7 @@
                     BorderColor="{AppThemeBinding Light=#4F7CFF, Dark=#60A5FA}"
                     HasShadow="False">
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Today"
+                        <Label Text="Active"
                                 FontSize="14"
                                 FontAttributes="Bold"
                         TextColor="{AppThemeBinding Light=#2563EB, Dark=#60A5FA}"/>
@@ -52,7 +65,7 @@
                                 FontSize="16"
                                 FontAttributes="Bold"
                         TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
-                        <Label Text="{Binding OpenTaskSummary}"
+                        <Label Text="{Binding TodayCardSubtitle}"
                                 FontSize="14"
                         TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                     </VerticalStackLayout>
@@ -70,11 +83,11 @@
                                 FontSize="14"
                                 FontAttributes="Bold"
                         TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
-                        <Label Text="{Binding CompletedThisWeek}"
+                        <Label Text="{Binding CompletedTaskCount}"
                                 FontSize="24"
                                 FontAttributes="Bold"
                         TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
-                        <Label Text="This week"
+                        <Label Text="{Binding CompletedSubtitle}"
                                 FontSize="14"
                         TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
                     </VerticalStackLayout>
@@ -162,6 +175,12 @@
 
                     <CollectionView ItemsSource="{Binding FocusItems}"
                             SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label
+                                Text="{Binding FocusEmptyStateText}"
+                                FontSize="14"
+                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                        </CollectionView.EmptyView>
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="viewModels:FocusItem">
                                 <Frame

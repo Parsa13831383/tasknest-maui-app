@@ -92,16 +92,29 @@
 
                                         </Grid>
 
-                                        <Grid ColumnDefinitions="*,*,*"
-                                                        ColumnSpacing="14">
-                                                <Button Text="Back to Tasks"
+                                        <!-- Status -->
+                                        <HorizontalStackLayout Spacing="8">
+                                                <Label Text="Status:"
+                                                                FontSize="15"
+                                                                FontAttributes="Bold"
+                                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"
+                                                                VerticalOptions="Center"/>
+                                                <Label Text="{Binding StatusLabel}"
+                                                                FontSize="15"
+                                                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"
+                                                                VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+
+                                        <Grid ColumnDefinitions="*,*,*,*"
+                                                        ColumnSpacing="10">
+                                                <Button Text="Back"
                                                         Command="{Binding BackCommand}"
                                                         BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
                                                                 TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"
                                                                 CornerRadius="12"
                                                                 HeightRequest="50"/>
 
-                                                <Button Text="Edit Task"
+                                                <Button Text="Edit"
                                                         Grid.Column="1"
                                                         Command="{Binding EditCommand}"
                                                         BackgroundColor="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"
@@ -109,8 +122,17 @@
                                                                 CornerRadius="12"
                                                                 HeightRequest="50"/>
 
-                                                <Button Text="Delete"
+                                                <Button Text="Complete"
                                                         Grid.Column="2"
+                                                        Command="{Binding CompleteCommand}"
+                                                        IsEnabled="{Binding IsNotCompleted}"
+                                                        BackgroundColor="{AppThemeBinding Light=#D1FAE5, Dark=#064E3B}"
+                                                                TextColor="{AppThemeBinding Light=#065F46, Dark=#A7F3D0}"
+                                                                CornerRadius="12"
+                                                                HeightRequest="50"/>
+
+                                                <Button Text="Delete"
+                                                        Grid.Column="3"
                                                         Command="{Binding DeleteCommand}"
                                                         BackgroundColor="{AppThemeBinding Light=#FEE2E2, Dark=#7F1D1D}"
                                                                 TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FECACA}"

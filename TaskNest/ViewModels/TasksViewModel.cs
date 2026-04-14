@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using TaskNest.Interfaces;
 using TaskNest.Models;
 using TaskListItem = TaskNest.ViewModels.TaskListItem;
@@ -52,6 +53,7 @@ public class TaskListViewModel : BaseViewModel
     public ICommand FilterTasksCommand { get; }
     public ICommand ViewTaskCommand { get; }
     public ICommand EditTaskCommand { get; }
+    public ICommand CompleteTaskCommand { get; }
     public ICommand DeleteTaskCommand { get; }
 
     public TaskListViewModel(IUnitOfWork unitOfWork)
@@ -65,6 +67,7 @@ public class TaskListViewModel : BaseViewModel
         FilterTasksCommand = new Command(async () => await ChooseCategoryFilterAsync());
         ViewTaskCommand = new Command<TaskListItem>(async (task) => await GoToDetails(task));
         EditTaskCommand = new Command<TaskListItem>(async (task) => await GoToEdit(task));
+        CompleteTaskCommand = new Command<TaskListItem>(async (task) => await CompleteTaskAsync(task));
         DeleteTaskCommand = new Command<TaskListItem>(async (task) => await DeleteTaskAsync(task));
     }
 
@@ -97,7 +100,8 @@ public class TaskListViewModel : BaseViewModel
                     Description = dbTask.Description,
                     DueDate = dbTask.DueDate?.ToString("dd MMM yyyy") ?? "No due date",
                     Category = categoryText,
-                    TaskColor = dbTask.TaskColor
+                    TaskColor = dbTask.TaskColor,
+                    IsCompleted = dbTask.IsCompleted
                 });
             }
 
@@ -135,40 +139,38 @@ public class TaskListViewModel : BaseViewModel
     {
         if (IsBusy || task is null) return;
 
+        var shouldDelete = await Shell.Current.DisplayAlert(
+            "Delete Task",
+            $"Delete '{task.Title}'? This will move it to trash.",
+            "Delete",
+            "Cancel");
+
+        if (!shouldDelete) return;
+
+        var deleteSucceeded = false;
+
         try
         {
-            var shouldDelete = await Shell.Current.DisplayAlert(
-                "Delete Task",
-                $"Delete '{task.Title}'? This will move it to trash.",
-                "Delete",
-                "Cancel");
-
-            if (!shouldDelete) return;
-
             IsBusy = true;
 
-            // 1. Fetch the actual TaskItem from the database
             var existing = await _unitOfWork.Tasks.GetByIdAsync(task.Id);
-
-            if (existing != null)
+            if (existing is null)
             {
-                var rows = await _unitOfWork.Tasks.DeleteAsync(existing);
-                System.Diagnostics.Debug.WriteLine($"Deleted rows: {rows}");
+                await Shell.Current.DisplayAlert("Delete Error", "Task not found.", "OK");
+                return;
+            }
 
-                if (rows > 0)
-                {
-                    _allTasks.RemoveAll(t => t.Id == task.Id);
-                    PopulateCategoryFilters();
-                    ApplyFilters();
-                    await LoadTasksAsync();
-                    return;
-                }
-
+            var rows = await _unitOfWork.Tasks.DeleteAsync(existing);
+            if (rows <= 0)
+            {
                 await Shell.Current.DisplayAlert(
                     "Delete Error",
-                    "Task delete request did not affect any rows. Check Supabase RLS update policy for tasks.",
+                    "Could not delete task. Please check your connection and try again.",
                     "OK");
+                return;
             }
+
+            deleteSucceeded = true;
         }
         catch (Exception ex)
         {
@@ -178,6 +180,92 @@ public class TaskListViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+        }
+
+        if (deleteSucceeded)
+        {
+            WeakReferenceMessenger.Default.Send(new TaskStatusChangedMessage());
+            await LoadTasksAsync();
+        }
+    }
+
+    private async Task CompleteTaskAsync(TaskListItem? task)
+    {
+        if (IsBusy || task is null)
+        {
+            return;
+        }
+
+        if (task.IsCompleted)
+        {
+            await Shell.Current.DisplayAlert("Already Completed", $"'{task.Title}' is already completed.", "OK");
+            return;
+        }
+
+        var shouldComplete = await Shell.Current.DisplayAlert(
+            "Complete Task",
+            $"Mark '{task.Title}' as completed?",
+            "Complete",
+            "Cancel");
+
+        if (!shouldComplete)
+        {
+            return;
+        }
+
+        // Track whether the cloud update actually succeeded so we only reload on success.
+        var updateSucceeded = false;
+
+        try
+        {
+            IsBusy = true;
+
+            var existing = await _unitOfWork.Tasks.GetByIdAsync(task.Id);
+            if (existing is null)
+            {
+                await Shell.Current.DisplayAlert("Task Not Found", "The selected task could not be loaded.", "OK");
+                return;
+            }
+
+            if (existing.IsCompleted)
+            {
+                // Already completed in the cloud — just sync the local flag.
+                updateSucceeded = true;
+                return;
+            }
+
+            existing.IsCompleted = true;
+            existing.UpdatedAtUtc = DateTime.UtcNow;
+
+            var updatedRows = await _unitOfWork.Tasks.UpdateAsync(existing);
+            if (updatedRows <= 0)
+            {
+                await Shell.Current.DisplayAlert(
+                    "Completion Error",
+                    "Could not mark task as completed. Please check your connection and try again.",
+                    "OK");
+                return;
+            }
+
+            updateSucceeded = true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error completing task: {ex.Message}");
+            await Shell.Current.DisplayAlert("Completion Error", ex.Message, "OK");
+        }
+        finally
+        {
+            // Release the lock BEFORE reloading so LoadTasksAsync can proceed.
+            IsBusy = false;
+        }
+
+        if (updateSucceeded)
+        {
+            // Notify the Dashboard (and any other subscriber) to reload its completed count.
+            WeakReferenceMessenger.Default.Send(new TaskStatusChangedMessage());
+            // Refresh the task list so the button shows "Completed".
+            await LoadTasksAsync();
         }
     }
 

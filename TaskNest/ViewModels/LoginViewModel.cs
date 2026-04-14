@@ -21,6 +21,7 @@ public partial class LoginViewModel : BaseViewModel
     private string _emailError = string.Empty;
     private string _passwordError = string.Empty;
     private string _authError = string.Empty;
+    private string _authInfo = string.Empty;
 
     public string EmailError
     {
@@ -58,9 +59,22 @@ public partial class LoginViewModel : BaseViewModel
         }
     }
 
+    public string AuthInfo
+    {
+        get => _authInfo;
+        set
+        {
+            if (SetProperty(ref _authInfo, value))
+            {
+                OnPropertyChanged(nameof(HasAuthInfo));
+            }
+        }
+    }
+
     public bool HasEmailError => !string.IsNullOrWhiteSpace(EmailError);
     public bool HasPasswordError => !string.IsNullOrWhiteSpace(PasswordError);
     public bool HasAuthError => !string.IsNullOrWhiteSpace(AuthError);
+    public bool HasAuthInfo => !string.IsNullOrWhiteSpace(AuthInfo);
 
     public LoginViewModel(ISupabaseAuthService authService, IInputValidationService validation)
     {
@@ -77,10 +91,15 @@ public partial class LoginViewModel : BaseViewModel
         EmailError = string.Empty;
         PasswordError = string.Empty;
         AuthError = string.Empty;
+        AuthInfo = string.Empty;
 
         if (!validation.TryValidateEmail(Email, out var normalizedEmail, out var emailError))
         {
             EmailError = emailError;
+            if (Shell.Current is not null)
+            {
+                await Shell.Current.DisplayAlert("Login", emailError, "OK");
+            }
             return;
         }
 
@@ -108,6 +127,80 @@ public partial class LoginViewModel : BaseViewModel
         }
     }
 
+    [RelayCommand]
+    private async Task ForgotPasswordAsync()
+    {
+        if (IsBusy) return;
+
+        EmailError = string.Empty;
+        AuthError = string.Empty;
+        AuthInfo = string.Empty;
+
+        var emailToUse = Email;
+
+        if (!validation.TryValidateEmail(emailToUse, out var normalizedEmail, out _))
+        {
+            if (Shell.Current is null)
+            {
+                EmailError = "Email is required.";
+                return;
+            }
+
+            var enteredEmail = await Shell.Current.DisplayPromptAsync(
+                "Forgot Password",
+                "Enter the email address for your TaskNest account.",
+                accept: "Send",
+                cancel: "Cancel",
+                placeholder: "Email",
+                maxLength: 320,
+                keyboard: Keyboard.Email,
+                initialValue: Email);
+
+            if (string.IsNullOrWhiteSpace(enteredEmail))
+            {
+                return;
+            }
+
+            if (!validation.TryValidateEmail(enteredEmail, out normalizedEmail, out var emailError))
+            {
+                EmailError = emailError;
+
+                if (Shell.Current is not null)
+                {
+                    await Shell.Current.DisplayAlert("Forgot Password", emailError, "OK");
+                }
+
+                return;
+            }
+
+            Email = normalizedEmail;
+        }
+
+        try
+        {
+            IsBusy = true;
+
+            await authService.SendPasswordResetEmailAsync(normalizedEmail);
+            AuthInfo = "If this email is registered, a password reset link has been sent.";
+            if (Shell.Current is not null)
+            {
+                await Shell.Current.DisplayAlert("Forgot Password", AuthInfo, "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            AuthError = ex.Message;
+            if (Shell.Current is not null)
+            {
+                await Shell.Current.DisplayAlert("Forgot Password", AuthError, "OK");
+            }
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     partial void OnEmailChanged(string value)
     {
         if (!string.IsNullOrWhiteSpace(EmailError))
@@ -118,6 +211,11 @@ public partial class LoginViewModel : BaseViewModel
         if (!string.IsNullOrWhiteSpace(AuthError))
         {
             AuthError = string.Empty;
+        }
+
+        if (!string.IsNullOrWhiteSpace(AuthInfo))
+        {
+            AuthInfo = string.Empty;
         }
     }
 

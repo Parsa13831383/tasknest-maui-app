@@ -1,26 +1,25 @@
-using TaskNest.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using TaskNest.ViewModels;
 
 namespace TaskNest.Views;
 
 public partial class SettingsPage : ContentPage
 {
-    private readonly SettingsViewModel _viewModel;
-
     public SettingsPage()
     {
         InitializeComponent();
 
-        var authService = Application.Current?.Handler?.MauiContext?.Services.GetService<ISupabaseAuthService>()
-            ?? throw new InvalidOperationException("ISupabaseAuthService is not registered in DI.");
-
-        _viewModel = new SettingsViewModel(authService);
-        BindingContext = _viewModel;
+        BindingContext = Application.Current?.Handler?.MauiContext?.Services.GetService<SettingsViewModel>()
+            ?? throw new InvalidOperationException("SettingsViewModel service is not registered.");
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _viewModel.RefreshSecurityProof();
+
+        if (BindingContext is SettingsViewModel viewModel)
+        {
+            viewModel.RefreshSecurityProof();
+        }
     }
 }
