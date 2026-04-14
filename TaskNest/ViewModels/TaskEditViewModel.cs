@@ -86,6 +86,7 @@ public class TaskEditViewModel : BaseViewModel
     }
 
     public ObservableCollection<TaskColorOption> AvailableTaskColors { get; } = new();
+    public ObservableCollection<string> CategoryNames { get; } = new();
 
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
@@ -113,11 +114,13 @@ public class TaskEditViewModel : BaseViewModel
             IsBusy = true;
 
             _categoryIdByName.Clear();
+            CategoryNames.Clear();
 
             var categoryItems = await _unitOfWork.Categories.GetAllAsync();
             foreach (var category in categoryItems)
             {
                 _categoryIdByName[category.Name] = category.Id;
+                CategoryNames.Add(category.Name);
             }
 
             if (!string.IsNullOrWhiteSpace(taskId))

@@ -83,9 +83,15 @@
                                                         FontSize="15"
                                                         FontAttributes="Bold"
                                                         TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                                <Picker
+                                                        ItemsSource="{Binding CategoryNames}"
+                                                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                                                        Title="Select a category"
+                                                        BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                                 <Entry
                                                         Text="{Binding SelectedCategory, Mode=TwoWay}"
-                                                        Placeholder="Type a category"
+                                                        Placeholder="Or type a new category"
                                                         BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
                                                         TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                                         </VerticalStackLayout>

@@ -34,6 +34,9 @@ public partial class TaskCard : ContentView
     public static readonly BindableProperty DeleteTaskCommandProperty =
         BindableProperty.Create(nameof(DeleteTaskCommand), typeof(System.Windows.Input.ICommand), typeof(TaskCard));
 
+    public static readonly BindableProperty CompleteTaskCommandProperty =
+        BindableProperty.Create(nameof(CompleteTaskCommand), typeof(System.Windows.Input.ICommand), typeof(TaskCard));
+
     public string TaskId
     {
         get => (string)GetValue(TaskIdProperty);
@@ -86,6 +89,12 @@ public partial class TaskCard : ContentView
     {
         get => (System.Windows.Input.ICommand?)GetValue(DeleteTaskCommandProperty);
         set => SetValue(DeleteTaskCommandProperty, value);
+    }
+
+    public System.Windows.Input.ICommand? CompleteTaskCommand
+    {
+        get => (System.Windows.Input.ICommand?)GetValue(CompleteTaskCommandProperty);
+        set => SetValue(CompleteTaskCommandProperty, value);
     }
 
     private async void OnViewDetailsClicked(object sender, EventArgs e)

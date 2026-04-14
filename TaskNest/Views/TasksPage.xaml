@@ -16,16 +16,27 @@
             <!-- Header -->
             <VerticalStackLayout Spacing="6">
                 <Label
-                    Text="Tasks"
+                    Text="{Binding PageTitle}"
                     FontSize="32"
                     FontAttributes="Bold"
                     TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
 
                 <Label
-                    Text="Manage your workload and stay organised."
+                    Text="{Binding PageSubtitle}"
                     FontSize="15"
                     TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
             </VerticalStackLayout>
+
+            <!-- Show All button (visible when filtered by category) -->
+            <Button
+                Text="← Show All Tasks"
+                IsVisible="{Binding IsCategoryFiltered}"
+                Command="{Binding ShowAllTasksCommand}"
+                BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#1F2937}"
+                TextColor="{AppThemeBinding Light=#2563EB, Dark=#60A5FA}"
+                CornerRadius="12"
+                HeightRequest="40"
+                FontSize="14"/>
 
             <!-- Action Buttons -->
             <Grid ColumnDefinitions="*,*"

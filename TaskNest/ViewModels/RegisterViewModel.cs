@@ -36,6 +36,48 @@ public class RegisterViewModel : BaseViewModel
         set => SetProperty(ref confirmPassword, value);
     }
 
+    // -- Inline validation error properties --
+
+    private string nameError = string.Empty;
+    public string NameError
+    {
+        get => nameError;
+        set { if (SetProperty(ref nameError, value)) OnPropertyChanged(nameof(HasNameError)); }
+    }
+    public bool HasNameError => !string.IsNullOrWhiteSpace(NameError);
+
+    private string emailError = string.Empty;
+    public string EmailError
+    {
+        get => emailError;
+        set { if (SetProperty(ref emailError, value)) OnPropertyChanged(nameof(HasEmailError)); }
+    }
+    public bool HasEmailError => !string.IsNullOrWhiteSpace(EmailError);
+
+    private string passwordError = string.Empty;
+    public string PasswordError
+    {
+        get => passwordError;
+        set { if (SetProperty(ref passwordError, value)) OnPropertyChanged(nameof(HasPasswordError)); }
+    }
+    public bool HasPasswordError => !string.IsNullOrWhiteSpace(PasswordError);
+
+    private string confirmPasswordError = string.Empty;
+    public string ConfirmPasswordError
+    {
+        get => confirmPasswordError;
+        set { if (SetProperty(ref confirmPasswordError, value)) OnPropertyChanged(nameof(HasConfirmPasswordError)); }
+    }
+    public bool HasConfirmPasswordError => !string.IsNullOrWhiteSpace(ConfirmPasswordError);
+
+    private string authError = string.Empty;
+    public string AuthError
+    {
+        get => authError;
+        set { if (SetProperty(ref authError, value)) OnPropertyChanged(nameof(HasAuthError)); }
+    }
+    public bool HasAuthError => !string.IsNullOrWhiteSpace(AuthError);
+
     public ICommand RegisterCommand { get; }
     public ICommand NavigateToLoginCommand { get; }
 
@@ -48,6 +90,15 @@ public class RegisterViewModel : BaseViewModel
         NavigateToLoginCommand = new Command(async () => await NavigateToLoginAsync());
     }
 
+    private void ClearErrors()
+    {
+        NameError = string.Empty;
+        EmailError = string.Empty;
+        PasswordError = string.Empty;
+        ConfirmPasswordError = string.Empty;
+        AuthError = string.Empty;
+    }
+
     private async Task RegisterAsync()
     {
         if (IsBusy)
@@ -55,29 +106,40 @@ public class RegisterViewModel : BaseViewModel
             return;
         }
 
-        if (!validation.TryValidateEmail(Email, out var normalizedEmail, out var emailError))
+        ClearErrors();
+
+        var hasError = false;
+
+        if (string.IsNullOrWhiteSpace(Name))
         {
-            await Shell.Current.DisplayAlert("Validation", emailError, "OK");
-            return;
+            NameError = "Full name is required.";
+            hasError = true;
         }
 
-        if (!validation.TryValidatePassword(Password, out var normalizedPassword, out var passwordError))
+        if (!validation.TryValidateEmail(Email, out var normalizedEmail, out var emailErr))
         {
-            await Shell.Current.DisplayAlert("Validation", passwordError, "OK");
-            return;
+            EmailError = emailErr;
+            hasError = true;
         }
 
-        if (!string.Equals(normalizedPassword, ConfirmPassword, StringComparison.Ordinal))
+        if (!validation.TryValidatePassword(Password, out var normalizedPassword, out var passwordErr))
         {
-            await Shell.Current.DisplayAlert("Validation", "Passwords do not match.", "OK");
-            return;
+            PasswordError = passwordErr;
+            hasError = true;
         }
+        else if (!string.Equals(normalizedPassword, ConfirmPassword, StringComparison.Ordinal))
+        {
+            ConfirmPasswordError = "Passwords do not match.";
+            hasError = true;
+        }
+
+        if (hasError) return;
 
         try
         {
             IsBusy = true;
 
-            var result = await authService.SignUpAsync(normalizedEmail, normalizedPassword, Name);
+            var result = await authService.SignUpAsync(normalizedEmail!, normalizedPassword!, Name);
             var requiresEmailConfirmation = string.IsNullOrWhiteSpace(result?.AccessToken);
 
             await Shell.Current.DisplayAlert(
@@ -91,7 +153,7 @@ public class RegisterViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Registration Error", ex.Message, "OK");
+            AuthError = ex.Message;
         }
         finally
         {

@@ -2,6 +2,14 @@
 
 A cross-platform task management application built with **.NET MAUI 8** and **Supabase**, developed as coursework for **6004CMD** at Coventry University.
 
+## Background & Motivation
+
+Managing tasks across university, work, and personal life is a constant challenge for students. Existing apps are often bloated with features, require paid subscriptions, or lack proper cloud syncing across devices. TaskNest was built to solve this — a clean, focused mobile app that lets users create, organise, and track tasks with minimal friction.
+
+The project demonstrates how Cloud Computing enhances mobile applications: Supabase provides real-time authentication and data persistence without managing infrastructure, while Row Level Security ensures that each user's data remains private and isolated at the database level. This cloud-first architecture means a user can log in on any platform and see the same tasks immediately — showcasing genuine cross-platform data accessibility.
+
+TaskNest was designed from the ground up with the MVVM pattern, a clean service layer, and proper separation of concerns to reflect professional software engineering practices.
+
 ## Features
 
 | Feature | Description |

@@ -3,8 +3,10 @@
     x:Class="TaskNest.Views.RegisterPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
+    x:DataType="viewModels:RegisterViewModel"
     Title="Register"
-    BackgroundColor="#F7F8FC">
+    BackgroundColor="{AppThemeBinding Light=#F7F8FC, Dark=#0F172A}">
 
     <ScrollView>
         <Grid Padding="24">
@@ -20,19 +22,20 @@
                         Text="Create account"
                         FontSize="32"
                         FontAttributes="Bold"
-                        TextColor="#111827"/>
+                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
 
                     <Label
                         Text="Join TaskNest and manage your productivity."
                         FontSize="15"
-                        TextColor="#6B7280"/>
+                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
                 </VerticalStackLayout>
 
                 <!-- FORM CARD -->
                 <Frame
                     Padding="22"
                     CornerRadius="18"
-                    BackgroundColor="White"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#111827}"
+                    BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
                     HasShadow="True">
 
                     <VerticalStackLayout Spacing="18">
@@ -41,56 +44,110 @@
                             Text="Register"
                             FontSize="20"
                             FontAttributes="Bold"
-                            TextColor="#111827"/>
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+
+                        <!-- AUTH ERROR -->
+                        <Label
+                            Text="{Binding AuthError}"
+                            IsVisible="{Binding HasAuthError}"
+                            FontSize="13"
+                            TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
 
                         <!-- NAME -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Full Name"
-                                    FontAttributes="Bold"/>
+                                    FontAttributes="Bold"
+                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Entry
                                 Placeholder="Enter your name"
-                                Text="{Binding Name}"/>
+                                Text="{Binding Name}"
+                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                            <Label
+                                Text="{Binding NameError}"
+                                IsVisible="{Binding HasNameError}"
+                                FontSize="12"
+                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
                         </VerticalStackLayout>
 
                         <!-- EMAIL -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Email"
-                                    FontAttributes="Bold"/>
+                                    FontAttributes="Bold"
+                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Entry
                                 Placeholder="Enter your email"
                                 Keyboard="Email"
-                                Text="{Binding Email}"/>
+                                Text="{Binding Email}"
+                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                            <Label
+                                Text="{Binding EmailError}"
+                                IsVisible="{Binding HasEmailError}"
+                                FontSize="12"
+                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
                         </VerticalStackLayout>
 
                         <!-- PASSWORD -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Password"
-                                    FontAttributes="Bold"/>
+                                    FontAttributes="Bold"
+                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Entry
                                 Placeholder="Create password"
                                 IsPassword="True"
-                                Text="{Binding Password}"/>
+                                Text="{Binding Password}"
+                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Label
-                            Text="Use 12+ characters with uppercase, lowercase, number, and symbol."
-                            FontSize="12"
-                            TextColor="#6B7280"/>
+                                Text="{Binding PasswordError}"
+                                IsVisible="{Binding HasPasswordError}"
+                                FontSize="12"
+                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
+                            <Label
+                                Text="Use 12+ characters with uppercase, lowercase, number, and symbol."
+                                FontSize="12"
+                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
                         </VerticalStackLayout>
 
                         <!-- CONFIRM -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Confirm Password"
-                                    FontAttributes="Bold"/>
+                                    FontAttributes="Bold"
+                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
                             <Entry
                                 Placeholder="Confirm password"
                                 IsPassword="True"
-                                Text="{Binding ConfirmPassword}"/>
+                                Text="{Binding ConfirmPassword}"
+                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
+                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                            <Label
+                                Text="{Binding ConfirmPasswordError}"
+                                IsVisible="{Binding HasConfirmPasswordError}"
+                                FontSize="12"
+                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
                         </VerticalStackLayout>
+
+                        <!-- LOADING -->
+                        <HorizontalStackLayout
+                            Spacing="10"
+                            IsVisible="{Binding IsBusy}">
+                            <ActivityIndicator
+                                IsRunning="{Binding IsBusy}"
+                                Color="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"/>
+                            <Label
+                                Text="Creating account..."
+                                FontSize="14"
+                                VerticalOptions="Center"
+                                TextColor="{AppThemeBinding Light=#374151, Dark=#CBD5E1}"/>
+                        </HorizontalStackLayout>
 
                         <!-- BUTTONS -->
                         <Button
                             Text="Create Account"
                             Command="{Binding RegisterCommand}"
-                            BackgroundColor="#2563EB"
+                            IsEnabled="{Binding IsNotBusy}"
+                            BackgroundColor="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"
                             TextColor="White"
                             CornerRadius="12"
                             HeightRequest="50"/>
@@ -98,8 +155,8 @@
                         <Button
                             Text="Already have an account? Login"
                             Command="{Binding NavigateToLoginCommand}"
-                            BackgroundColor="#E5E7EB"
-                            TextColor="#111827"
+                            BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
+                            TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"
                             CornerRadius="12"
                             HeightRequest="50"/>
 

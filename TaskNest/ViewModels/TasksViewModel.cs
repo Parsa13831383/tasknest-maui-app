@@ -40,6 +40,9 @@ public class TaskListViewModel : BaseViewModel
             if (SetProperty(ref _selectedCategoryFilter, normalizedValue))
             {
                 OnPropertyChanged(nameof(FilterButtonText));
+                OnPropertyChanged(nameof(PageTitle));
+                OnPropertyChanged(nameof(PageSubtitle));
+                OnPropertyChanged(nameof(IsCategoryFiltered));
                 ApplyFilters();
             }
         }
@@ -49,8 +52,19 @@ public class TaskListViewModel : BaseViewModel
         ? "Filter Tasks"
         : $"Filter: {SelectedCategoryFilter}";
 
+    public string PageTitle => SelectedCategoryFilter == AllCategoriesFilter
+        ? "Tasks"
+        : SelectedCategoryFilter;
+
+    public string PageSubtitle => SelectedCategoryFilter == AllCategoriesFilter
+        ? "Manage your workload and stay organised."
+        : $"Showing tasks in {SelectedCategoryFilter}";
+
+    public bool IsCategoryFiltered => SelectedCategoryFilter != AllCategoriesFilter;
+
     public ICommand CreateTaskCommand { get; }
     public ICommand FilterTasksCommand { get; }
+    public ICommand ShowAllTasksCommand { get; }
     public ICommand ViewTaskCommand { get; }
     public ICommand EditTaskCommand { get; }
     public ICommand CompleteTaskCommand { get; }
@@ -65,6 +79,7 @@ public class TaskListViewModel : BaseViewModel
 
         CreateTaskCommand = new Command(async () => await GoToCreate());
         FilterTasksCommand = new Command(async () => await ChooseCategoryFilterAsync());
+        ShowAllTasksCommand = new Command(() => SelectedCategoryFilter = AllCategoriesFilter);
         ViewTaskCommand = new Command<TaskListItem>(async (task) => await GoToDetails(task));
         EditTaskCommand = new Command<TaskListItem>(async (task) => await GoToEdit(task));
         CompleteTaskCommand = new Command<TaskListItem>(async (task) => await CompleteTaskAsync(task));
