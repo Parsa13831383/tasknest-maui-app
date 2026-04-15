@@ -68,6 +68,7 @@ public class SupabaseTaskRepository : ITaskRepository
             UserId = _authService.UserId ?? string.Empty,
             Title = task.Title,
             Description = task.Description,
+            Reflection = task.Reflection,
             DueDate = task.DueDate,
             IsCompleted = task.IsCompleted,
             CategoryId = task.CategoryId,
@@ -101,6 +102,7 @@ public class SupabaseTaskRepository : ITaskRepository
         {
             Title = task.Title,
             Description = task.Description,
+            Reflection = task.Reflection,
             DueDate = task.DueDate,
             IsCompleted = task.IsCompleted,
             CategoryId = task.CategoryId,
@@ -162,6 +164,7 @@ public class SupabaseTaskRepository : ITaskRepository
             Id = cloudTask.Id ?? string.Empty,
             Title = cloudTask.Title,
             Description = cloudTask.Description,
+            Reflection = cloudTask.Reflection,
             DueDate = cloudTask.DueDate,
             IsCompleted = cloudTask.IsCompleted,
             CategoryId = cloudTask.CategoryId,

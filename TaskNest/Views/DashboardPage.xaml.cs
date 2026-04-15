@@ -21,4 +21,14 @@ public partial class DashboardPage : ContentPage
             await viewModel.LoadAsync();
         }
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        if (BindingContext is DashboardViewModel viewModel)
+        {
+            viewModel.CancelPendingLoad();
+        }
+    }
 }

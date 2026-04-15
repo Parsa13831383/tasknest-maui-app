@@ -16,6 +16,9 @@ public class CloudTaskDto
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
 
+    [JsonPropertyName("reflection")]
+    public string Reflection { get; set; } = string.Empty;
+
     [JsonPropertyName("due_date")]
     public DateTime? DueDate { get; set; }
 

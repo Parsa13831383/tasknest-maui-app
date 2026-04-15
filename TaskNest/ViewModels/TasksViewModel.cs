@@ -62,6 +62,7 @@ public class TaskListViewModel : BaseViewModel
 
     public bool IsCategoryFiltered => SelectedCategoryFilter != AllCategoriesFilter;
 
+
     public ICommand CreateTaskCommand { get; }
     public ICommand FilterTasksCommand { get; }
     public ICommand ShowAllTasksCommand { get; }
@@ -345,9 +346,13 @@ public class TaskListViewModel : BaseViewModel
         }
 
         Tasks.Clear();
+
         foreach (var task in filteredTasks)
         {
-            Tasks.Add(task);
+            if (!task.IsCompleted)
+            {
+                Tasks.Add(task);
+            }
         }
     }
 }

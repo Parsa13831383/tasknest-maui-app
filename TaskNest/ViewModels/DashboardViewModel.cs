@@ -11,6 +11,7 @@ namespace TaskNest.ViewModels;
 public partial class DashboardViewModel : BaseViewModel
 {
     private readonly IDashboardService dashboardService;
+    private CancellationTokenSource? loadCancellation;
 
     [ObservableProperty]
     private string welcomeHeading = "WELCOME";
@@ -46,6 +47,12 @@ public partial class DashboardViewModel : BaseViewModel
     private ObservableCollection<FocusItem> focusItems = new();
 
     [ObservableProperty]
+    private ObservableCollection<WeeklyChartBar> weeklyChartBars = new();
+
+    [ObservableProperty]
+    private string weeklyChartSummary = "No data yet";
+
+    [ObservableProperty]
     private string focusEmptyStateText = "No focus tasks yet. Add a task to get started.";
 
     [ObservableProperty]
@@ -72,20 +79,38 @@ public partial class DashboardViewModel : BaseViewModel
         });
     }
 
+    public void CancelPendingLoad()
+    {
+        loadCancellation?.Cancel();
+        loadCancellation?.Dispose();
+        loadCancellation = null;
+        IsBusy = false;
+    }
+
     public async Task LoadAsync()
     {
-        if (IsBusy)
-        {
-            return;
-        }
+        CancelPendingLoad();
+
+        var cts = new CancellationTokenSource();
+        loadCancellation = cts;
 
         try
         {
             IsBusy = true;
             ErrorMessage = string.Empty;
 
-            var summary = await dashboardService.GetDashboardSummaryAsync(focusLimit: 5);
+            var summary = await dashboardService.GetDashboardSummaryAsync(focusLimit: 5, cancellationToken: cts.Token);
+
+            if (cts.Token.IsCancellationRequested)
+            {
+                return;
+            }
+
             ApplySummary(summary);
+        }
+        catch (OperationCanceledException)
+        {
+            // Load was cancelled (e.g. navigated away). No action needed.
         }
         catch (UnauthorizedAccessException)
         {
@@ -108,10 +133,13 @@ public partial class DashboardViewModel : BaseViewModel
     private Task NewTaskAsync() => NavigateAsync("taskedit");
 
     [RelayCommand]
-    private Task ViewTasksAsync() => NavigateAsync("tasks");
+    private Task ViewTasksAsync() => NavigateAsync("//tasks");
 
     [RelayCommand]
-    private Task ViewCategoriesAsync() => NavigateAsync("categories");
+    private Task ViewCategoriesAsync() => NavigateAsync("//categories");
+
+    [RelayCommand]
+    private Task ViewCompletedTasksAsync() => NavigateAsync("completedtasks");
 
     private void ApplySummary(DashboardSummaryDto summary)
     {
@@ -145,6 +173,35 @@ public partial class DashboardViewModel : BaseViewModel
         FocusEmptyStateText = summary.IsAuthenticated
             ? "No focus tasks yet. Create a task and it will appear here."
             : "No session found. Please sign in to load your tasks.";
+
+        ApplyWeeklyChart(summary.WeeklyCompleted);
+    }
+
+    private void ApplyWeeklyChart(IReadOnlyList<DailyCompletedDto> weeklyData)
+    {
+        WeeklyChartBars.Clear();
+
+        var maxCount = weeklyData.Count > 0 ? weeklyData.Max(d => d.Count) : 0;
+        var totalCompleted = weeklyData.Sum(d => d.Count);
+
+        foreach (var day in weeklyData)
+        {
+            var heightFraction = maxCount > 0 ? (double)day.Count / maxCount : 0;
+            var barHeight = Math.Max(4, heightFraction * 80);
+
+            WeeklyChartBars.Add(new WeeklyChartBar(
+                day.DayLabel,
+                day.Count,
+                barHeight,
+                day.IsToday
+                    ? Color.FromArgb("#007AFF")
+                    : Color.FromArgb("#34C759"),
+                day.IsToday));
+        }
+
+        WeeklyChartSummary = totalCompleted == 0
+            ? "No tasks completed this week"
+            : $"{totalCompleted} task{(totalCompleted == 1 ? "" : "s")} completed this week";
     }
 
     private static string BuildMetaLabel(DashboardFocusItemDto focusTask)
@@ -183,3 +240,10 @@ public sealed record FocusItem(
     string TimeLabel,
     string MetaLabel,
     Color AccentColor);
+
+public sealed record WeeklyChartBar(
+    string DayLabel,
+    int Count,
+    double BarHeight,
+    Color BarColor,
+    bool IsToday);

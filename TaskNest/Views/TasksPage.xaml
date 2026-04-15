@@ -111,16 +111,36 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:TaskListItem">
-                            <controls:TaskCard
-                                TaskId="{Binding Id}"
-                                Title="{Binding Title}"
-                                Subtitle="{Binding Description}"
-                                DueDate="{Binding DueDate}"
-                                Category="{Binding Category}"
-                                TaskColor="{Binding TaskColor}"
-                                ViewTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewTaskCommand}"
-                                EditTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditTaskCommand}"
-                                DeleteTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"/>
+                            <SwipeView>
+                                <SwipeView.LeftItems>
+                                    <SwipeItems Mode="Execute">
+                                        <SwipeItem
+                                            Text="Complete"
+                                            BackgroundColor="#34C759"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CompleteTaskCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+                                <SwipeView.RightItems>
+                                    <SwipeItems Mode="Execute">
+                                        <SwipeItem
+                                            Text="Delete"
+                                            BackgroundColor="#FF3B30"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+                                <controls:TaskCard
+                                    TaskId="{Binding Id}"
+                                    Title="{Binding Title}"
+                                    Subtitle="{Binding Description}"
+                                    DueDate="{Binding DueDate}"
+                                    Category="{Binding Category}"
+                                    TaskColor="{Binding TaskColor}"
+                                    ViewTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewTaskCommand}"
+                                    EditTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditTaskCommand}"
+                                    DeleteTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"/>
+                            </SwipeView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 

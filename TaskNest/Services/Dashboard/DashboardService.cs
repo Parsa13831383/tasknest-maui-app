@@ -35,8 +35,31 @@ public sealed class DashboardService : IDashboardService
             };
         }
 
-        var user = await authService.GetCurrentUserAsync();
-        var displayName = ResolveDisplayName(user, authService.UserEmail);
+        // Resolve display name from the cached session info BEFORE making any
+        // network call that could inadvertently clear the access token.
+        var displayName = ResolveDisplayName(null, authService.UserEmail);
+
+        // Fetch user profile in the background for a nicer greeting, but never
+        // let a failure here break the dashboard or clear the session token.
+        try
+        {
+            var user = await authService.GetCurrentUserAsync();
+            if (user is not null)
+            {
+                displayName = ResolveDisplayName(user, authService.UserEmail);
+            }
+        }
+        catch
+        {
+            // Profile fetch failed — continue with the email-based display name.
+        }
+
+        // If GetCurrentUserAsync cleared the session (e.g. 401), restore it
+        // so subsequent data calls still carry the user's JWT.
+        if (!authService.IsAuthenticated)
+        {
+            await authService.RestoreSessionAsync();
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -79,6 +102,7 @@ public sealed class DashboardService : IDashboardService
             : "No categories yet";
 
         var focusTasks = BuildFocusItems(activeTasks, categoriesById, today, focusLimit);
+        var weeklyCompleted = BuildWeeklyCompleted(completedTasks, startOfWeek, today);
 
         return new DashboardSummaryDto
         {
@@ -90,7 +114,8 @@ public sealed class DashboardService : IDashboardService
             CompletedThisWeekCount = completedThisWeek,
             CategoryCount = visibleCategories.Count,
             CategoryPreviewText = categoryPreview,
-            FocusTasks = focusTasks
+            FocusTasks = focusTasks,
+            WeeklyCompleted = weeklyCompleted
         };
     }
 
@@ -240,5 +265,33 @@ public sealed class DashboardService : IDashboardService
     {
         var diff = (7 + (value.DayOfWeek - DayOfWeek.Monday)) % 7;
         return value.AddDays(-1 * diff).Date;
+    }
+
+    private static IReadOnlyList<DailyCompletedDto> BuildWeeklyCompleted(
+        IReadOnlyCollection<TaskItem> completedTasks,
+        DateTime startOfWeek,
+        DateTime today)
+    {
+        var dayLabels = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        var result = new List<DailyCompletedDto>(7);
+
+        for (var i = 0; i < 7; i++)
+        {
+            var day = startOfWeek.AddDays(i);
+            var dayUtcStart = DateTime.SpecifyKind(day, DateTimeKind.Utc);
+            var dayUtcEnd = dayUtcStart.AddDays(1);
+
+            var count = completedTasks.Count(t =>
+                t.UpdatedAtUtc >= dayUtcStart && t.UpdatedAtUtc < dayUtcEnd);
+
+            result.Add(new DailyCompletedDto
+            {
+                DayLabel = dayLabels[i],
+                Count = count,
+                IsToday = day.Date == today
+            });
+        }
+
+        return result;
     }
 }

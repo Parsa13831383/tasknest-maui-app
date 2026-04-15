@@ -80,68 +80,6 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Appearance & Language Card -->
-            <Frame
-                Padding="20"
-                CornerRadius="16"
-                BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
-                BorderColor="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
-                HasShadow="False">
-                <VerticalStackLayout Spacing="18">
-
-                    <Label
-                        Text="Appearance &amp; Language"
-                        Style="{StaticResource SectionTitle}"/>
-
-                    <VerticalStackLayout Spacing="6">
-                        <Label
-                            Text="Theme"
-                            Style="{StaticResource FieldLabel}"/>
-                        <Picker
-                            Title="Select theme"
-                            ItemsSource="{Binding Themes}"
-                            SelectedItem="{Binding SelectedTheme}"/>
-                    </VerticalStackLayout>
-
-                    <VerticalStackLayout Spacing="6">
-                        <Label
-                            Text="Language"
-                            Style="{StaticResource FieldLabel}"/>
-                        <Picker
-                            Title="Select language"
-                            ItemsSource="{Binding Languages}"
-                            SelectedItem="{Binding SelectedLanguage}"/>
-                    </VerticalStackLayout>
-
-                </VerticalStackLayout>
-            </Frame>
-
-            <!-- Productivity Card -->
-            <Frame
-                Padding="20"
-                CornerRadius="16"
-                BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
-                BorderColor="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
-                HasShadow="False">
-                <VerticalStackLayout Spacing="18">
-
-                    <Label
-                        Text="Productivity"
-                        Style="{StaticResource SectionTitle}"/>
-
-                    <VerticalStackLayout Spacing="6">
-                        <Label
-                            Text="Reminder Frequency"
-                            Style="{StaticResource FieldLabel}"/>
-                        <Picker
-                            Title="Choose reminder frequency"
-                            ItemsSource="{Binding ReminderFrequencies}"
-                            SelectedItem="{Binding SelectedReminderFrequency}"/>
-                    </VerticalStackLayout>
-
-                </VerticalStackLayout>
-            </Frame>
-
             <!-- Save / Reset Buttons -->
             <Grid ColumnDefinitions="*,*"
                   ColumnSpacing="10">

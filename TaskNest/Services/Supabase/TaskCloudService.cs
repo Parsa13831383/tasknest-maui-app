@@ -90,6 +90,7 @@ public class TaskCloudService : ITaskCloudService
         {
             ["title"] = task.Title,
             ["description"] = task.Description,
+            ["reflection"] = task.Reflection,
             ["due_date"] = task.DueDate,
             ["is_completed"] = task.IsCompleted,
             ["category_id"] = task.CategoryId,
@@ -129,6 +130,7 @@ public class TaskCloudService : ITaskCloudService
         {
             title = task.Title,
             description = task.Description,
+            reflection = task.Reflection,
             due_date = task.DueDate,
             is_completed = task.IsCompleted,
             category_id = task.CategoryId,

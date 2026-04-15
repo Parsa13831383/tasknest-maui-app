@@ -11,4 +11,12 @@ public sealed class DashboardSummaryDto
     public int CategoryCount { get; init; }
     public string CategoryPreviewText { get; init; } = "No categories yet";
     public IReadOnlyList<DashboardFocusItemDto> FocusTasks { get; init; } = Array.Empty<DashboardFocusItemDto>();
+    public IReadOnlyList<DailyCompletedDto> WeeklyCompleted { get; init; } = Array.Empty<DailyCompletedDto>();
+}
+
+public sealed class DailyCompletedDto
+{
+    public string DayLabel { get; init; } = string.Empty;
+    public int Count { get; init; }
+    public bool IsToday { get; init; }
 }

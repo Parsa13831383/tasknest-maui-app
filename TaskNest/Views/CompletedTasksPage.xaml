@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="TaskNest.Views.CompletedTasksPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
+    x:DataType="viewModels:CompletedTasksViewModel"
+    Title="Completed Tasks"
+    BackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#000000}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,32,20,24"
+                Spacing="20">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="6">
+                <Label
+                    Text="Completed Tasks"
+                    Style="{StaticResource PageTitle}"/>
+                <Label
+                    Text="Tasks you've finished. Undo to move back or delete permanently."
+                    Style="{StaticResource PageSubtitle}"/>
+            </VerticalStackLayout>
+
+            <!-- Loading -->
+            <ActivityIndicator
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                HeightRequest="28"
+                HorizontalOptions="Center"/>
+
+            <!-- Task List -->
+            <CollectionView
+                ItemsSource="{Binding CompletedTasks}"
+                SelectionMode="None">
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Padding="32,48"
+                        Spacing="10">
+                        <Label
+                            Text="No completed tasks"
+                            FontSize="18"
+                            FontFamily="OpenSansSemibold"
+                            HorizontalTextAlignment="Center"
+                            TextColor="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
+                        <Label
+                            Text="Tasks you mark as done will appear here."
+                            FontSize="14"
+                            FontFamily="OpenSansRegular"
+                            HorizontalTextAlignment="Center"
+                            TextColor="{AppThemeBinding Light=#AEAEB2, Dark=#636366}"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:TaskListItem">
+                        <Frame
+                            Padding="0"
+                            Margin="0,0,0,10"
+                            CornerRadius="14"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
+                            BorderColor="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
+                            HasShadow="False">
+                            <Grid ColumnDefinitions="5,*"
+                                  RowDefinitions="Auto">
+
+                                <!-- Color strip -->
+                                <BoxView
+                                    Color="{Binding TaskColor}"
+                                    WidthRequest="5"
+                                    Opacity="0.45"/>
+
+                                <VerticalStackLayout
+                                    Grid.Column="1"
+                                    Padding="14,12"
+                                    Spacing="8">
+
+                                    <!-- Title + category -->
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <Label
+                                            Text="{Binding Title}"
+                                            FontSize="16"
+                                            FontFamily="OpenSansSemibold"
+                                            TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                            TextDecorations="Strikethrough"
+                                            LineBreakMode="TailTruncation"
+                                            VerticalOptions="Center"/>
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding Category}"
+                                            FontSize="12"
+                                            FontFamily="OpenSansRegular"
+                                            TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                                            VerticalOptions="Center"/>
+                                    </Grid>
+
+                                    <!-- Due date -->
+                                    <Label
+                                        Text="{Binding DueDate}"
+                                        FontSize="12"
+                                        FontFamily="OpenSansRegular"
+                                        TextColor="{AppThemeBinding Light=#AEAEB2, Dark=#636366}"/>
+
+                                    <!-- Action buttons -->
+                                    <Grid ColumnDefinitions="*,*"
+                                          ColumnSpacing="8">
+                                        <Button
+                                            Grid.Column="0"
+                                            Text="Undo"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.UndoTaskCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#1E1B4B}"
+                                            TextColor="{AppThemeBinding Light=#4F46E5, Dark=#818CF8}"
+                                            CornerRadius="10"
+                                            HeightRequest="36"
+                                            FontSize="13"
+                                            FontFamily="OpenSansSemibold"
+                                            Padding="8,0"/>
+                                        <Button
+                                            Grid.Column="1"
+                                            Text="Delete"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{AppThemeBinding Light=#FFF0EF, Dark=#3B1A18}"
+                                            TextColor="{AppThemeBinding Light=#FF3B30, Dark=#FF6961}"
+                                            CornerRadius="10"
+                                            HeightRequest="36"
+                                            FontSize="13"
+                                            FontFamily="OpenSansSemibold"
+                                            Padding="8,0"/>
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

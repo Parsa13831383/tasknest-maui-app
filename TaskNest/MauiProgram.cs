@@ -41,6 +41,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<TaskListViewModel>();
 		builder.Services.AddTransient<TaskDetailViewModel>();
 		builder.Services.AddTransient<TaskEditViewModel>();
+		builder.Services.AddTransient<CompletedTasksViewModel>();
 		builder.Services.AddTransient<CategoriesViewModel>();
 		builder.Services.AddTransient<SettingsViewModel>();
 		builder.Services.AddSingleton<IProfileService, ProfileService>();
