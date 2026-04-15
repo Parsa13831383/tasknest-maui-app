@@ -5,47 +5,91 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:TaskNest.Views"
     FlyoutBehavior="Flyout"
+    FlyoutBackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#1C1C1E}"
     Title="TaskNest">
 
-        <FlyoutItem x:Name="DashboardFlyout"
-            Title="Dashboard"
-            Route="dashboard">
+    <Shell.FlyoutHeaderTemplate>
+        <DataTemplate>
+            <VerticalStackLayout
+                Padding="24,48,24,24"
+                Spacing="6"
+                BackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#1C1C1E}">
+                <Label
+                    Text="TaskNest"
+                    FontSize="26"
+                    FontFamily="OpenSansSemibold"
+                    FontAttributes="Bold"
+                    TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+                <Label
+                    Text="Productivity, simplified."
+                    FontSize="13"
+                    FontFamily="OpenSansRegular"
+                    TextColor="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
+                <BoxView
+                    HeightRequest="1"
+                    Color="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
+                    Margin="0,12,0,0"/>
+            </VerticalStackLayout>
+        </DataTemplate>
+    </Shell.FlyoutHeaderTemplate>
+
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid
+                ColumnDefinitions="Auto,*"
+                ColumnSpacing="14"
+                Padding="20,14"
+                BackgroundColor="Transparent">
+                <Label
+                    Text="{Binding Title}"
+                    Grid.Column="1"
+                    FontSize="16"
+                    FontFamily="OpenSansRegular"
+                    VerticalOptions="Center"
+                    TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+
+    <FlyoutItem x:Name="DashboardFlyout"
+        Title="Dashboard"
+        Route="dashboard">
         <ShellContent
             x:Name="DashboardContent"
             Title="Dashboard"
             ContentTemplate="{DataTemplate views:DashboardPage}"/>
     </FlyoutItem>
 
-        <FlyoutItem x:Name="TasksFlyout"
-            Title="Tasks"
-            Route="tasks">
+    <FlyoutItem x:Name="TasksFlyout"
+        Title="Tasks"
+        Route="tasks">
         <ShellContent
             x:Name="TasksContent"
             Title="Tasks"
             ContentTemplate="{DataTemplate views:TasksPage}"/>
     </FlyoutItem>
 
-        <FlyoutItem x:Name="CategoriesFlyout"
-            Title="Categories"
-            Route="categories">
+    <FlyoutItem x:Name="CategoriesFlyout"
+        Title="Categories"
+        Route="categories">
         <ShellContent
             x:Name="CategoriesContent"
             Title="Categories"
             ContentTemplate="{DataTemplate views:CategoriesPage}"/>
     </FlyoutItem>
 
-        <FlyoutItem x:Name="SettingsFlyout"
-            Title="Settings"
-            Route="settings">
+    <FlyoutItem x:Name="SettingsFlyout"
+        Title="Settings"
+        Route="settings">
         <ShellContent
             x:Name="SettingsContent"
             Title="Settings"
             ContentTemplate="{DataTemplate views:SettingsPage}"/>
     </FlyoutItem>
 
-        <FlyoutItem x:Name="ProfileFlyout"
-            Title="Profile"
-            Route="profile">
+    <FlyoutItem x:Name="ProfileFlyout"
+        Title="Profile"
+        Route="profile">
         <ShellContent
             x:Name="ProfileContent"
             Title="Profile"

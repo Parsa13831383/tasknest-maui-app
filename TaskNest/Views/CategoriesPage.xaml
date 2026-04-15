@@ -7,119 +7,104 @@
     xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
     x:DataType="viewModels:CategoriesViewModel"
     Title="Categories"
-    BackgroundColor="{AppThemeBinding Light=#F6F7FB, Dark=#12151A}">
+    BackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#000000}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24"
-                Spacing="18">
+        <VerticalStackLayout Padding="20,32,20,24"
+                Spacing="20">
 
             <!-- Header -->
             <VerticalStackLayout Spacing="6">
                 <Label
                     Text="Categories"
-                    FontSize="32"
-                    FontAttributes="Bold"
-                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                    Style="{StaticResource PageTitle}"/>
 
                 <Label
                     Text="Organise your tasks into clear areas of focus."
-                    FontSize="15"
-                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                    Style="{StaticResource PageSubtitle}"/>
             </VerticalStackLayout>
 
-            <!-- New Category Form -->
+            <!-- New Category Form Card -->
             <Frame
-                Padding="18"
-                CornerRadius="18"
-                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
-                BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}"
-                HasShadow="True">
-                <VerticalStackLayout Spacing="12">
+                Padding="20"
+                CornerRadius="16"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
+                BorderColor="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
+                HasShadow="False">
+                <VerticalStackLayout Spacing="14">
                     <Label
                         Text="Create Category"
-                        FontSize="18"
-                        FontAttributes="Bold"
-                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                        Style="{StaticResource SectionTitle}"
+                        FontSize="18"/>
 
                     <Entry
                         Text="{Binding NewCategoryName, Mode=TwoWay}"
-                        Placeholder="Category name"
-                        BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#111827}"
-                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                        Placeholder="Category name"/>
 
                     <Entry
                         Text="{Binding NewCategoryDescription, Mode=TwoWay}"
-                        Placeholder="Description (optional)"
-                        BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#111827}"
-                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                        Placeholder="Description (optional)"/>
 
                     <Grid ColumnDefinitions="*,*"
-                            ColumnSpacing="12">
+                          ColumnSpacing="10">
                         <Button
                             Grid.Column="0"
                             Text="+ Add Category"
                             Command="{Binding AddCategoryCommand}"
-                            BackgroundColor="#2563EB"
-                            TextColor="White"
-                            CornerRadius="12"
-                            HeightRequest="48"/>
+                            Style="{StaticResource PrimaryButton}"
+                            HeightRequest="46"/>
 
                         <Button
                             Grid.Column="1"
                             Text="Refresh"
                             Command="{Binding ManageCategoriesCommand}"
-                            BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
-                            TextColor="{AppThemeBinding Light=#111827, Dark=#E5E7EB}"
-                            CornerRadius="12"
-                            HeightRequest="48"/>
+                            Style="{StaticResource SecondaryButton}"
+                            HeightRequest="46"/>
                     </Grid>
                 </VerticalStackLayout>
             </Frame>
 
             <!-- Compact Stats Bar -->
             <Border
-                Padding="14,10"
-                Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}"
+                Padding="14,12"
+                Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
                 StrokeThickness="1"
-                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A1F29}"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
                 StrokeShape="RoundRectangle 14">
                 <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                        ColumnSpacing="10"
-                        VerticalOptions="Center">
+                      ColumnSpacing="10"
+                      VerticalOptions="Center">
                     <Label Text="Total"
-                           FontSize="13"
-                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                           Style="{StaticResource Caption}"/>
                     <Label Grid.Column="1"
                            Text="{Binding TotalCategories}"
                            FontSize="14"
-                           FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
 
                     <Label Grid.Column="2"
-                           Text="•"
+                           Text="·"
                            FontSize="14"
-                           TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"/>
+                           TextColor="{AppThemeBinding Light=#AEAEB2, Dark=#636366}"/>
 
                     <Label Grid.Column="3"
                            Text="Most Active"
-                           FontSize="13"
-                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                           Style="{StaticResource Caption}"/>
                     <Label Grid.Column="4"
                            Text="{Binding MostActiveCategory}"
                            FontSize="14"
-                           FontAttributes="Bold"
-                           TextColor="#2563EB"/>
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
 
                     <Label Grid.Column="5"
-                              Text="Tasks"
-                           FontSize="13"
-                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                           Text="Tasks"
+                           Style="{StaticResource Caption}"/>
 
-                          <Label Grid.Column="6"
-                              Text="{Binding TasksAssigned}"
-                              FontSize="14"
-                              FontAttributes="Bold"
-                              TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                    <Label Grid.Column="6"
+                           Text="{Binding TasksAssigned}"
+                           FontSize="14"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
                 </Grid>
             </Border>
 
@@ -127,9 +112,7 @@
             <VerticalStackLayout Spacing="14">
                 <Label
                     Text="Areas of Focus"
-                    FontSize="22"
-                    FontAttributes="Bold"
-                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                    Style="{StaticResource SectionTitle}"/>
 
                 <CollectionView
                     ItemsSource="{Binding Categories}"
@@ -139,36 +122,35 @@
                         <VerticalStackLayout
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
-                            Padding="24"
-                            Spacing="8">
+                            Padding="32,48"
+                            Spacing="10">
                             <Label
                                 Text="No categories yet"
                                 FontSize="18"
-                                FontAttributes="Bold"
+                                FontFamily="OpenSansSemibold"
                                 HorizontalTextAlignment="Center"
-                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                                TextColor="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
                             <Label
                                 Text="Create your first category above to organise tasks."
-                                FontSize="14"
-                                HorizontalTextAlignment="Center"
-                                TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"/>
+                                Style="{StaticResource Caption}"
+                                HorizontalTextAlignment="Center"/>
                         </VerticalStackLayout>
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemsLayout>
                         <GridItemsLayout Orientation="Vertical"
                                 Span="{OnPlatform MacCatalyst=3, Default=2}"
-                                HorizontalItemSpacing="14"
-                                VerticalItemSpacing="14"/>
+                                HorizontalItemSpacing="12"
+                                VerticalItemSpacing="12"/>
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:CategoryItem">
                             <Border
                                 Padding="14"
-                                Stroke="{AppThemeBinding Light=#D5DAE3, Dark=#2B3240}"
+                                Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
                                 StrokeThickness="1"
-                                BackgroundColor="{AppThemeBinding Light=White, Dark=#1A1F29}"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
                                 StrokeShape="RoundRectangle 16">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer
@@ -183,26 +165,26 @@
                                             Binding="{Binding IsEmptyState}"
                                             Value="True">
                                         <Setter Property="Stroke"
-                                                Value="{AppThemeBinding Light=#CBD5E1, Dark=#3B4254}"/>
+                                                Value="{AppThemeBinding Light=#D1D1D6, Dark=#48484A}"/>
                                         <Setter Property="StrokeDashArray"
                                                 Value="5,4"/>
                                         <Setter Property="Opacity"
-                                                Value="0.92"/>
+                                                Value="0.9"/>
                                     </DataTrigger>
                                 </Border.Triggers>
 
                                 <Grid RowDefinitions="Auto,Auto,Auto"
-                                        ColumnDefinitions="8,*">
+                                      ColumnDefinitions="6,*">
                                     <BoxView
                                         Grid.RowSpan="3"
                                         Grid.Column="0"
-                                        CornerRadius="4"
+                                        CornerRadius="3"
                                         Color="{Binding AccentColor}"/>
 
                                     <Grid Grid.Column="1"
-                                            ColumnDefinitions="Auto,*"
-                                            ColumnSpacing="8"
-                                            Padding="10,0,0,0">
+                                          ColumnDefinitions="Auto,*"
+                                          ColumnSpacing="8"
+                                          Padding="10,0,0,0">
                                         <Label
                                             Text="{Binding IconGlyph}"
                                             FontSize="17"
@@ -212,51 +194,51 @@
                                         <VerticalStackLayout Grid.Column="1" Spacing="2">
                                             <Label
                                                 Text="{Binding Name}"
-                                                FontSize="17"
-                                                FontAttributes="Bold"
-                                                TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                                                FontSize="16"
+                                                FontFamily="OpenSansSemibold"
+                                                TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
                                             <Label
                                                 Text="{Binding Description}"
-                                                FontSize="13"
+                                                FontSize="12"
                                                 MaxLines="1"
                                                 LineBreakMode="TailTruncation"
-                                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                                                TextColor="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
                                         </VerticalStackLayout>
                                     </Grid>
 
                                     <VerticalStackLayout Grid.Row="1"
                                             Grid.Column="1"
                                             Spacing="6"
-                                            Padding="10,12,0,0">
+                                            Padding="10,10,0,0">
                                         <ProgressBar
                                             Progress="{Binding ProgressValue}"
                                             ProgressColor="{Binding AccentColor}"
-                                            BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#374151}"
-                                            HeightRequest="6"/>
+                                            BackgroundColor="{AppThemeBinding Light=#E5E5EA, Dark=#48484A}"
+                                            HeightRequest="5"/>
                                         <Label
                                             Text="{Binding ProgressText}"
-                                            FontSize="12"
+                                            FontSize="11"
                                             FontAttributes="Italic"
-                                            TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                                            TextColor="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
                                     </VerticalStackLayout>
 
                                     <Grid Grid.RowSpan="3"
-                                            Grid.ColumnSpan="2"
-                                            IsVisible="{Binding ShowQuickActions}"
-                                            BackgroundColor="#55000000"
-                                            Padding="10"
-                                            ColumnDefinitions="*,Auto,Auto"
-                                            VerticalOptions="End">
+                                          Grid.ColumnSpan="2"
+                                          IsVisible="{Binding ShowQuickActions}"
+                                          BackgroundColor="#55000000"
+                                          Padding="10"
+                                          ColumnDefinitions="*,Auto,Auto"
+                                          VerticalOptions="End">
                                         <Button
                                             Grid.Column="1"
                                             Text="Edit"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCategoryCommand}"
                                             CommandParameter="{Binding .}"
-                                            BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#374151}"
-                                            TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
+                                            BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#48484A}"
+                                            TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"
                                             FontSize="12"
                                             CornerRadius="10"
-                                            HeightRequest="34"/>
+                                            HeightRequest="32"/>
 
                                         <Button
                                             Grid.Column="2"
@@ -264,11 +246,10 @@
                                             Text="Delete"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCategoryCommand}"
                                             CommandParameter="{Binding .}"
-                                            BackgroundColor="#FEE2E2"
-                                            TextColor="#B91C1C"
+                                            Style="{StaticResource DestructiveButton}"
                                             FontSize="12"
                                             CornerRadius="10"
-                                            HeightRequest="34"/>
+                                            HeightRequest="32"/>
                                     </Grid>
                                 </Grid>
                             </Border>

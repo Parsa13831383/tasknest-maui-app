@@ -4,122 +4,113 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Login"
-    BackgroundColor="#F7F8FC">
+    BackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#000000}">
 
     <ScrollView>
-        <Grid Padding="24">
+        <Grid Padding="24,48,24,24">
             <VerticalStackLayout
-                MaximumWidthRequest="520"
+                MaximumWidthRequest="480"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                Spacing="22">
+                Spacing="28">
 
-                <VerticalStackLayout Spacing="6">
+                <!-- Header -->
+                <VerticalStackLayout Spacing="8">
                     <Label
                         Text="Welcome back"
-                        FontSize="16"
-                        TextColor="#6B7280"/>
+                        Style="{StaticResource Eyebrow}"/>
 
                     <Label
                         Text="Login to TaskNest"
-                        FontSize="32"
-                        FontAttributes="Bold"
-                        TextColor="#111827"/>
+                        Style="{StaticResource PageTitle}"/>
 
                     <Label
                         Text="Access your tasks, categories, and productivity dashboard."
-                        FontSize="15"
-                        TextColor="#6B7280"/>
+                        Style="{StaticResource PageSubtitle}"/>
                 </VerticalStackLayout>
 
+                <!-- Form Card -->
                 <Frame
-                    Padding="22"
-                    CornerRadius="18"
-                    BackgroundColor="White"
-                    HasShadow="True">
+                    Padding="24"
+                    CornerRadius="20"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
+                    BorderColor="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
+                    HasShadow="False">
 
-                    <VerticalStackLayout Spacing="18">
+                    <VerticalStackLayout Spacing="20">
 
                         <Label
                             Text="Account Login"
-                            FontSize="20"
-                            FontAttributes="Bold"
-                            TextColor="#111827"/>
+                            Style="{StaticResource SectionTitle}"/>
 
-                        <VerticalStackLayout Spacing="8">
+                        <!-- Email Field -->
+                        <VerticalStackLayout Spacing="6">
                             <Label
                                 Text="Email Address"
-                                FontSize="15"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
+                                Style="{StaticResource FieldLabel}"/>
                             <Entry
                                 Placeholder="Enter your email"
                                 Keyboard="Email"
-                                Text="{Binding Email}"
-                                TextColor="#111827"
-                                BackgroundColor="#F9FAFB"/>
+                                Text="{Binding Email}"/>
                             <Label
                                 Text="{Binding EmailError}"
                                 IsVisible="{Binding HasEmailError}"
-                                FontSize="12"
-                                TextColor="#DC2626"/>
+                                Style="{StaticResource ErrorText}"/>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="8">
+                        <!-- Password Field -->
+                        <VerticalStackLayout Spacing="6">
                             <Label
                                 Text="Password"
-                                FontSize="15"
-                                FontAttributes="Bold"
-                                TextColor="#111827"/>
+                                Style="{StaticResource FieldLabel}"/>
                             <Entry
                                 Placeholder="Enter your password"
                                 IsPassword="True"
-                                Text="{Binding Password}"
-                                TextColor="#111827"
-                                BackgroundColor="#F9FAFB"/>
+                                Text="{Binding Password}"/>
                             <Label
                                 Text="{Binding PasswordError}"
                                 IsVisible="{Binding HasPasswordError}"
-                                FontSize="12"
-                                TextColor="#DC2626"/>
+                                Style="{StaticResource ErrorText}"/>
                         </VerticalStackLayout>
 
+                        <!-- Auth Messages -->
                         <Label
                             Text="{Binding AuthError}"
                             IsVisible="{Binding HasAuthError}"
-                            FontSize="13"
-                            TextColor="#B91C1C"/>
+                            Style="{StaticResource ErrorText}"
+                            FontSize="13"/>
 
                         <Label
                             Text="{Binding AuthInfo}"
                             IsVisible="{Binding HasAuthInfo}"
                             FontSize="13"
-                            TextColor="#1D4ED8"/>
+                            TextColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
 
+                        <!-- Loading -->
                         <HorizontalStackLayout
                             Spacing="10"
                             VerticalOptions="Center"
                             IsVisible="{Binding IsBusy}">
                             <ActivityIndicator
-                                IsRunning="{Binding IsBusy}"
-                                Color="#2563EB"/>
+                                IsRunning="{Binding IsBusy}"/>
                             <Label
                                 Text="Signing in..."
                                 VerticalOptions="Center"
-                                TextColor="#374151"/>
+                                Style="{StaticResource Caption}"/>
                         </HorizontalStackLayout>
 
+                        <!-- Remember + Forgot -->
                         <Grid ColumnDefinitions="*,Auto"
-                                VerticalOptions="Center">
+                              VerticalOptions="Center">
                             <HorizontalStackLayout Spacing="10"
                                     VerticalOptions="Center">
                                 <Switch
-                                    IsToggled="{Binding RememberMe}"
-                                    OnColor="#2563EB"/>
+                                    IsToggled="{Binding RememberMe}"/>
                                 <Label
                                     Text="Remember me"
                                     VerticalOptions="Center"
-                                    TextColor="#374151"/>
+                                    FontSize="14"
+                                    TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
                             </HorizontalStackLayout>
 
                             <Button
@@ -127,43 +118,39 @@
                                 Text="Forgot password?"
                                 Command="{Binding ForgotPasswordCommand}"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Padding="12,6"
-                                VerticalOptions="Center"
-                                BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                TextColor="#2563EB"/>
+                                Style="{StaticResource GhostButton}"
+                                FontSize="14"
+                                Padding="8,0"
+                                HeightRequest="36"/>
                         </Grid>
 
+                        <!-- Buttons -->
                         <Button
                             Text="Login"
                             Command="{Binding LoginCommand}"
                             IsEnabled="{Binding IsNotBusy}"
-                            BackgroundColor="#2563EB"
-                            TextColor="White"
-                            CornerRadius="12"
-                            HeightRequest="50"/>
+                            Style="{StaticResource PrimaryButton}"/>
 
                         <Button
                             Text="Create an account"
                             Command="{Binding NavigateToRegisterCommand}"
                             IsEnabled="{Binding IsNotBusy}"
-                            BackgroundColor="#E5E7EB"
-                            TextColor="#111827"
-                            CornerRadius="12"
-                            HeightRequest="50"/>
+                            Style="{StaticResource SecondaryButton}"/>
 
                     </VerticalStackLayout>
                 </Frame>
 
+                <!-- Info Banner -->
                 <Frame
                     Padding="16"
-                    CornerRadius="16"
-                    BackgroundColor="#EFF6FF"
+                    CornerRadius="14"
+                    BackgroundColor="{AppThemeBinding Light=#E9F2FF, Dark=#0D2137}"
+                    BorderColor="{AppThemeBinding Light=#C7DBFF, Dark=#1A3A5C}"
                     HasShadow="False">
                     <Label
                         Text="Demo login page for TaskNest mobile coursework project."
-                        FontSize="14"
-                        TextColor="#1D4ED8"/>
+                        FontSize="13"
+                        TextColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
                 </Frame>
 
             </VerticalStackLayout>

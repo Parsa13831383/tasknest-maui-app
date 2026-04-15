@@ -6,159 +6,130 @@
     xmlns:viewModels="clr-namespace:TaskNest.ViewModels"
     x:DataType="viewModels:RegisterViewModel"
     Title="Register"
-    BackgroundColor="{AppThemeBinding Light=#F7F8FC, Dark=#0F172A}">
+    BackgroundColor="{AppThemeBinding Light=#F5F5F7, Dark=#000000}">
 
     <ScrollView>
-        <Grid Padding="24">
+        <Grid Padding="24,48,24,24">
             <VerticalStackLayout
-                MaximumWidthRequest="520"
+                MaximumWidthRequest="480"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                Spacing="22">
+                Spacing="28">
 
-                <!-- HEADER -->
-                <VerticalStackLayout Spacing="6">
+                <!-- Header -->
+                <VerticalStackLayout Spacing="8">
                     <Label
                         Text="Create account"
-                        FontSize="32"
-                        FontAttributes="Bold"
-                        TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                        Style="{StaticResource PageTitle}"/>
 
                     <Label
                         Text="Join TaskNest and manage your productivity."
-                        FontSize="15"
-                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
+                        Style="{StaticResource PageSubtitle}"/>
                 </VerticalStackLayout>
 
-                <!-- FORM CARD -->
+                <!-- Form Card -->
                 <Frame
-                    Padding="22"
-                    CornerRadius="18"
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#111827}"
-                    BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
-                    HasShadow="True">
+                    Padding="24"
+                    CornerRadius="20"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
+                    BorderColor="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
+                    HasShadow="False">
 
-                    <VerticalStackLayout Spacing="18">
+                    <VerticalStackLayout Spacing="20">
 
                         <Label
                             Text="Register"
-                            FontSize="20"
-                            FontAttributes="Bold"
-                            TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                            Style="{StaticResource SectionTitle}"/>
 
-                        <!-- AUTH ERROR -->
+                        <!-- Auth Error -->
                         <Label
                             Text="{Binding AuthError}"
                             IsVisible="{Binding HasAuthError}"
-                            FontSize="13"
-                            TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
+                            Style="{StaticResource ErrorText}"
+                            FontSize="13"/>
 
-                        <!-- NAME -->
+                        <!-- Name -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Full Name"
-                                    FontAttributes="Bold"
-                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                   Style="{StaticResource FieldLabel}"/>
                             <Entry
                                 Placeholder="Enter your name"
-                                Text="{Binding Name}"
-                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
-                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                Text="{Binding Name}"/>
                             <Label
                                 Text="{Binding NameError}"
                                 IsVisible="{Binding HasNameError}"
-                                FontSize="12"
-                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
+                                Style="{StaticResource ErrorText}"/>
                         </VerticalStackLayout>
 
-                        <!-- EMAIL -->
+                        <!-- Email -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Email"
-                                    FontAttributes="Bold"
-                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                   Style="{StaticResource FieldLabel}"/>
                             <Entry
                                 Placeholder="Enter your email"
                                 Keyboard="Email"
-                                Text="{Binding Email}"
-                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
-                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                Text="{Binding Email}"/>
                             <Label
                                 Text="{Binding EmailError}"
                                 IsVisible="{Binding HasEmailError}"
-                                FontSize="12"
-                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
+                                Style="{StaticResource ErrorText}"/>
                         </VerticalStackLayout>
 
-                        <!-- PASSWORD -->
+                        <!-- Password -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Password"
-                                    FontAttributes="Bold"
-                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                   Style="{StaticResource FieldLabel}"/>
                             <Entry
                                 Placeholder="Create password"
                                 IsPassword="True"
-                                Text="{Binding Password}"
-                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
-                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                Text="{Binding Password}"/>
                             <Label
                                 Text="{Binding PasswordError}"
                                 IsVisible="{Binding HasPasswordError}"
-                                FontSize="12"
-                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
+                                Style="{StaticResource ErrorText}"/>
                             <Label
                                 Text="Use 12+ characters with uppercase, lowercase, number, and symbol."
-                                FontSize="12"
-                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#94A3B8}"/>
+                                Style="{StaticResource Caption}"/>
                         </VerticalStackLayout>
 
-                        <!-- CONFIRM -->
+                        <!-- Confirm -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Confirm Password"
-                                    FontAttributes="Bold"
-                                    TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                   Style="{StaticResource FieldLabel}"/>
                             <Entry
                                 Placeholder="Confirm password"
                                 IsPassword="True"
-                                Text="{Binding ConfirmPassword}"
-                                BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#1E293B}"
-                                TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"/>
+                                Text="{Binding ConfirmPassword}"/>
                             <Label
                                 Text="{Binding ConfirmPasswordError}"
                                 IsVisible="{Binding HasConfirmPasswordError}"
-                                FontSize="12"
-                                TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"/>
+                                Style="{StaticResource ErrorText}"/>
                         </VerticalStackLayout>
 
-                        <!-- LOADING -->
+                        <!-- Loading -->
                         <HorizontalStackLayout
                             Spacing="10"
                             IsVisible="{Binding IsBusy}">
                             <ActivityIndicator
-                                IsRunning="{Binding IsBusy}"
-                                Color="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"/>
+                                IsRunning="{Binding IsBusy}"/>
                             <Label
                                 Text="Creating account..."
                                 FontSize="14"
                                 VerticalOptions="Center"
-                                TextColor="{AppThemeBinding Light=#374151, Dark=#CBD5E1}"/>
+                                Style="{StaticResource Caption}"/>
                         </HorizontalStackLayout>
 
-                        <!-- BUTTONS -->
+                        <!-- Buttons -->
                         <Button
                             Text="Create Account"
                             Command="{Binding RegisterCommand}"
                             IsEnabled="{Binding IsNotBusy}"
-                            BackgroundColor="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"
-                            TextColor="White"
-                            CornerRadius="12"
-                            HeightRequest="50"/>
+                            Style="{StaticResource PrimaryButton}"/>
 
                         <Button
                             Text="Already have an account? Login"
                             Command="{Binding NavigateToLoginCommand}"
-                            BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
-                            TextColor="{AppThemeBinding Light=#111827, Dark=#F8FAFC}"
-                            CornerRadius="12"
-                            HeightRequest="50"/>
+                            Style="{StaticResource SecondaryButton}"/>
 
                     </VerticalStackLayout>
                 </Frame>

@@ -5,23 +5,52 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
+    <!-- Platform theming (kept for backward compatibility) -->
+    <Color x:Key="Primary">#007AFF</Color>
+    <Color x:Key="PrimaryDark">#0A84FF</Color>
     <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <Color x:Key="Secondary">#E8E8ED</Color>
+    <Color x:Key="SecondaryDarkText">#98989D</Color>
+    <Color x:Key="Tertiary">#5856D6</Color>
 
-    <Color x:Key="Accent">#2563EB</Color>
-    <Color x:Key="AccentSoft">#EAF1FF</Color>
+    <!-- Apple-inspired semantic palette -->
+    <Color x:Key="Accent">#007AFF</Color>
+    <Color x:Key="AccentDark">#0A84FF</Color>
+    <Color x:Key="AccentSoft">#E9F2FF</Color>
+
     <Color x:Key="Surface">#FFFFFF</Color>
-    <Color x:Key="SurfaceAlt">#F7F8FC</Color>
-    <Color x:Key="SurfaceMuted">#EEF2F7</Color>
-    <Color x:Key="BorderSubtle">#E5E7EB</Color>
-    <Color x:Key="TextPrimary">#0F172A</Color>
-    <Color x:Key="TextSecondary">#64748B</Color>
-    <Color x:Key="Success">#16A34A</Color>
-    <Color x:Key="Warning">#D97706</Color>
+    <Color x:Key="SurfaceDark">#2C2C2E</Color>
+    <Color x:Key="SurfaceAlt">#F5F5F7</Color>
+    <Color x:Key="SurfaceAltDark">#1C1C1E</Color>
+    <Color x:Key="SurfaceMuted">#F2F2F7</Color>
+    <Color x:Key="SurfaceMutedDark">#2C2C2E</Color>
+
+    <Color x:Key="PageBg">#F5F5F7</Color>
+    <Color x:Key="PageBgDark">#000000</Color>
+
+    <Color x:Key="CardBg">#FFFFFF</Color>
+    <Color x:Key="CardBgDark">#1C1C1E</Color>
+
+    <Color x:Key="BorderSubtle">#E5E5EA</Color>
+    <Color x:Key="BorderSubtleDark">#38383A</Color>
+
+    <Color x:Key="TextPrimary">#1C1C1E</Color>
+    <Color x:Key="TextPrimaryDark">#F5F5F7</Color>
+    <Color x:Key="TextSecondary">#8E8E93</Color>
+    <Color x:Key="TextSecondaryDark">#98989D</Color>
+    <Color x:Key="TextTertiary">#AEAEB2</Color>
+
+    <Color x:Key="Success">#34C759</Color>
+    <Color x:Key="SuccessBg">#E8FAF0</Color>
+    <Color x:Key="SuccessBgDark">#0D3B1F</Color>
+    <Color x:Key="Warning">#FF9500</Color>
+    <Color x:Key="WarningBg">#FFF4E5</Color>
+    <Color x:Key="Destructive">#FF3B30</Color>
+    <Color x:Key="DestructiveBg">#FFF0EF</Color>
+    <Color x:Key="DestructiveBgDark">#3B1A18</Color>
+
+    <Color x:Key="InputBg">#F2F2F7</Color>
+    <Color x:Key="InputBgDark">#2C2C2E</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
@@ -29,13 +58,13 @@
     <Color x:Key="MidnightBlue">#190649</Color>
     <Color x:Key="OffBlack">#1f1f1f</Color>
 
-    <Color x:Key="Gray100">#E1E1E1</Color>
-    <Color x:Key="Gray200">#C8C8C8</Color>
-    <Color x:Key="Gray300">#ACACAC</Color>
-    <Color x:Key="Gray400">#919191</Color>
-    <Color x:Key="Gray500">#6E6E6E</Color>
-    <Color x:Key="Gray600">#404040</Color>
-    <Color x:Key="Gray900">#212121</Color>
+    <Color x:Key="Gray100">#E5E5EA</Color>
+    <Color x:Key="Gray200">#D1D1D6</Color>
+    <Color x:Key="Gray300">#AEAEB2</Color>
+    <Color x:Key="Gray400">#8E8E93</Color>
+    <Color x:Key="Gray500">#636366</Color>
+    <Color x:Key="Gray600">#48484A</Color>
+    <Color x:Key="Gray900">#1C1C1E</Color>
     <Color x:Key="Gray950">#141414</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>

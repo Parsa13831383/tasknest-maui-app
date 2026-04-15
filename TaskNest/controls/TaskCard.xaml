@@ -6,100 +6,135 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Frame
-        Padding="18"
-        Margin="0,0,0,14"
-        CornerRadius="18"
-        BackgroundColor="{AppThemeBinding Light=White, Dark=#1A2230}"
-        BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#2B3240}"
-        HasShadow="True">
+        Padding="0"
+        Margin="0,0,0,12"
+        CornerRadius="16"
+        BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
+        BorderColor="{AppThemeBinding Light=#E5E5EA, Dark=#38383A}"
+        HasShadow="False">
 
-        <VerticalStackLayout Spacing="12">
+        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="6,*">
 
-            <!-- Title + Color -->
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <VerticalStackLayout Spacing="4">
+            <!-- Accent color strip -->
+            <BoxView
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Color="{Binding TaskColor}"
+                WidthRequest="6"/>
+
+            <!-- Main content area -->
+            <VerticalStackLayout
+                Grid.Row="0"
+                Grid.Column="1"
+                Padding="16,16,16,12"
+                Spacing="10">
+
+                <!-- Title row with color dot -->
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label
+                            Text="{Binding Title}"
+                            FontSize="17"
+                            FontFamily="OpenSansSemibold"
+                            TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"/>
+                        <Label
+                            Text="{Binding Description}"
+                            FontSize="13"
+                            FontFamily="OpenSansRegular"
+                            TextColor="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"/>
+                    </VerticalStackLayout>
+
+                    <Border
+                        Grid.Column="1"
+                        WidthRequest="14"
+                        HeightRequest="14"
+                        BackgroundColor="{Binding TaskColor}"
+                        Stroke="Transparent"
+                        StrokeShape="RoundRectangle 7"
+                        VerticalOptions="Start"
+                        Margin="0,4,0,0"/>
+                </Grid>
+
+                <!-- Metadata chips -->
+                <HorizontalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="4">
+                        <Label
+                            Text="Due"
+                            FontSize="12"
+                            FontFamily="OpenSansSemibold"
+                            TextColor="{AppThemeBinding Light=#AEAEB2, Dark=#636366}"/>
+                        <Label
+                            Text="{Binding DueDate}"
+                            FontSize="12"
+                            FontFamily="OpenSansRegular"
+                            TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+                    </HorizontalStackLayout>
+
                     <Label
-                        Text="{Binding Title}"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
+                        Text="{Binding Category}"
+                        FontSize="12"
+                        FontFamily="OpenSansSemibold"
+                        TextColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
+                </HorizontalStackLayout>
 
-                    <Label
-                        Text="{Binding Description}"
-                        FontSize="14"
-                        TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
-                </VerticalStackLayout>
+            </VerticalStackLayout>
 
-                <Border
-                    Grid.Column="1"
-                    WidthRequest="16"
-                    HeightRequest="16"
-                    BackgroundColor="{Binding TaskColor}"
-                    Stroke="#D1D5DB"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 8"
-                    VerticalOptions="Center"/>
-            </Grid>
-
-            <!-- Metadata -->
-            <Grid ColumnDefinitions="Auto,*,Auto"
-                    ColumnSpacing="10">
-                <Label
-                    Text="Due:"
-                    FontSize="13"
-                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
-
-                <Label
-                    Grid.Column="1"
-                    Text="{Binding DueDate}"
-                    FontSize="13"
-                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"/>
-
-                <Label
-                    Grid.Column="2"
-                    Text="{Binding Category}"
-                    FontSize="13"
-                    TextColor="#2563EB"/>
-            </Grid>
-
-            <!-- Actions -->
-                <Grid ColumnDefinitions="*,*,*,*"
-                    ColumnSpacing="12">
+            <!-- Action buttons row -->
+            <Grid
+                Grid.Row="1"
+                Grid.Column="1"
+                ColumnDefinitions="*,*,*,*"
+                ColumnSpacing="8"
+                Padding="16,0,16,14">
 
                 <Button
-                    Text="View Details"
+                    Text="View"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewTaskCommand}"
                     CommandParameter="{Binding .}"
-                    BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
-                    TextColor="{AppThemeBinding Light=#111827, Dark=#F3F4F6}"
-                    CornerRadius="12"
-                    HeightRequest="42"/>
+                    BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#2C2C2E}"
+                    TextColor="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"
+                    CornerRadius="10"
+                    HeightRequest="36"
+                    FontSize="13"
+                    FontFamily="OpenSansSemibold"
+                    Padding="8,0"/>
 
                 <Button
                     Grid.Column="1"
-                    Text="Edit Task"
+                    Text="Edit"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditTaskCommand}"
                     CommandParameter="{Binding .}"
-                    BackgroundColor="#2563EB"
+                    BackgroundColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"
                     TextColor="White"
-                    CornerRadius="12"
-                    HeightRequest="42"/>
+                    CornerRadius="10"
+                    HeightRequest="36"
+                    FontSize="13"
+                    FontFamily="OpenSansSemibold"
+                    Padding="8,0"/>
 
                 <Button
                     Grid.Column="2"
-                    Text="Complete"
+                    Text="Done"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CompleteTaskCommand}"
                     CommandParameter="{Binding .}"
-                    BackgroundColor="{AppThemeBinding Light=#DBEAFE, Dark=#1E3A8A}"
-                    TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#BFDBFE}"
-                    CornerRadius="12"
-                    HeightRequest="42">
+                    BackgroundColor="{AppThemeBinding Light=#E8FAF0, Dark=#0D3B1F}"
+                    TextColor="{AppThemeBinding Light=#34C759, Dark=#30D158}"
+                    CornerRadius="10"
+                    HeightRequest="36"
+                    FontSize="13"
+                    FontFamily="OpenSansSemibold"
+                    Padding="8,0">
                     <Button.Triggers>
                         <DataTrigger TargetType="Button" Binding="{Binding IsCompleted}" Value="True">
                             <Setter Property="Text" Value="Completed"/>
                             <Setter Property="IsEnabled" Value="False"/>
-                            <Setter Property="BackgroundColor" Value="#DCFCE7"/>
-                            <Setter Property="TextColor" Value="#166534"/>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#E8FAF0, Dark=#0D3B1F}"/>
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light=#34C759, Dark=#30D158}"/>
+                            <Setter Property="Opacity" Value="0.6"/>
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
@@ -109,13 +144,15 @@
                     Text="Delete"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"
                     CommandParameter="{Binding .}"
-                    BackgroundColor="#FEE2E2"
-                    TextColor="#B91C1C"
-                    CornerRadius="12"
-                    HeightRequest="42"/>
+                    BackgroundColor="{AppThemeBinding Light=#FFF0EF, Dark=#3B1A18}"
+                    TextColor="{AppThemeBinding Light=#FF3B30, Dark=#FF6961}"
+                    CornerRadius="10"
+                    HeightRequest="36"
+                    FontSize="13"
+                    FontFamily="OpenSansSemibold"
+                    Padding="8,0"/>
 
             </Grid>
-
-        </VerticalStackLayout>
+        </Grid>
     </Frame>
 </ContentView>

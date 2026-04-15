@@ -2,142 +2,291 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+    <!-- ════════════════════════════════════════════════════
+         BASE ELEMENT STYLES
+         ════════════════════════════════════════════════════ -->
+
     <Style TargetType="Label">
         <Setter Property="TextColor"
-                Value="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"/>
-        <Setter Property="FontFamily"
-                Value="OpenSansRegular"/>
-    </Style>
-
-    <Style x:Key="H1"
-            TargetType="Label">
-        <Setter Property="FontSize"
-                Value="26"/>
-        <Setter Property="FontAttributes"
-                Value="Bold"/>
-    </Style>
-
-    <Style x:Key="Subtle"
-            TargetType="Label">
-        <Setter Property="Opacity"
-                Value="0.75"/>
-        <Setter Property="FontSize"
-                Value="13"/>
-    </Style>
-
-    <Style x:Key="DashboardEyebrow"
-           TargetType="Label">
-        <Setter Property="FontFamily"
-                Value="OpenSansSemibold"/>
-        <Setter Property="FontSize"
-                Value="12"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource TextSecondary}"/>
-        <Setter Property="CharacterSpacing"
-                Value="1.2"/>
-        <Setter Property="TextTransform"
-                Value="Uppercase"/>
-    </Style>
-
-    <Style x:Key="DashboardTitle"
-           TargetType="Label">
-        <Setter Property="FontFamily"
-                Value="OpenSansSemibold"/>
-        <Setter Property="FontSize"
-                Value="30"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource TextPrimary}"/>
-    </Style>
-
-    <Style x:Key="DashboardSubtitle"
-           TargetType="Label">
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
         <Setter Property="FontFamily"
                 Value="OpenSansRegular"/>
         <Setter Property="FontSize"
                 Value="15"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource TextSecondary}"/>
-        <Setter Property="Opacity"
-                Value="0.78"/>
     </Style>
 
-    <Style x:Key="DashboardSectionTitle"
-           TargetType="Label">
-        <Setter Property="FontFamily"
-                Value="OpenSansSemibold"/>
-        <Setter Property="FontSize"
-                Value="19"/>
+    <Style TargetType="Entry">
+        <Setter Property="BackgroundColor"
+                Value="{AppThemeBinding Light=#F2F2F7, Dark=#2C2C2E}"/>
         <Setter Property="TextColor"
-                Value="{StaticResource TextPrimary}"/>
-    </Style>
-
-    <Style x:Key="DashboardCardLabel"
-           TargetType="Label">
-        <Setter Property="FontFamily"
-                Value="OpenSansSemibold"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource TextPrimary}"/>
-    </Style>
-
-    <Style x:Key="DashboardCardValue"
-           TargetType="Label">
-        <Setter Property="FontFamily"
-                Value="OpenSansSemibold"/>
-        <Setter Property="FontSize"
-                Value="24"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource TextPrimary}"/>
-    </Style>
-
-    <Style x:Key="DashboardCardSubtext"
-           TargetType="Label">
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+        <Setter Property="PlaceholderColor"
+                Value="{AppThemeBinding Light=#AEAEB2, Dark=#636366}"/>
         <Setter Property="FontFamily"
                 Value="OpenSansRegular"/>
         <Setter Property="FontSize"
-                Value="13"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource TextSecondary}"/>
-        <Setter Property="Opacity"
-                Value="0.78"/>
+                Value="15"/>
     </Style>
 
-    <Style x:Key="DashboardPrimaryActionButton"
-           TargetType="Button">
+    <Style TargetType="Editor">
         <Setter Property="BackgroundColor"
-                Value="{StaticResource Accent}"/>
+                Value="{AppThemeBinding Light=#F2F2F7, Dark=#2C2C2E}"/>
         <Setter Property="TextColor"
-                Value="White"/>
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+        <Setter Property="PlaceholderColor"
+                Value="{AppThemeBinding Light=#AEAEB2, Dark=#636366}"/>
         <Setter Property="FontFamily"
-                Value="OpenSansSemibold"/>
-        <Setter Property="CornerRadius"
-                Value="16"/>
-        <Setter Property="HeightRequest"
-                Value="52"/>
-        <Setter Property="Padding"
-                Value="18,14"/>
-    </Style>
-
-    <Style x:Key="DashboardSecondaryActionButton"
-           TargetType="Button">
-        <Setter Property="BackgroundColor"
-                Value="{StaticResource SurfaceMuted}"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource TextPrimary}"/>
-        <Setter Property="FontFamily"
-                Value="OpenSansSemibold"/>
-        <Setter Property="CornerRadius"
-                Value="16"/>
-        <Setter Property="HeightRequest"
-                Value="52"/>
-        <Setter Property="Padding"
-                Value="18,14"/>
+                Value="OpenSansRegular"/>
+        <Setter Property="FontSize"
+                Value="15"/>
     </Style>
 
     <Style TargetType="Button">
         <Setter Property="CornerRadius"
                 Value="14"/>
         <Setter Property="HeightRequest"
-                Value="48"/>
+                Value="50"/>
+        <Setter Property="FontFamily"
+                Value="OpenSansSemibold"/>
+        <Setter Property="FontSize"
+                Value="15"/>
+        <Setter Property="Padding"
+                Value="20,0"/>
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="BackgroundColor"
+                Value="{AppThemeBinding Light=#F2F2F7, Dark=#2C2C2E}"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+        <Setter Property="FontFamily"
+                Value="OpenSansRegular"/>
+        <Setter Property="FontSize"
+                Value="15"/>
+    </Style>
+
+    <Style TargetType="Switch">
+        <Setter Property="OnColor"
+                Value="#007AFF"/>
+    </Style>
+
+    <Style TargetType="ActivityIndicator">
+        <Setter Property="Color"
+                Value="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
+    </Style>
+
+    <Style TargetType="ProgressBar">
+        <Setter Property="ProgressColor"
+                Value="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
+    </Style>
+
+    <!-- ════════════════════════════════════════════════════
+         TYPOGRAPHY HIERARCHY
+         ════════════════════════════════════════════════════ -->
+
+    <!-- Page title: 30pt bold -->
+    <Style x:Key="PageTitle" TargetType="Label">
+        <Setter Property="FontSize" Value="30"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+    </Style>
+
+    <!-- Page subtitle: 15pt secondary -->
+    <Style x:Key="PageSubtitle" TargetType="Label">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
+    </Style>
+
+    <!-- Section header: 20pt semibold -->
+    <Style x:Key="SectionTitle" TargetType="Label">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+    </Style>
+
+    <!-- Eyebrow text: 12pt uppercase tracking -->
+    <Style x:Key="Eyebrow" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
+        <Setter Property="CharacterSpacing" Value="1.2"/>
+        <Setter Property="TextTransform" Value="Uppercase"/>
+    </Style>
+
+    <!-- Body text: 15pt -->
+    <Style x:Key="Body" TargetType="Label">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+    </Style>
+
+    <!-- Caption: 13pt secondary -->
+    <Style x:Key="Caption" TargetType="Label">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
+    </Style>
+
+    <!-- Field label: 14pt semibold -->
+    <Style x:Key="FieldLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+    </Style>
+
+    <!-- Error text -->
+    <Style x:Key="ErrorText" TargetType="Label">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#FF3B30, Dark=#FF6961}"/>
+    </Style>
+
+    <!-- Link text -->
+    <Style x:Key="LinkText" TargetType="Label">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
+    </Style>
+
+    <!-- Large stat number -->
+    <Style x:Key="StatValue" TargetType="Label">
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+    </Style>
+
+    <!-- Stat label -->
+    <Style x:Key="StatLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#8E8E93, Dark=#98989D}"/>
+    </Style>
+
+    <!-- Backward compat: H1 and Subtle -->
+    <Style x:Key="H1" TargetType="Label">
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+    </Style>
+
+    <Style x:Key="Subtle" TargetType="Label">
+        <Setter Property="Opacity" Value="0.7"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+
+    <!-- ════════════════════════════════════════════════════
+         BUTTON STYLES
+         ════════════════════════════════════════════════════ -->
+
+    <!-- Primary action button (filled accent) -->
+    <Style x:Key="PrimaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor"
+                Value="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
+        <Setter Property="TextColor" Value="White"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="HeightRequest" Value="50"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Padding" Value="24,0"/>
+    </Style>
+
+    <!-- Secondary button (soft muted bg) -->
+    <Style x:Key="SecondaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor"
+                Value="{AppThemeBinding Light=#F2F2F7, Dark=#2C2C2E}"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="HeightRequest" Value="50"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Padding" Value="24,0"/>
+    </Style>
+
+    <!-- Destructive button -->
+    <Style x:Key="DestructiveButton" TargetType="Button">
+        <Setter Property="BackgroundColor"
+                Value="{AppThemeBinding Light=#FFF0EF, Dark=#3B1A18}"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#FF3B30, Dark=#FF6961}"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="HeightRequest" Value="50"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Padding" Value="24,0"/>
+    </Style>
+
+    <!-- Ghost/text button -->
+    <Style x:Key="GhostButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="HeightRequest" Value="44"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="BorderColor" Value="Transparent"/>
+    </Style>
+
+    <!-- Small inline button -->
+    <Style x:Key="SmallButton" TargetType="Button">
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="HeightRequest" Value="36"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="Padding" Value="14,0"/>
+    </Style>
+
+    <!-- ════════════════════════════════════════════════════
+         BACKWARD-COMPATIBLE DASHBOARD STYLES
+         ════════════════════════════════════════════════════ -->
+
+    <Style x:Key="DashboardEyebrow" TargetType="Label"
+           BasedOn="{StaticResource Eyebrow}"/>
+
+    <Style x:Key="DashboardTitle" TargetType="Label"
+           BasedOn="{StaticResource PageTitle}"/>
+
+    <Style x:Key="DashboardSubtitle" TargetType="Label"
+           BasedOn="{StaticResource PageSubtitle}"/>
+
+    <Style x:Key="DashboardSectionTitle" TargetType="Label"
+           BasedOn="{StaticResource SectionTitle}"/>
+
+    <Style x:Key="DashboardCardLabel" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light=#1C1C1E, Dark=#F5F5F7}"/>
+    </Style>
+
+    <Style x:Key="DashboardCardValue" TargetType="Label"
+           BasedOn="{StaticResource StatValue}"/>
+
+    <Style x:Key="DashboardCardSubtext" TargetType="Label"
+           BasedOn="{StaticResource Caption}"/>
+
+    <Style x:Key="DashboardPrimaryActionButton" TargetType="Button"
+           BasedOn="{StaticResource PrimaryButton}">
+        <Setter Property="HeightRequest" Value="52"/>
+    </Style>
+
+    <Style x:Key="DashboardSecondaryActionButton" TargetType="Button"
+           BasedOn="{StaticResource SecondaryButton}">
+        <Setter Property="HeightRequest" Value="52"/>
     </Style>
 
 </ResourceDictionary>
